@@ -58,6 +58,7 @@ E. Validasi dan Database
 - Seeder untuk data awal, seperti akun Admin, kategori, dan unit.
 
 ## 5. Screen Capture Skema Database
+<img width="920" height="1795" alt="ERD_peminjaman" src="https://github.com/user-attachments/assets/be66ce12-6d9d-4f53-8468-d66e5251b806" />
 
 
 
