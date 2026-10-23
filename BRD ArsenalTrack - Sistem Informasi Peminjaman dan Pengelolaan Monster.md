@@ -1,8 +1,8 @@
 # Business Requirements Document (BRD)
 
-**ArsenalTrack: Sistem Informasi Peminjaman dan Pengelolaan Persenjataan Modern Berbasis Web**
+**MonsterTrack: Sistem Informasi Peminjaman dan Pengelolaan Monster Berbasis Web**
 
-Dokumen Kebutuhan Bisnis untuk Proyek Akademik | Versi 1.0 | Status: Draft untuk Review
+Dokumen Kebutuhan Bisnis untuk Proyek Akademik | Versi 1.1 | Status: Draft untuk Review
 
 ---
 
@@ -10,15 +10,15 @@ Dokumen Kebutuhan Bisnis untuk Proyek Akademik | Versi 1.0 | Status: Draft untuk
 
 | Item | Keterangan |
 | --- | --- |
-| Nama Project | ArsenalTrack |
-| Judul | Sistem Informasi Peminjaman dan Pengelolaan Persenjataan Modern Berbasis Web |
+| Nama Project | MonsterTrack |
+| Judul | Sistem Informasi Peminjaman dan Pengelolaan Monster Berbasis Web |
 | Jenis Dokumen | Business Requirements Document (BRD) |
-| Konteks | Simulasi akademik pada lembaga keamanan/pusat pelatihan fiktif |
-| Versi | 1.0 |
-| Tanggal | 22 Oktober 2026 |
+| Konteks | Simulasi akademik pada lembaga pelatihan pawang monster fiktif |
+| Versi | 1.1 |
+| Tanggal | 23 Oktober 2026 |
 | Bahasa | Indonesia |
 
-> **Catatan penting:** ArsenalTrack hanya merupakan simulasi manajemen inventaris dan peminjaman untuk kebutuhan akademik. Seluruh data bersifat dummy. Sistem tidak memuat fitur jual beli, marketplace, instruksi penggunaan, modifikasi, pembuatan, maupun taktik penggunaan senjata.
+> **Catatan penting:** MonsterTrack hanya merupakan simulasi manajemen inventaris dan peminjaman untuk kebutuhan akademik. Seluruh monster dan data bersifat fiktif/dummy. Sistem tidak memuat fitur jual beli, marketplace, panduan pertarungan atau taktik, rekayasa/modifikasi, maupun pembiakan monster.
 
 ## 2. Document Control
 
@@ -28,6 +28,7 @@ Dokumen Kebutuhan Bisnis untuk Proyek Akademik | Versi 1.0 | Status: Draft untuk
 | --- | --- | --- | --- |
 | 0.1 | 22 Okt 2026 | Tim Proyek | Penyusunan draf awal |
 | 1.0 | 22 Okt 2026 | Tim Proyek | Draf lengkap untuk review |
+| 1.1 | 23 Okt 2026 | Tim Proyek | Tema proyek diganti menjadi peminjaman monster (nama, istilah, contoh data, dan ruang lingkup disesuaikan; aturan bisnis tidak berubah) |
 
 **Persetujuan**
 
@@ -41,9 +42,9 @@ Dokumen Kebutuhan Bisnis untuk Proyek Akademik | Versi 1.0 | Status: Draft untuk
 
 | Istilah | Arti |
 | --- | --- |
-| Unit | Satu item fisik persenjataan latihan/simulasi yang tercatat dalam inventaris, dengan kode unik |
-| Kode Unit | Identitas unik satu unit, contoh `RT-001` |
-| Anggota | Pengguna terdaftar yang berhak meminjam unit |
+| Monster | Satu ekor monster fiktif yang tercatat dalam inventaris lembaga untuk latihan/simulasi, dengan kode unik (sebelumnya disebut "unit") |
+| Kode Monster | Identitas unik satu monster, contoh `SL-001` |
+| Anggota | Pengguna terdaftar yang berhak meminjam monster |
 | Peminjaman Aktif | Peminjaman yang belum dikembalikan (belum diproses Admin) |
 | Jatuh Tempo | Batas akhir pengembalian, maksimal 5 hari sejak tanggal peminjaman |
 | TBD | To Be Decided, perlu keputusan project owner |
@@ -60,18 +61,18 @@ Dokumen Kebutuhan Bisnis untuk Proyek Akademik | Versi 1.0 | Status: Draft untuk
 
 ## 3. Project Overview
 
-ArsenalTrack adalah aplikasi web untuk mengelola inventaris dan proses peminjaman persenjataan modern untuk kebutuhan latihan dan simulasi pada sebuah lembaga keamanan/pusat pelatihan fiktif. Sistem menggantikan pencatatan manual dengan pencatatan digital yang terstruktur.
+MonsterTrack adalah aplikasi web untuk mengelola inventaris dan proses peminjaman monster untuk kebutuhan latihan dan simulasi pada sebuah lembaga pelatihan pawang monster fiktif. Sistem menggantikan pencatatan manual dengan pencatatan digital yang terstruktur.
 
 Sistem memiliki dua jenis pengguna:
 
-1. **Admin**: mengelola data inventaris (unit dan kategori), anggota, peminjaman, pengembalian, denda, serta riwayat transaksi.
-2. **Anggota/User**: melihat dan mencari unit yang tersedia, mengajukan peminjaman, melihat peminjaman yang sedang berlangsung, dan mengelola profil sendiri.
+1. **Admin**: mengelola data inventaris (monster dan kategori), anggota, peminjaman, pengembalian, denda, serta riwayat transaksi.
+2. **Anggota/User**: melihat dan mencari monster yang tersedia, mengajukan peminjaman, melihat peminjaman yang sedang berlangsung, dan mengelola profil sendiri.
 
 Sistem hanya menangani **manajemen data dan transaksi peminjaman**. Sistem tidak mengontrol perangkat fisik apa pun.
 
 ## 4. Background
 
-Pusat pelatihan fiktif dalam proyek ini memiliki sejumlah peralatan simulasi yang dipinjamkan kepada anggota selama sesi latihan. Selama ini pencatatan dilakukan manual (buku catatan atau lembar kerja terpisah). Seiring bertambahnya jumlah unit dan anggota, cara ini menimbulkan kesulitan pelacakan, kesalahan pencatatan, dan lemahnya pengawasan batas peminjaman.
+Lembaga pelatihan pawang monster fiktif dalam proyek ini memiliki sejumlah monster yang dipinjamkan kepada anggota selama sesi latihan dan simulasi. Selama ini pencatatan dilakukan manual (buku catatan atau lembar kerja terpisah). Seiring bertambahnya jumlah monster dan anggota, cara ini menimbulkan kesulitan pelacakan, kesalahan pencatatan, dan lemahnya pengawasan batas peminjaman.
 
 Pihak pengelola membutuhkan sistem berbasis web yang menyediakan satu sumber data terpusat tentang inventaris, anggota, dan peminjaman, sekaligus menerapkan aturan peminjaman (batas jumlah, batas waktu, denda) secara konsisten. Proyek ini dikerjakan sebagai tugas akademik dengan data dummy.
 
@@ -79,12 +80,12 @@ Pihak pengelola membutuhkan sistem berbasis web yang menyediakan satu sumber dat
 
 | No | Permasalahan | Dampak | Kebutuhan yang Menjawab |
 | --- | --- | --- | --- |
-| P-01 | Data inventaris tersebar dan sulit dilacak | Unit sulit ditemukan, data tidak konsisten | FR-005, FR-006, FR-007 |
-| P-02 | Sulit mengetahui unit yang tersedia atau sedang dipinjam | Anggota tidak tahu unit mana yang bisa dipinjam, Admin harus mengecek manual | FR-005, FR-007, FR-008 |
+| P-01 | Data inventaris monster tersebar dan sulit dilacak | Monster sulit ditemukan, data tidak konsisten | FR-005, FR-006, FR-007 |
+| P-02 | Sulit mengetahui monster yang tersedia atau sedang dipinjam | Anggota tidak tahu monster mana yang bisa dipinjam, Admin harus mengecek manual | FR-005, FR-007, FR-008 |
 | P-03 | Data anggota dan profil tidak terorganisir | Identitas peminjam sulit diverifikasi | FR-003, FR-004 |
 | P-04 | Riwayat peminjaman sulit dicari | Penelusuran transaksi lama memakan waktu | FR-011, FR-012 |
-| P-05 | Risiko peminjaman melebihi batas | Satu anggota dapat menguasai terlalu banyak unit | FR-008 (BR-010) |
-| P-06 | Keterlambatan pengembalian sulit diketahui | Unit tertahan tanpa pengawasan | FR-009, FR-010 (BR-011, BR-012) |
+| P-05 | Risiko peminjaman melebihi batas | Satu anggota dapat menguasai terlalu banyak monster | FR-008 (BR-010) |
+| P-06 | Keterlambatan pengembalian sulit diketahui | Monster tertahan tanpa pengawasan | FR-009, FR-010 (BR-011, BR-012) |
 | P-07 | Perhitungan denda tidak terdokumentasi | Denda tidak konsisten dan sulit dipertanggungjawabkan | FR-010 |
 | P-08 | Kesalahan pencatatan manual | Data ganda, salah tulis, atau hilang | Seluruh modul |
 
@@ -92,21 +93,21 @@ Pihak pengelola membutuhkan sistem berbasis web yang menyediakan satu sumber dat
 
 | ID | Tujuan Bisnis (Business Requirement) | Ukuran Keberhasilan | Terkait |
 | --- | --- | --- | --- |
-| BReq-01 | Digitalisasi pengelolaan inventaris persenjataan | Seluruh unit tercatat di sistem dengan kode unik dan status | FR-005, FR-006 |
-| BReq-02 | Mempermudah Admin mengelola data unit | Admin dapat menambah, mengubah, menghapus, dan melihat unit tanpa pencatatan manual | FR-005 |
-| BReq-03 | Mempermudah anggota mencari unit yang tersedia | Anggota dapat mencari berdasarkan nama dan melihat status unit | FR-007 |
+| BReq-01 | Digitalisasi pengelolaan inventaris monster | Seluruh monster tercatat di sistem dengan kode unik dan status | FR-005, FR-006 |
+| BReq-02 | Mempermudah Admin mengelola data monster | Admin dapat menambah, mengubah, menghapus, dan melihat monster tanpa pencatatan manual | FR-005 |
+| BReq-03 | Mempermudah anggota mencari monster yang tersedia | Anggota dapat mencari berdasarkan nama dan melihat status monster | FR-007 |
 | BReq-04 | Mengelola peminjaman dan pengembalian secara terstruktur | Setiap transaksi tercatat lengkap dengan tanggal dan status | FR-008, FR-009 |
-| BReq-05 | Membatasi jumlah unit yang dapat dipinjam anggota | Tidak ada anggota dengan lebih dari 2 peminjaman aktif | FR-008 |
+| BReq-05 | Membatasi jumlah monster yang dapat dipinjam anggota | Tidak ada anggota dengan lebih dari 2 peminjaman aktif | FR-008 |
 | BReq-06 | Mencatat riwayat peminjaman | Seluruh transaksi dapat ditelusuri | FR-011 |
-| BReq-07 | Mengurangi kesalahan pencatatan manual | Status unit berubah otomatis mengikuti transaksi | FR-008, FR-009 |
+| BReq-07 | Mengurangi kesalahan pencatatan manual | Status monster berubah otomatis mengikuti transaksi | FR-008, FR-009 |
 | BReq-08 | Menyediakan data dan laporan peminjaman bagi Admin | Riwayat dapat dilihat dan dicetak | FR-011, FR-012 |
 
 ## 7. Stakeholder
 
 | Stakeholder | Peran | Tanggung Jawab / Kepentingan |
 | --- | --- | --- |
-| **Admin** | Pengelola sistem dan inventaris | Mengelola data anggota, unit, dan kategori; memantau seluruh peminjaman; memproses pengembalian; memantau keterlambatan dan denda; melihat dan mencetak riwayat; menjaga keakuratan data |
-| **Anggota/User** | Peminjam unit | Login; mengelola profil sendiri; melihat dan mencari unit; mengajukan peminjaman sesuai aturan; melihat peminjaman aktif dan riwayat miliknya; menghubungi Admin untuk pengembalian |
+| **Admin** | Pengelola sistem dan inventaris | Mengelola data anggota, monster, dan kategori; memantau seluruh peminjaman; memproses pengembalian; memantau keterlambatan dan denda; melihat dan mencetak riwayat; menjaga keakuratan data |
+| **Anggota/User** | Peminjam monster | Login; mengelola profil sendiri; melihat dan mencari monster; mengajukan peminjaman sesuai aturan; melihat peminjaman aktif dan riwayat miliknya; menghubungi Admin untuk pengembalian |
 | **Project Owner / Dosen Pembimbing** | Pemilik kebijakan proyek | Menentukan keputusan bisnis yang masih TBD (nominal denda, detail identitas anggota); menyetujui BRD |
 | **Tim Pengembang** | Pelaksana | Menerjemahkan BRD ke flowchart, ERD, PRD, desain, dan kode |
 
@@ -122,15 +123,15 @@ Hak akses dibatasi berdasarkan peran (role-based). Tanda ✔ berarti diizinkan, 
 | 2 | Melihat dan mengelola profil | ✔ (profil sendiri) | ✔ (hanya profil sendiri) |
 | 3 | Melihat data anggota | ✔ | ✘ |
 | 4 | Menambah, mengubah, menghapus anggota | ✔ | ✘ |
-| 5 | Melihat daftar unit | ✔ | ✔ |
-| 6 | Menambah, mengubah, menghapus unit | ✔ | ✘ |
-| 7 | Melihat dan mencari unit berdasarkan nama | ✔ | ✔ |
-| 8 | Melihat detail unit | ✔ | ✔ |
-| 9 | Melihat kategori | ✔ | ✔ (sebagai bagian informasi unit) |
+| 5 | Melihat daftar monster | ✔ | ✔ |
+| 6 | Menambah, mengubah, menghapus monster | ✔ | ✘ |
+| 7 | Melihat dan mencari monster berdasarkan nama | ✔ | ✔ |
+| 8 | Melihat detail monster | ✔ | ✔ |
+| 9 | Melihat kategori | ✔ | ✔ (sebagai bagian informasi monster) |
 | 10 | Menambah, mengubah, menghapus kategori | ✔ | ✘ |
 | 11 | Melakukan peminjaman | ✘ | ✔ (jika memenuhi ketentuan) |
-| 12 | Melihat seluruh peminjaman / unit yang sedang dipinjam | ✔ | ✘ |
-| 13 | Melihat unit yang sedang dipinjam oleh dirinya | ✘ (tidak relevan) | ✔ |
+| 12 | Melihat seluruh peminjaman / monster yang sedang dipinjam | ✔ | ✘ |
+| 13 | Melihat monster yang sedang dipinjam oleh dirinya | ✘ (tidak relevan) | ✔ |
 | 14 | Memproses pengembalian | ✔ | ✘ |
 | 15 | Melihat riwayat seluruh peminjaman | ✔ | ✘ |
 | 16 | Melihat riwayat peminjaman miliknya | ✘ (tidak relevan) | ✔ (jika diperlukan) |
@@ -138,9 +139,9 @@ Hak akses dibatasi berdasarkan peran (role-based). Tanda ✔ berarti diizinkan, 
 | 18 | Mencetak riwayat peminjaman | ✔ | ✘ |
 | 19 | Mengakses fitur Admin | ✔ | ✘ |
 
-**Anggota tidak dapat:** mengelola data anggota lain, mengelola unit, mengelola kategori, menghapus unit, memproses pengembalian secara langsung, melihat transaksi anggota lain, dan mengakses fitur Admin.
+**Anggota tidak dapat:** mengelola data anggota lain, mengelola monster, mengelola kategori, menghapus monster, memproses pengembalian secara langsung, melihat transaksi anggota lain, dan mengakses fitur Admin.
 
-**TBD / perlu keputusan:** (a) apakah Admin boleh meminjam unit (diasumsikan tidak, sesuai BR-002), (b) apakah anggota dapat melihat denda miliknya sendiri (rekomendasi: boleh, bersifat read-only).
+**TBD / perlu keputusan:** (a) apakah Admin boleh meminjam monster (diasumsikan tidak, sesuai BR-002), (b) apakah anggota dapat melihat denda miliknya sendiri (rekomendasi: boleh, bersifat read-only).
 
 ## 9. Scope
 
@@ -151,10 +152,10 @@ Hak akses dibatasi berdasarkan peran (role-based). Tanda ✔ berarti diizinkan, 
 | 1 | Login dan logout, validasi role | Authentication |
 | 2 | Pengelolaan data anggota oleh Admin (CRUD) | User Management |
 | 3 | Pengelolaan profil (satu user satu profil) | Profile Management |
-| 4 | Pengelolaan unit (CRUD) dengan kode unik dan status | Unit Management |
-| 5 | Pengelolaan kategori (CRUD) dan relasi many-to-many dengan unit | Category Management |
-| 6 | Pencarian unit berdasarkan nama | Unit Search |
-| 7 | Pengajuan dan pencatatan peminjaman dengan batas 2 unit aktif dan 5 hari | Loan Management |
+| 4 | Pengelolaan monster (CRUD) dengan kode unik dan status | Monster Management |
+| 5 | Pengelolaan kategori (CRUD) dan relasi many-to-many dengan monster | Category Management |
+| 6 | Pencarian monster berdasarkan nama | Monster Search |
+| 7 | Pengajuan dan pencatatan peminjaman dengan batas 2 monster aktif dan 5 hari | Loan Management |
 | 8 | Pemrosesan pengembalian oleh Admin | Return Management |
 | 9 | Penetapan keterlambatan dan pencatatan denda | Fine Management |
 | 10 | Riwayat peminjaman (Admin: seluruhnya, Anggota: miliknya) | Loan History |
@@ -164,14 +165,14 @@ Hak akses dibatasi berdasarkan peran (role-based). Tanda ✔ berarti diizinkan, 
 
 | No | Di Luar Lingkup | Alasan |
 | --- | --- | --- |
-| 1 | Jual beli persenjataan dan marketplace | Bukan fungsi sistem peminjaman |
+| 1 | Jual beli monster dan marketplace | Bukan fungsi sistem peminjaman |
 | 2 | Pembayaran online (termasuk pembayaran denda) | Denda hanya dicatat, pembayaran dilakukan di luar sistem |
 | 3 | Tracking GPS | Sistem tidak memantau lokasi fisik |
-| 4 | Sistem keamanan fisik | Di luar sistem informasi |
-| 5 | Panduan/instruksi penggunaan senjata | Tidak diperlukan dan tidak diizinkan dalam proyek ini |
-| 6 | Modifikasi senjata | Tidak diperlukan dan tidak diizinkan dalam proyek ini |
-| 7 | Pembuatan senjata | Tidak diperlukan dan tidak diizinkan dalam proyek ini |
-| 8 | Taktik penggunaan senjata | Tidak diperlukan dan tidak diizinkan dalam proyek ini |
+| 4 | Sistem keamanan kandang/fasilitas fisik | Di luar sistem informasi |
+| 5 | Panduan pertarungan atau taktik penggunaan monster | Tidak diperlukan dalam sistem peminjaman |
+| 6 | Rekayasa atau modifikasi monster | Tidak diperlukan dalam sistem peminjaman |
+| 7 | Pembiakan atau penciptaan monster | Tidak diperlukan dalam sistem peminjaman |
+| 8 | Panduan perawatan dan pelatihan monster | Sistem hanya mencatat data peminjaman |
 | 9 | Integrasi perangkat keras (scanner, sensor, dll.) | Sistem hanya mengelola data |
 
 Item out of scope tidak memengaruhi fungsi utama aplikasi karena seluruh alur inti (inventaris, peminjaman, pengembalian, riwayat) berjalan sepenuhnya di dalam data sistem.
@@ -228,16 +229,16 @@ Seluruh FR di bawah ini adalah kebutuhan fungsional (apa yang dilakukan sistem).
 | Post-condition | Data anggota terbarui; profil terkait mengikuti. |
 | Validation / Business rules | BR-002, BR-003, BR-009, BR-019. |
 
-### FR-005 Pengelolaan Unit
+### FR-005 Pengelolaan Monster
 
 | Atribut | Isi |
 | --- | --- |
 | Aktor | Admin (kelola); Anggota (hanya lihat, lihat FR-007) |
-| Deskripsi | Admin melihat, menambah, mengubah, dan menghapus data unit, termasuk kode unik, nama, status, dan kategori. |
-| Pre-condition | Admin login; minimal satu kategori sudah tersedia untuk unit baru. |
-| Main flow | 1) Admin membuka menu Unit. 2) Sistem menampilkan daftar unit dengan status. 3) Admin memilih aksi. 4) Admin mengisi nama, kode unit, status, dan memilih satu atau lebih kategori. 5) Sistem memvalidasi dan menyimpan. |
-| Alternative flow | A1: Kode unit duplikat, sistem menolak. A2: Tidak ada kategori dipilih, sistem menolak. A3: Unit berstatus dipinjam akan dihapus, sistem menolak. A4: Unit yang pernah dipinjam akan dihapus, penanganan menjaga riwayat adalah TBD (lihat NFR-008). |
-| Post-condition | Data unit terbarui. |
+| Deskripsi | Admin melihat, menambah, mengubah, dan menghapus data monster, termasuk kode unik, nama, status, dan kategori. |
+| Pre-condition | Admin login; minimal satu kategori sudah tersedia untuk monster baru. |
+| Main flow | 1) Admin membuka menu Monster. 2) Sistem menampilkan daftar monster dengan status. 3) Admin memilih aksi. 4) Admin mengisi nama, kode monster, status, dan memilih satu atau lebih kategori. 5) Sistem memvalidasi dan menyimpan. |
+| Alternative flow | A1: Kode monster duplikat, sistem menolak. A2: Tidak ada kategori dipilih, sistem menolak. A3: Monster berstatus dipinjam akan dihapus, sistem menolak. A4: Monster yang pernah dipinjam akan dihapus, penanganan menjaga riwayat adalah TBD (lihat NFR-008). |
+| Post-condition | Data monster terbarui. |
 | Validation / Business rules | BR-005, BR-006, BR-007, BR-009, BR-019. |
 
 ### FR-006 Pengelolaan Kategori
@@ -245,47 +246,47 @@ Seluruh FR di bawah ini adalah kebutuhan fungsional (apa yang dilakukan sistem).
 | Atribut | Isi |
 | --- | --- |
 | Aktor | Admin |
-| Deskripsi | Admin melihat, menambah, mengubah, dan menghapus kategori unit. |
+| Deskripsi | Admin melihat, menambah, mengubah, dan menghapus kategori monster (misalnya berdasarkan elemen atau jenis). |
 | Pre-condition | Admin login. |
 | Main flow | 1) Admin membuka menu Kategori. 2) Admin memilih aksi. 3) Sistem memvalidasi nama kategori. 4) Sistem menyimpan. |
-| Alternative flow | A1: Nama kategori kosong atau duplikat, sistem menolak. A2: Kategori masih dipakai oleh unit, sistem menolak penghapusan atau meminta konfirmasi (**TBD**: pilih salah satu). |
+| Alternative flow | A1: Nama kategori kosong atau duplikat, sistem menolak. A2: Kategori masih dipakai oleh monster, sistem menolak penghapusan atau meminta konfirmasi (**TBD**: pilih salah satu). |
 | Post-condition | Data kategori terbarui. |
 | Validation / Business rules | BR-005, BR-009, BR-019. |
 
-### FR-007 Pencarian Unit
+### FR-007 Pencarian Monster
 
 | Atribut | Isi |
 | --- | --- |
 | Aktor | Admin, Anggota |
-| Deskripsi | Pengguna melihat daftar unit, mencari unit berdasarkan nama, dan melihat detail unit (kode, nama, kategori, status). |
+| Deskripsi | Pengguna melihat daftar monster, mencari monster berdasarkan nama, dan melihat detail monster (kode, nama, kategori, status). |
 | Pre-condition | Pengguna login. |
-| Main flow | 1) Pengguna membuka daftar unit. 2) Memasukkan kata kunci nama unit. 3) Sistem menampilkan unit yang sesuai beserta status. 4) Pengguna memilih unit untuk melihat detail. |
-| Alternative flow | A1: Tidak ada hasil, sistem menampilkan pesan data tidak ditemukan. A2: Kata kunci kosong, sistem menampilkan seluruh unit. |
+| Main flow | 1) Pengguna membuka daftar monster. 2) Memasukkan kata kunci nama monster. 3) Sistem menampilkan monster yang sesuai beserta status. 4) Pengguna memilih monster untuk melihat detail. |
+| Alternative flow | A1: Tidak ada hasil, sistem menampilkan pesan data tidak ditemukan. A2: Kata kunci kosong, sistem menampilkan seluruh monster. |
 | Post-condition | Tidak ada perubahan data. |
-| Validation / Business rules | BR-001, BR-006, BR-008. Karena nama boleh sama, hasil pencarian dapat memuat banyak unit dengan nama sama dan dibedakan oleh kode unit. |
+| Validation / Business rules | BR-001, BR-006, BR-008. Karena nama boleh sama, hasil pencarian dapat memuat banyak monster dengan nama sama dan dibedakan oleh kode monster. |
 
-### FR-008 Peminjaman Unit
+### FR-008 Peminjaman Monster
 
 | Atribut | Isi |
 | --- | --- |
 | Aktor | Anggota |
-| Deskripsi | Anggota meminjam unit yang tersedia selama maksimal 5 hari, dengan batas 2 peminjaman aktif. |
-| Pre-condition | Anggota login dan berstatus terdaftar sebagai anggota; unit berstatus tersedia. |
-| Main flow | Lihat Bagian 14 (Flow Peminjaman). |
-| Alternative flow | A1: Unit sedang dipinjam, ditolak. A2: Anggota sudah memiliki 2 unit aktif, ditolak. A3: User belum terdaftar sebagai anggota, ditolak. A4: Data tidak valid, ditolak dengan pesan. |
-| Post-condition | Transaksi tercatat; status unit menjadi dipinjam; tanggal jatuh tempo tersimpan. |
+| Deskripsi | Anggota meminjam monster yang tersedia selama maksimal 5 hari, dengan batas 2 peminjaman aktif. |
+| Pre-condition | Anggota login dan berstatus terdaftar sebagai anggota; monster berstatus tersedia. |
+| Main flow | Lihat Bagian 17.2 (Flow Peminjaman). |
+| Alternative flow | A1: Monster sedang dipinjam, ditolak. A2: Anggota sudah memiliki 2 monster aktif, ditolak. A3: User belum terdaftar sebagai anggota, ditolak. A4: Data tidak valid, ditolak dengan pesan. |
+| Post-condition | Transaksi tercatat; status monster menjadi dipinjam; tanggal jatuh tempo tersimpan. |
 | Validation / Business rules | BR-001, BR-002, BR-010, BR-011, BR-016, BR-019. |
 
-### FR-009 Pengembalian Unit
+### FR-009 Pengembalian Monster
 
 | Atribut | Isi |
 | --- | --- |
 | Aktor | Admin (anggota menghubungi Admin di luar sistem) |
 | Deskripsi | Admin memproses pengembalian dan sistem mencatat tanggal kembali serta status keterlambatan. |
-| Pre-condition | Admin login; terdapat peminjaman aktif atas unit tersebut. |
-| Main flow | Lihat Bagian 15 (Flow Pengembalian). |
+| Pre-condition | Admin login; terdapat peminjaman aktif atas monster tersebut. |
+| Main flow | Lihat Bagian 17.3 (Flow Pengembalian). |
 | Alternative flow | A1: Transaksi tidak ditemukan atau sudah dikembalikan, ditolak. A2: Anggota mencoba memproses sendiri, akses ditolak. |
-| Post-condition | Tanggal kembali tercatat; status unit menjadi tersedia; transaksi masuk riwayat; denda tercatat bila terlambat. |
+| Post-condition | Tanggal kembali tercatat; status monster menjadi tersedia; transaksi masuk riwayat; denda tercatat bila terlambat. |
 | Validation / Business rules | BR-012, BR-013, BR-014, BR-015, BR-019. |
 
 ### FR-010 Denda
@@ -296,7 +297,7 @@ Seluruh FR di bawah ini adalah kebutuhan fungsional (apa yang dilakukan sistem).
 | Deskripsi | Sistem menandai keterlambatan dan mencatat denda bila pengembalian melewati batas 5 hari. |
 | Pre-condition | Pengembalian sedang diproses atau peminjaman melewati jatuh tempo. |
 | Main flow | 1) Sistem membandingkan tanggal kembali dengan jatuh tempo. 2) Bila lebih dari jatuh tempo, status menjadi terlambat. 3) Sistem mencatat denda sesuai kebijakan. 4) Admin dapat melihat daftar keterlambatan dan denda. |
-| Alternative flow | A1: Dikembalikan pada atau sebelum jatuh tempo, tidak ada denda. A2: Nominal belum ditetapkan, sistem hanya mencatat keterlambatan (lihat Bagian 16). |
+| Alternative flow | A1: Dikembalikan pada atau sebelum jatuh tempo, tidak ada denda. A2: Nominal belum ditetapkan, sistem hanya mencatat keterlambatan (lihat Bagian 17.4). |
 | Post-condition | Data keterlambatan dan denda tersimpan. |
 | Validation / Business rules | BR-011, BR-012. **Nominal dan rumus denda: Business Decision / TBD.** |
 
@@ -305,7 +306,7 @@ Seluruh FR di bawah ini adalah kebutuhan fungsional (apa yang dilakukan sistem).
 | Atribut | Isi |
 | --- | --- |
 | Aktor | Admin (seluruh), Anggota (miliknya) |
-| Deskripsi | Menampilkan riwayat dan peminjaman aktif. Admin melihat semua transaksi dan unit yang sedang dipinjam; anggota hanya melihat miliknya. |
+| Deskripsi | Menampilkan riwayat dan peminjaman aktif. Admin melihat semua transaksi dan monster yang sedang dipinjam; anggota hanya melihat miliknya. |
 | Pre-condition | Pengguna login. |
 | Main flow | 1) Pengguna membuka menu Riwayat atau Peminjaman Aktif. 2) Sistem menampilkan data sesuai role. 3) Admin dapat memfilter (filter yang tersedia: TBD, misalnya periode, anggota, status). |
 | Alternative flow | A1: Belum ada data, sistem menampilkan pesan kosong. A2: Anggota mencoba melihat transaksi anggota lain, ditolak. |
@@ -332,18 +333,18 @@ Seluruh FR di bawah ini adalah kebutuhan fungsional (apa yang dilakukan sistem).
 | BR-002 | Hanya user yang terdaftar sebagai anggota yang dapat melakukan peminjaman. | FR-004, FR-008 |
 | BR-003 | Setiap user hanya memiliki satu profile. | FR-003, FR-004 |
 | BR-004 | User hanya dapat mengubah profile miliknya sendiri. | FR-003 |
-| BR-005 | Satu unit dapat memiliki lebih dari satu kategori. | FR-005, FR-006 |
-| BR-006 | Nama unit boleh sama. | FR-005, FR-007 |
-| BR-007 | Setiap unit harus memiliki kode unit yang unik. | FR-005 |
-| BR-008 | Pencarian unit dilakukan berdasarkan nama unit. | FR-007 |
-| BR-009 | Admin memiliki akses CRUD terhadap data unit, kategori, dan anggota. | FR-004, FR-005, FR-006 |
-| BR-010 | Setiap anggota maksimal memiliki 2 unit yang sedang dipinjam secara aktif. | FR-008 |
+| BR-005 | Satu monster dapat memiliki lebih dari satu kategori. | FR-005, FR-006 |
+| BR-006 | Nama monster boleh sama. | FR-005, FR-007 |
+| BR-007 | Setiap monster harus memiliki kode monster yang unik. | FR-005 |
+| BR-008 | Pencarian monster dilakukan berdasarkan nama monster. | FR-007 |
+| BR-009 | Admin memiliki akses CRUD terhadap data monster, kategori, dan anggota. | FR-004, FR-005, FR-006 |
+| BR-010 | Setiap anggota maksimal memiliki 2 monster yang sedang dipinjam secara aktif. | FR-008 |
 | BR-011 | Durasi maksimal peminjaman adalah 5 hari. | FR-008, FR-010 |
 | BR-012 | Jika pengembalian melewati batas maksimal 5 hari, anggota dikenakan denda. | FR-009, FR-010 |
-| BR-013 | Hanya Admin yang dapat memproses pengembalian unit melalui sistem. | FR-009 |
-| BR-014 | Anggota harus menghubungi Admin apabila ingin mengembalikan unit. | FR-009 |
-| BR-015 | Admin dapat melihat seluruh unit yang sedang dipinjam. | FR-009, FR-011 |
-| BR-016 | Anggota hanya dapat melihat unit yang sedang dipinjam olehnya. | FR-008, FR-011 |
+| BR-013 | Hanya Admin yang dapat memproses pengembalian monster melalui sistem. | FR-009 |
+| BR-014 | Anggota harus menghubungi Admin apabila ingin mengembalikan monster. | FR-009 |
+| BR-015 | Admin dapat melihat seluruh monster yang sedang dipinjam. | FR-009, FR-011 |
+| BR-016 | Anggota hanya dapat melihat monster yang sedang dipinjam olehnya. | FR-008, FR-011 |
 | BR-017 | Admin dapat melihat riwayat seluruh peminjaman. | FR-011, FR-012 |
 | BR-018 | Admin dapat mencetak riwayat peminjaman. | FR-012 |
 | BR-019 | Setiap field penting harus memiliki validasi required dan validasi lain yang relevan. | Seluruh FR, Bagian 12 |
@@ -372,15 +373,15 @@ Seluruh validasi dijalankan pada sisi server dan juga ditampilkan di sisi form a
 | VAL-P-02 | Satu profil hanya dimiliki satu user |
 | VAL-P-03 | Hanya pemilik profil yang dapat mengubahnya |
 
-### 12.3 Unit
+### 12.3 Monster
 
 | ID | Field | Aturan Validasi |
 | --- | --- | --- |
-| VAL-N-01 | Nama unit | Wajib diisi (boleh sama dengan unit lain) |
-| VAL-N-02 | Kode unit | Wajib diisi |
-| VAL-N-03 | Kode unit | Harus unik |
-| VAL-N-04 | Status | Harus valid (misalnya: tersedia, dipinjam; daftar status lain seperti rusak/perawatan: TBD) |
-| VAL-N-05 | Kategori | Unit harus memiliki minimal satu kategori |
+| VAL-N-01 | Nama monster | Wajib diisi (boleh sama dengan monster lain) |
+| VAL-N-02 | Kode monster | Wajib diisi |
+| VAL-N-03 | Kode monster | Harus unik |
+| VAL-N-04 | Status | Harus valid (misalnya: tersedia, dipinjam; daftar status lain seperti sedang istirahat/perawatan: TBD) |
+| VAL-N-05 | Kategori | Monster harus memiliki minimal satu kategori |
 
 ### 12.4 Category
 
@@ -394,7 +395,7 @@ Seluruh validasi dijalankan pada sisi server dan juga ditampilkan di sisi form a
 | ID | Aturan Validasi |
 | --- | --- |
 | VAL-L-01 | User wajib terdaftar sebagai anggota |
-| VAL-L-02 | Unit wajib berstatus tersedia |
+| VAL-L-02 | Monster wajib berstatus tersedia |
 | VAL-L-03 | Jumlah peminjaman aktif anggota tidak boleh lebih dari 2 |
 | VAL-L-04 | Tanggal peminjaman wajib valid |
 | VAL-L-05 | Tanggal jatuh tempo maksimal 5 hari dari tanggal peminjaman |
@@ -407,11 +408,11 @@ Seluruh validasi dijalankan pada sisi server dan juga ditampilkan di sisi form a
 | NFR-002 | Security | Otorisasi berbasis role (Admin dan Anggota); halaman dan fitur hanya dapat diakses setelah login | Uji akses per role |
 | NFR-003 | Security | Anggota tidak boleh mengakses endpoint/halaman Admin, baik melalui menu maupun dengan mengetik alamat langsung | Uji akses langsung ke URL Admin sebagai anggota |
 | NFR-004 | Security | User hanya dapat mengakses profil dan transaksi miliknya sendiri | Uji akses data milik user lain |
-| NFR-005 | Performance | Pencarian unit responsif dan memberikan hasil dalam waktu wajar pada data uji (target waktu spesifik: TBD) | Uji dengan data dummy dalam jumlah besar |
-| NFR-006 | Performance | Basis data menggunakan indexing pada field yang relevan (misalnya kode unit, nama unit, email, status peminjaman) | Tinjauan struktur data |
-| NFR-007 | Usability | UI mudah dipahami; status unit (tersedia/dipinjam) ditampilkan jelas; seluruh form memiliki validasi dengan pesan yang mudah dimengerti | Uji pengguna saat UAT |
-| NFR-008 | Reliability | Data transaksi tidak boleh hilang ketika status unit berubah atau ketika data anggota/unit/kategori diubah; riwayat tetap utuh | Uji skenario ubah dan hapus data |
-| NFR-009 | Maintainability | Struktur kode modular sesuai modul sistem (Bagian 9 di dokumen ini: lihat 14.1) | Code review |
+| NFR-005 | Performance | Pencarian monster responsif dan memberikan hasil dalam waktu wajar pada data uji (target waktu spesifik: TBD) | Uji dengan data dummy dalam jumlah besar |
+| NFR-006 | Performance | Basis data menggunakan indexing pada field yang relevan (misalnya kode monster, nama monster, email, status peminjaman) | Tinjauan struktur data |
+| NFR-007 | Usability | UI mudah dipahami; status monster (tersedia/dipinjam) ditampilkan jelas; seluruh form memiliki validasi dengan pesan yang mudah dimengerti | Uji pengguna saat UAT |
+| NFR-008 | Reliability | Data transaksi tidak boleh hilang ketika status monster berubah atau ketika data anggota/monster/kategori diubah; riwayat tetap utuh | Uji skenario ubah dan hapus data |
+| NFR-009 | Maintainability | Struktur kode modular sesuai modul sistem (lihat Bagian 14.1) | Code review |
 | NFR-010 | Maintainability | Migration dan seeder terdokumentasi (termasuk data dummy awal) | Tinjauan dokumentasi proyek |
 
 ## 14. Data Requirements
@@ -423,9 +424,9 @@ Seluruh validasi dijalankan pada sisi server dan juga ditampilkan di sisi form a
 | 1 | Authentication | Mengamankan akses sistem | Login, logout, validasi role | FR-001, FR-002 |
 | 2 | User Management | Mengelola data anggota | CRUD anggota oleh Admin | FR-004 |
 | 3 | Profile Management | Mengelola data diri pengguna | Lihat dan ubah profil sendiri | FR-003 |
-| 4 | Unit Management | Mengelola inventaris | CRUD unit, kode unik, status | FR-005 |
-| 5 | Category Management | Mengelompokkan unit | CRUD kategori, relasi dengan unit | FR-006 |
-| 6 | Unit Search | Memudahkan menemukan unit | Daftar unit, cari nama, detail | FR-007 |
+| 4 | Monster Management | Mengelola inventaris monster | CRUD monster, kode unik, status | FR-005 |
+| 5 | Category Management | Mengelompokkan monster | CRUD kategori, relasi dengan monster | FR-006 |
+| 6 | Monster Search | Memudahkan menemukan monster | Daftar monster, cari nama, detail | FR-007 |
 | 7 | Loan Management | Mencatat peminjaman | Ajukan peminjaman, cek batas, tentukan jatuh tempo | FR-008 |
 | 8 | Return Management | Mencatat pengembalian | Proses pengembalian oleh Admin | FR-009 |
 | 9 | Fine Management | Mencatat keterlambatan dan denda | Penentuan terlambat, pencatatan denda | FR-010 |
@@ -440,11 +441,11 @@ Bagian ini hanya mendefinisikan kebutuhan data dari sisi bisnis, bukan skema bas
 | --- | --- | --- |
 | User | Menyimpan akun (nama, email, password, role) untuk login dan otorisasi | Satu user memiliki satu Profile; satu user dapat memiliki banyak Loan |
 | Profile | Menyimpan data diri pengguna | Dimiliki tepat satu User |
-| Unit | Menyimpan inventaris (kode unik, nama, status) | Banyak ke banyak dengan Category; muncul pada banyak Loan Detail sepanjang waktu |
-| Category | Mengelompokkan unit | Banyak ke banyak dengan Unit |
-| Unit Category | Menghubungkan unit dengan kategorinya | Penghubung Unit dan Category |
+| Monster | Menyimpan inventaris (kode unik, nama, status) | Banyak ke banyak dengan Category; muncul pada banyak Loan Detail sepanjang waktu |
+| Category | Mengelompokkan monster | Banyak ke banyak dengan Monster |
+| Monster Category | Menghubungkan monster dengan kategorinya | Penghubung Monster dan Category |
 | Loan | Menyimpan transaksi peminjaman (anggota, tanggal pinjam, jatuh tempo, tanggal kembali, status) | Dimiliki satu User; memiliki satu atau lebih Loan Detail |
-| Loan Detail | Menyimpan unit yang dipinjam pada suatu transaksi | Milik satu Loan; mengacu satu Unit |
+| Loan Detail | Menyimpan monster yang dipinjam pada suatu transaksi | Milik satu Loan; mengacu satu Monster |
 | Fine | Menyimpan keterlambatan dan denda | Terkait satu Loan (atau satu Loan Detail, TBD) |
 
 ## 15. Entity & Relationship Candidate
@@ -455,11 +456,11 @@ Bagian ini adalah bahan persiapan ERD. Nama field bersifat kandidat dan dapat di
 | --- | --- | --- | --- | --- |
 | User | Akun dan role | id\_user | nama, email (unik), password (hash), role, status akun (TBD), timestamp | 1 User ke 1 Profile; 1 User ke banyak Loan |
 | Profile | Data diri | id\_profile | id\_user (unik, FK), field identitas (TBD: nomor anggota, telepon, alamat, dll.), timestamp | 1 Profile milik 1 User |
-| Unit | Inventaris | id\_unit | kode\_unit (unik), nama\_unit, status, deskripsi (opsional), timestamp | Banyak ke banyak dengan Category; 1 Unit ke banyak Loan Detail |
-| Category | Pengelompokan | id\_category | nama\_kategori, deskripsi (opsional), timestamp | Banyak ke banyak dengan Unit |
-| Unit Category | Penghubung | id\_unit\_category atau PK gabungan (id\_unit, id\_category) | id\_unit (FK), id\_category (FK) | Banyak ke 1 Unit; banyak ke 1 Category |
+| Monster | Inventaris monster | id\_monster | kode\_monster (unik), nama\_monster, status, deskripsi (opsional), timestamp | Banyak ke banyak dengan Category; 1 Monster ke banyak Loan Detail |
+| Category | Pengelompokan | id\_category | nama\_kategori, deskripsi (opsional), timestamp | Banyak ke banyak dengan Monster |
+| Monster Category | Penghubung | id\_monster\_category atau PK gabungan (id\_monster, id\_category) | id\_monster (FK), id\_category (FK) | Banyak ke 1 Monster; banyak ke 1 Category |
 | Loan | Transaksi peminjaman | id\_loan | id\_user (FK), tanggal\_pinjam, tanggal\_jatuh\_tempo, tanggal\_kembali (kosong selama belum kembali), status (aktif, selesai, terlambat), timestamp | Banyak ke 1 User; 1 Loan ke banyak Loan Detail; 1 Loan ke 0 atau 1 Fine |
-| Loan Detail | Unit pada transaksi | id\_loan\_detail | id\_loan (FK), id\_unit (FK), status item (TBD) | Banyak ke 1 Loan; banyak ke 1 Unit |
+| Loan Detail | Monster pada transaksi | id\_loan\_detail | id\_loan (FK), id\_monster (FK), status item (TBD) | Banyak ke 1 Loan; banyak ke 1 Monster |
 | Fine | Denda | id\_fine | id\_loan (FK), jumlah hari terlambat, nominal (TBD, dari kebijakan), status denda (TBD) | 1 Fine milik 1 Loan |
 
 **Alasan relasi:**
@@ -468,20 +469,20 @@ Bagian ini adalah bahan persiapan ERD. Nama field bersifat kandidat dan dapat di
 | --- | --- |
 | 1 User ke 1 Profile | BR-003: setiap user hanya memiliki satu profil; memisahkan data akun dari data diri |
 | 1 User ke banyak Loan | Satu anggota dapat melakukan banyak peminjaman sepanjang waktu (dibatasi 2 aktif oleh BR-010) |
-| 1 Loan ke banyak Loan Detail | Satu transaksi dapat memuat lebih dari satu unit (maksimal 2 sesuai BR-010); **TBD**: apakah satu transaksi boleh memuat 2 unit atau setiap unit selalu satu transaksi terpisah |
-| 1 Unit ke banyak Loan Detail | Satu unit fisik dapat dipinjam berkali-kali sepanjang waktu, sehingga riwayat tetap terjaga |
-| Unit dan Category banyak ke banyak | BR-005: satu unit dapat memiliki lebih dari satu kategori dan satu kategori dimiliki banyak unit; diwujudkan melalui entity penghubung Unit Category |
+| 1 Loan ke banyak Loan Detail | Satu transaksi dapat memuat lebih dari satu monster (maksimal 2 sesuai BR-010); **TBD**: apakah satu transaksi boleh memuat 2 monster atau setiap monster selalu satu transaksi terpisah |
+| 1 Monster ke banyak Loan Detail | Satu monster dapat dipinjam berkali-kali sepanjang waktu, sehingga riwayat tetap terjaga |
+| Monster dan Category banyak ke banyak | BR-005: satu monster dapat memiliki lebih dari satu kategori dan satu kategori dimiliki banyak monster; diwujudkan melalui entity penghubung Monster Category |
 | 1 Loan ke 0 atau 1 Fine | Denda hanya ada bila terlambat |
 
-**Unit dan Kategori:** satu unit memiliki satu kode unik; nama unit tidak harus unik; satu nama unit dapat memiliki beberapa unit fisik. Contoh:
+**Monster dan Kategori:** satu monster memiliki satu kode unik; nama monster tidak harus unik; satu nama monster dapat memiliki beberapa ekor monster. Contoh:
 
-| Nama Unit | Kode Unit |
-| --- | --- |
-| Rifle Training | RT-001 |
-| Rifle Training | RT-002 |
-| Rifle Training | RT-003 |
+| Nama Monster | Kode Monster | Kategori (contoh) |
+| --- | --- | --- |
+| Slime Latihan | SL-001 | Air, Jinak |
+| Slime Latihan | SL-002 | Air, Jinak |
+| Slime Latihan | SL-003 | Air, Jinak |
 
-Karena nama tidak unik, kode unit menjadi pembeda antar unit fisik pada pencarian, peminjaman, dan riwayat.
+Karena nama tidak unik, kode monster menjadi pembeda antar monster pada pencarian, peminjaman, dan riwayat. Satu monster dapat memiliki banyak kategori (contoh: Air dan Jinak), dan kategori yang sama dimiliki banyak monster.
 
 ## 16. Use Case
 
@@ -492,9 +493,9 @@ Karena nama tidak unik, kode unit menjadi pembeda antar unit fisik pada pencaria
 | UC-A01 | Login | FR-001 |
 | UC-A02 | Manage User (lihat, tambah, ubah, hapus anggota) | FR-004 |
 | UC-A03 | Manage Profile | FR-003 |
-| UC-A04 | Manage Unit | FR-005 |
+| UC-A04 | Manage Monster | FR-005 |
 | UC-A05 | Manage Category | FR-006 |
-| UC-A06 | View / Search Unit | FR-007 |
+| UC-A06 | View / Search Monster | FR-007 |
 | UC-A07 | View Active Loans | FR-011 |
 | UC-A08 | Process Return | FR-009 |
 | UC-A09 | View Late Loans and Fines | FR-010 |
@@ -509,10 +510,10 @@ Karena nama tidak unik, kode unit menjadi pembeda antar unit fisik pada pencaria
 | UC-M01 | Login | FR-001 |
 | UC-M02 | View Profile | FR-003 |
 | UC-M03 | Edit Profile | FR-003 |
-| UC-M04 | Browse Unit | FR-007 |
-| UC-M05 | Search Unit | FR-007 |
-| UC-M06 | View Unit Detail | FR-007 |
-| UC-M07 | Borrow Unit | FR-008 |
+| UC-M04 | Browse Monster | FR-007 |
+| UC-M05 | Search Monster | FR-007 |
+| UC-M06 | View Monster Detail | FR-007 |
+| UC-M07 | Borrow Monster | FR-008 |
 | UC-M08 | View My Active Loans | FR-011 |
 | UC-M09 | View My Loan History | FR-011 |
 | UC-M10 | Logout | FR-002 |
@@ -525,21 +526,21 @@ Pengembalian oleh anggota dilakukan di luar sistem dengan menghubungi Admin (BR-
 
 1. Pengguna membuka sistem dan melakukan **Login**.
 2. Sistem melakukan **Role Validation**.
-3. **Jika Admin:** Admin Dashboard, lalu Manage User / Unit / Category, lalu Manage Loan (lihat peminjaman aktif), lalu Process Return, lalu View & Print History.
-4. **Jika Anggota:** Member Dashboard, lalu View/Search Unit, lalu Borrow Unit, lalu View My Loan.
+3. **Jika Admin:** Admin Dashboard, lalu Manage User / Monster / Category, lalu Manage Loan (lihat peminjaman aktif), lalu Process Return, lalu View & Print History.
+4. **Jika Anggota:** Member Dashboard, lalu View/Search Monster, lalu Borrow Monster, lalu View My Loan.
 5. Pengguna melakukan Logout.
 
 ### 17.2 Flow Peminjaman (FR-008)
 
 1. Anggota login.
-2. Anggota melihat daftar unit dan mencari unit berdasarkan nama.
-3. Anggota memilih unit dan melihat detail.
+2. Anggota melihat daftar monster dan mencari monster berdasarkan nama.
+3. Anggota memilih monster dan melihat detail.
 4. Sistem mengecek apakah user terdaftar sebagai anggota.
-5. Sistem mengecek ketersediaan unit.
+5. Sistem mengecek ketersediaan monster.
 6. Sistem mengecek jumlah peminjaman aktif anggota.
-7. Jika kurang dari 2 unit aktif, peminjaman dapat dilakukan.
+7. Jika kurang dari 2 monster aktif, peminjaman dapat dilakukan.
 8. Sistem mencatat transaksi dengan tanggal pinjam.
-9. Status unit menjadi dipinjam.
+9. Status monster menjadi dipinjam.
 10. Sistem menentukan tanggal jatuh tempo maksimal 5 hari dari tanggal pinjam.
 11. Sistem menampilkan konfirmasi dengan tanggal jatuh tempo.
 
@@ -547,22 +548,22 @@ Pengembalian oleh anggota dilakukan di luar sistem dengan menghubungi Admin (BR-
 
 | Kondisi | Perilaku Sistem |
 | --- | --- |
-| Unit sedang dipinjam | Sistem menolak dan menampilkan pesan bahwa unit tidak tersedia; transaksi tidak dibuat |
-| Anggota sudah memiliki 2 unit aktif | Sistem menolak dan menampilkan pesan batas maksimal tercapai; anggota dapat meminjam lagi setelah ada unit dikembalikan |
+| Monster sedang dipinjam | Sistem menolak dan menampilkan pesan bahwa monster tidak tersedia; transaksi tidak dibuat |
+| Anggota sudah memiliki 2 monster aktif | Sistem menolak dan menampilkan pesan batas maksimal tercapai; anggota dapat meminjam lagi setelah ada monster dikembalikan |
 | User belum terdaftar sebagai anggota | Sistem menolak peminjaman (BR-002); user diarahkan menghubungi Admin |
-| Data peminjaman tidak valid | Sistem menolak dan menampilkan pesan validasi (misalnya tanggal tidak valid atau jatuh tempo lebih dari 5 hari); tidak ada perubahan status unit |
+| Data peminjaman tidak valid | Sistem menolak dan menampilkan pesan validasi (misalnya tanggal tidak valid atau jatuh tempo lebih dari 5 hari); tidak ada perubahan status monster |
 
-**Catatan:** untuk mencegah dua anggota meminjam unit yang sama secara bersamaan, pengecekan ketersediaan dan pencatatan transaksi harus dilakukan sebagai satu proses yang konsisten (NFR-008).
+**Catatan:** untuk mencegah dua anggota meminjam monster yang sama secara bersamaan, pengecekan ketersediaan dan pencatatan transaksi harus dilakukan sebagai satu proses yang konsisten (NFR-008).
 
 ### 17.3 Flow Pengembalian (FR-009)
 
-1. Anggota menghubungi Admin (di luar sistem) untuk mengembalikan unit.
-2. Admin mencari transaksi peminjaman aktif (berdasarkan anggota atau kode unit).
+1. Anggota menghubungi Admin (di luar sistem) untuk mengembalikan monster.
+2. Admin mencari transaksi peminjaman aktif (berdasarkan anggota atau kode monster).
 3. Admin melakukan proses pengembalian.
 4. Sistem mencatat tanggal pengembalian.
 5. Sistem mengecek apakah terlambat (tanggal kembali melebihi jatuh tempo).
 6. Jika terlambat, sistem menetapkan status terlambat dan menghitung/mencatat denda.
-7. Status unit kembali menjadi tersedia.
+7. Status monster kembali menjadi tersedia.
 8. Transaksi masuk ke riwayat.
 
 ### 17.4 Business Requirement Denda (FR-010)
@@ -594,11 +595,11 @@ Setiap kriteria harus dapat diuji (lulus/gagal) pada tahap UAT.
 | AC-02 | Logout (FR-002) | Setelah logout, sesi berakhir dan halaman terproteksi tidak dapat diakses |
 | AC-03 | Profil (FR-003) | Pengguna dapat melihat dan mengubah profil miliknya; tidak dapat melihat atau mengubah profil user lain; satu user hanya memiliki satu profil |
 | AC-04 | Anggota (FR-004) | Admin dapat menambah, mengubah, menghapus, dan melihat anggota; email duplikat ditolak; anggota tidak dapat mengakses menu ini |
-| AC-05 | Unit (FR-005) | Admin dapat CRUD unit; kode unit duplikat ditolak; nama yang sama diterima selama kode berbeda; unit tanpa kategori ditolak; unit dapat memiliki beberapa kategori |
+| AC-05 | Monster (FR-005) | Admin dapat CRUD monster; kode monster duplikat ditolak; nama yang sama diterima selama kode berbeda; monster tanpa kategori ditolak; monster dapat memiliki beberapa kategori |
 | AC-06 | Kategori (FR-006) | Admin dapat CRUD kategori; nama kosong ditolak; aturan keunikan nama berlaku sesuai keputusan |
-| AC-07 | Pencarian Unit (FR-007) | Pencarian berdasarkan nama menampilkan semua unit yang sesuai beserta kode dan status; detail unit dapat dibuka; hasil kosong menampilkan pesan |
-| AC-08 | **Peminjaman Unit (FR-008)** | (1) User harus login. (2) User harus berstatus anggota. (3) Unit harus tersedia. (4) User tidak boleh memiliki lebih dari 2 unit aktif. (5) Sistem mencatat tanggal peminjaman. (6) Sistem menentukan batas pengembalian maksimal 5 hari. (7) Status unit menjadi dipinjam setelah transaksi berhasil. (8) Upaya yang melanggar aturan ditolak dengan pesan dan tidak mengubah data |
-| AC-09 | **Pengembalian (FR-009)** | (1) Hanya Admin yang dapat melakukan pengembalian. (2) Sistem mencatat tanggal pengembalian. (3) Sistem mengecek keterlambatan. (4) Sistem mencatat denda apabila terlambat. (5) Status unit kembali menjadi tersedia. (6) Transaksi masuk ke riwayat |
+| AC-07 | Pencarian Monster (FR-007) | Pencarian berdasarkan nama menampilkan semua monster yang sesuai beserta kode dan status; detail monster dapat dibuka; hasil kosong menampilkan pesan |
+| AC-08 | **Peminjaman Monster (FR-008)** | (1) User harus login. (2) User harus berstatus anggota. (3) Monster harus tersedia. (4) User tidak boleh memiliki lebih dari 2 monster aktif. (5) Sistem mencatat tanggal peminjaman. (6) Sistem menentukan batas pengembalian maksimal 5 hari. (7) Status monster menjadi dipinjam setelah transaksi berhasil. (8) Upaya yang melanggar aturan ditolak dengan pesan dan tidak mengubah data |
+| AC-09 | **Pengembalian (FR-009)** | (1) Hanya Admin yang dapat melakukan pengembalian. (2) Sistem mencatat tanggal pengembalian. (3) Sistem mengecek keterlambatan. (4) Sistem mencatat denda apabila terlambat. (5) Status monster kembali menjadi tersedia. (6) Transaksi masuk ke riwayat |
 | AC-10 | Denda (FR-010) | Pengembalian pada atau sebelum jatuh tempo tidak menghasilkan denda; pengembalian setelah jatuh tempo ditandai terlambat dan denda tercatat; Admin dapat melihat daftar keterlambatan dan denda; nominal mengikuti keputusan project owner |
 | AC-11 | Riwayat (FR-011) | Admin melihat seluruh peminjaman aktif dan riwayat; anggota hanya melihat data miliknya |
 | AC-12 | Cetak (FR-012) | Admin dapat mencetak riwayat; anggota tidak memiliki akses fitur cetak |
@@ -610,8 +611,8 @@ Setiap kriteria harus dapat diuji (lulus/gagal) pada tahap UAT.
 
 | ID | Asumsi |
 | --- | --- |
-| AS-01 | Proyek merupakan simulasi akademik pada lembaga fiktif |
-| AS-02 | Seluruh data persenjataan dan anggota bersifat dummy |
+| AS-01 | Proyek merupakan simulasi akademik pada lembaga pelatihan pawang monster fiktif |
+| AS-02 | Seluruh monster, anggota, dan data lain bersifat fiktif/dummy |
 | AS-03 | Sistem tidak mengontrol perangkat fisik dan hanya menangani manajemen data serta transaksi peminjaman |
 | AS-04 | Admin sudah tersedia (dibuat melalui seeder); pendaftaran anggota dilakukan oleh Admin, bukan registrasi mandiri |
 | AS-05 | Pengembalian fisik dilakukan di luar sistem; Admin kemudian mencatatnya (BR-014) |
@@ -625,7 +626,7 @@ Setiap kriteria harus dapat diuji (lulus/gagal) pada tahap UAT.
 | CN-01 | Aplikasi berbasis web |
 | CN-02 | Fitur terbatas pada In Scope (Bagian 9.1) |
 | CN-03 | Tidak ada pembayaran online, GPS, atau integrasi perangkat keras |
-| CN-04 | Sistem tidak memuat konten instruksi penggunaan, modifikasi, pembuatan, atau taktik senjata |
+| CN-04 | Sistem tidak memuat konten panduan pertarungan, rekayasa, pembiakan, atau jual beli monster |
 
 ### 19.3 Daftar TBD / Perlu Keputusan
 
@@ -634,9 +635,9 @@ Setiap kriteria harus dapat diuji (lulus/gagal) pada tahap UAT.
 | TBD-01 | Nominal dan rumus denda | FR-010, BR-012 | Project owner |
 | TBD-02 | Field wajib pada profil dan identitas anggota | FR-003, VAL-P-01 | Project owner |
 | TBD-03 | Aturan keunikan nama kategori | FR-006, VAL-C-02 | Project owner |
-| TBD-04 | Penanganan penghapusan anggota/unit/kategori yang sudah punya riwayat (soft delete atau ditolak) | FR-004, FR-005, FR-006, NFR-008 | Project owner |
-| TBD-05 | Daftar status unit (misalnya rusak atau perawatan) | VAL-N-04 | Project owner |
-| TBD-06 | Satu transaksi boleh memuat 2 unit atau satu unit per transaksi | Bagian 15 | Project owner |
+| TBD-04 | Penanganan penghapusan anggota/monster/kategori yang sudah punya riwayat (soft delete atau ditolak) | FR-004, FR-005, FR-006, NFR-008 | Project owner |
+| TBD-05 | Daftar status monster (misalnya sedang istirahat atau perawatan) | VAL-N-04 | Project owner |
+| TBD-06 | Satu transaksi boleh memuat 2 monster atau satu monster per transaksi | Bagian 15 | Project owner |
 | TBD-07 | Peminjaman langsung otomatis atau perlu persetujuan Admin | FR-008 | Project owner |
 | TBD-08 | Apakah anggota boleh melihat denda miliknya | Bagian 8 | Project owner |
 | TBD-09 | Dampak denda belum lunas pada peminjaman berikutnya | FR-010 | Project owner |
@@ -647,10 +648,10 @@ Setiap kriteria harus dapat diuji (lulus/gagal) pada tahap UAT.
 
 | Prioritas | Requirement |
 | --- | --- |
-| **Must Have** | FR-001 Login; FR-002 Logout; FR-003 Pengelolaan Profil; FR-004 Pengelolaan Anggota; FR-005 Pengelolaan Unit; FR-006 Pengelolaan Kategori; FR-007 Pencarian Unit; FR-008 Peminjaman Unit; FR-009 Pengembalian Unit; FR-010 Denda (pencatatan keterlambatan dan denda); FR-011 Riwayat Peminjaman; seluruh BR-001 sampai BR-019; NFR-001 sampai NFR-004 (Security); NFR-008 (Reliability) |
+| **Must Have** | FR-001 Login; FR-002 Logout; FR-003 Pengelolaan Profil; FR-004 Pengelolaan Anggota; FR-005 Pengelolaan Monster; FR-006 Pengelolaan Kategori; FR-007 Pencarian Monster; FR-008 Peminjaman Monster; FR-009 Pengembalian Monster; FR-010 Denda (pencatatan keterlambatan dan denda); FR-011 Riwayat Peminjaman; seluruh BR-001 sampai BR-019; NFR-001 sampai NFR-004 (Security); NFR-008 (Reliability) |
 | **Should Have** | FR-012 Cetak Riwayat; NFR-005 sampai NFR-007 (Performance dan Usability); NFR-009 dan NFR-010 (Maintainability); daftar keterlambatan khusus untuk Admin |
 | **Could Have** | Filter lanjutan riwayat (periode, anggota, status); ekspor riwayat ke PDF/Excel; dashboard ringkasan untuk Admin dan anggota; pagination dan pengurutan daftar |
-| **Won't Have (periode ini)** | Notifikasi otomatis (email/WhatsApp); pembayaran online; marketplace dan jual beli; GPS tracking; integrasi perangkat keras; pemesanan unit di muka (reservasi); seluruh item Out of Scope di Bagian 9.2 |
+| **Won't Have (periode ini)** | Notifikasi otomatis (email/WhatsApp); pembayaran online; marketplace dan jual beli; GPS tracking; integrasi perangkat keras; pemesanan monster di muka (reservasi); seluruh item Out of Scope di Bagian 9.2 |
 
 Catatan: FR-012 berstatus Should Have karena meskipun diminta dalam requirement utama (BR-018), sistem tetap dapat beroperasi tanpa fitur cetak. Project owner dapat menaikkannya menjadi Must Have.
 
@@ -661,18 +662,18 @@ Pengembangan berikut tidak termasuk lingkup saat ini dan baru dipertimbangkan se
 | No | Ide Pengembangan | Catatan |
 | --- | --- | --- |
 | 1 | Notifikasi pengingat jatuh tempo kepada anggota | Membantu mengurangi keterlambatan |
-| 2 | Dashboard statistik peminjaman | Untuk Admin (jumlah unit tersedia, dipinjam, terlambat) |
+| 2 | Dashboard statistik peminjaman | Untuk Admin (jumlah monster tersedia, dipinjam, terlambat) |
 | 3 | Ekspor laporan ke PDF/Excel | Pengembangan dari FR-012 |
 | 4 | Registrasi mandiri anggota dengan verifikasi Admin | Saat ini anggota didaftarkan Admin |
-| 5 | Status unit tambahan (perawatan, rusak) | Bergantung pada TBD-05 |
+| 5 | Status monster tambahan (istirahat, perawatan) | Bergantung pada TBD-05 |
 | 6 | Log aktivitas (audit trail) Admin | Meningkatkan akuntabilitas |
 | 7 | Aplikasi mobile atau tampilan responsif lanjutan | Memudahkan akses |
 
-Pengembangan di atas tidak boleh mencakup fitur terlarang yang tercantum pada Bagian 9.2.
+Pengembangan di atas tidak boleh mencakup item yang tercantum pada Bagian 9.2.
 
 ## 22. Conclusion
 
-BRD ini mendefinisikan kebutuhan bisnis ArsenalTrack sebagai sistem informasi peminjaman dan pengelolaan inventaris persenjataan latihan pada lembaga fiktif, dalam konteks simulasi akademik. Dokumen telah mencakup tujuan, permasalahan, stakeholder, hak akses, lingkup, 12 functional requirement, 19 business rule, validasi, kebutuhan non-fungsional, kebutuhan data, kandidat entity dan relasi, use case, alur bisnis, acceptance criteria, serta prioritas MoSCoW.
+BRD ini mendefinisikan kebutuhan bisnis MonsterTrack sebagai sistem informasi peminjaman dan pengelolaan inventaris monster pada lembaga pelatihan pawang monster fiktif, dalam konteks simulasi akademik. Dokumen telah mencakup tujuan, permasalahan, stakeholder, hak akses, lingkup, 12 functional requirement, 19 business rule, validasi, kebutuhan non-fungsional, kebutuhan data, kandidat entity dan relasi, use case, alur bisnis, acceptance criteria, serta prioritas MoSCoW.
 
 Seluruh hal yang belum pasti, terutama **nominal denda**, telah ditandai sebagai TBD pada Bagian 19.3 dan perlu diputuskan project owner sebelum implementasi final.
 
@@ -688,17 +689,17 @@ Matriks ini memastikan seluruh business rule dan hak akses dalam requirement awa
 | BR-002 Hanya anggota boleh meminjam | BReq-04 | FR-004, FR-008 | VAL-L-01 | AC-08 |
 | BR-003 Satu user satu profil | BReq-01 | FR-003 | VAL-P-02 | AC-03 |
 | BR-004 Ubah profil sendiri | BReq-01 | FR-003 | VAL-P-03 | AC-03, AC-13 |
-| BR-005 Unit multi-kategori | BReq-01 | FR-005, FR-006 | VAL-N-05 | AC-05 |
-| BR-006 Nama unit boleh sama | BReq-01 | FR-005, FR-007 | VAL-N-01 | AC-05, AC-07 |
-| BR-007 Kode unit unik | BReq-01 | FR-005 | VAL-N-02, VAL-N-03 | AC-05 |
+| BR-005 Monster multi-kategori | BReq-01 | FR-005, FR-006 | VAL-N-05 | AC-05 |
+| BR-006 Nama monster boleh sama | BReq-01 | FR-005, FR-007 | VAL-N-01 | AC-05, AC-07 |
+| BR-007 Kode monster unik | BReq-01 | FR-005 | VAL-N-02, VAL-N-03 | AC-05 |
 | BR-008 Cari berdasarkan nama | BReq-03 | FR-007 | - | AC-07 |
 | BR-009 CRUD Admin | BReq-02 | FR-004, FR-005, FR-006 | VAL-U, VAL-N, VAL-C | AC-04, AC-05, AC-06 |
-| BR-010 Maksimal 2 unit aktif | BReq-05 | FR-008 | VAL-L-03 | AC-08 |
+| BR-010 Maksimal 2 monster aktif | BReq-05 | FR-008 | VAL-L-03 | AC-08 |
 | BR-011 Maksimal 5 hari | BReq-04 | FR-008, FR-010 | VAL-L-05 | AC-08, AC-10 |
 | BR-012 Denda bila terlambat | BReq-04 | FR-009, FR-010 | - | AC-09, AC-10 |
 | BR-013 Pengembalian oleh Admin | BReq-04 | FR-009 | - | AC-09 |
 | BR-014 Anggota menghubungi Admin | BReq-04 | FR-009 | - | AC-09 |
-| BR-015 Admin lihat unit dipinjam | BReq-06 | FR-011 | - | AC-11 |
+| BR-015 Admin lihat monster dipinjam | BReq-06 | FR-011 | - | AC-11 |
 | BR-016 Anggota lihat miliknya | BReq-06 | FR-008, FR-011 | - | AC-11, AC-13 |
 | BR-017 Admin lihat seluruh riwayat | BReq-06 | FR-011 | - | AC-11 |
 | BR-018 Admin cetak riwayat | BReq-08 | FR-012 | - | AC-12 |
