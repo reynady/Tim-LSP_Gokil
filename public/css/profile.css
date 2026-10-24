@@ -1,0 +1,669 @@
+:root {
+    --green-dark:      #102F28;
+    --green-mid:       #21473D;
+    --green:           #187653;
+    --green-light:     #E9F3EC;
+    --page:            #F5F6F2;
+    --white:           #FFFFFF;
+    --text:            #1C3029;
+    --muted:           #6D7972;
+    --border:          #DFE5DE;
+    --soft:            #F8F9F6;
+    --sidebar-muted:   #B5C9BE;
+    --warn-bg:         #FBF4E6;
+    --warn-text:       #94651E;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    background: var(--page);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+button, input { font: inherit; }
+
+/* ── App Shell ────────────────────────────────────────── */
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ── Sidebar ────────────────────────────────────────── */
+.sidebar {
+    width: 248px;
+    flex: 0 0 248px;
+    min-height: 100vh;
+    padding: 30px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    background: var(--green-dark);
+    color: var(--white);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--white);
+    white-space: nowrap;
+}
+
+.brand-icon {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 6px;
+    background: var(--green-mid);
+    color: var(--white);
+}
+
+.brand-icon svg { width: 21px; height: 21px; }
+
+.nav-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.nav-label {
+    margin: 0 0 5px;
+    color: var(--sidebar-muted);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .07em;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 46px;
+    padding: 0 12px;
+    border-radius: 6px;
+    color: var(--sidebar-muted);
+    font-size: 14px;
+    font-weight: 400;
+    transition: background .2s, color .2s;
+}
+
+.nav-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+.nav-link:hover, .nav-link.active {
+    background: var(--green-mid);
+    color: var(--white);
+}
+
+.nav-link.active { font-weight: 600; }
+
+.nav-link .badge {
+    margin-left: auto;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--sidebar-muted);
+}
+
+.sidebar-spacer { flex-grow: 1; }
+
+.institution-card {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-radius: 6px;
+    background: var(--green-mid);
+    color: var(--sidebar-muted);
+}
+
+.institution-card svg { width: 20px; height: 20px; color: var(--sidebar-muted); }
+
+.institution-card strong {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--white);
+}
+
+.institution-card p {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 0 0 12px;
+    background: none;
+    border: none;
+    color: var(--sidebar-muted);
+    font-size: 14px;
+    cursor: pointer;
+    transition: color .2s;
+}
+
+.logout-btn svg { width: 18px; height: 18px; }
+.logout-btn:hover { color: var(--white); }
+
+/* ── Workspace ──────────────────────────────────────── */
+.workspace {
+    flex: 1 1 0%;
+    min-width: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--page);
+}
+
+/* ── Topbar ─────────────────────────────────────────── */
+.topbar {
+    min-height: 84px;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.breadcrumb strong {
+    color: var(--text);
+    font-weight: 400;
+}
+
+.account {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.account-label {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.account-divider {
+    width: 1px;
+    height: 26px;
+    background: var(--border);
+}
+
+.avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 100px;
+    display: grid;
+    place-items: center;
+    background: var(--green-light);
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.account-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.account-info strong {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.account-info small {
+    font-size: 10px;
+    color: var(--muted);
+}
+
+.account-chevron {
+    width: 14px;
+    height: 14px;
+    color: var(--muted);
+}
+
+/* ── Content ────────────────────────────────────────── */
+.page-content {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    flex: 1;
+}
+
+/* Page Heading */
+.page-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.page-heading h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--text);
+}
+
+.page-heading p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+/* ── Success Info Banner (Perubahan tersimpan) ──────── */
+.success-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 18px;
+    background: var(--green-light);
+    border-radius: 6px;
+}
+
+.success-notice > svg {
+    width: 20px;
+    height: 20px;
+    color: var(--green);
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.success-body {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.success-body strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--green);
+}
+
+.success-body p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+/* ── Profile Layout (Form + Guide) ──────────────────── */
+.profile-grid {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+/* ── Left: Profile Form Card ────────────────────────── */
+.profile-form-card {
+    flex: 1 1 0%;
+    min-width: 0;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* Member Identity Banner */
+.member-identity {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.avatar-large {
+    width: 64px;
+    height: 64px;
+    border-radius: 100px;
+    background: var(--green-light);
+    color: var(--green);
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.member-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.member-name {
+    font-size: 21px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.member-email {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.badge-active {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 9px;
+    border-radius: 100px;
+    background: var(--green-light);
+    color: var(--green);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.badge-active .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 100px;
+    background: var(--green);
+}
+
+.form-divider {
+    height: 1px;
+    background: var(--border);
+}
+
+/* Form Section Info */
+.form-section-header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-section-header h2 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.form-section-header p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+/* Form Groups */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-label {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text);
+}
+
+.form-input-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+    height: 48px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    transition: border-color .2s;
+}
+
+.form-input-box:focus-within {
+    border-color: var(--green);
+}
+
+.form-input-box input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+    color: var(--text);
+}
+
+.form-input-box.readonly {
+    background: var(--soft);
+}
+
+.form-input-box.readonly input {
+    color: var(--muted);
+    cursor: not-allowed;
+}
+
+.form-input-box.readonly svg {
+    width: 18px;
+    height: 18px;
+    color: var(--muted);
+}
+
+.email-verified {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--green);
+    white-space: nowrap;
+}
+
+.email-verified svg {
+    width: 14px;
+    height: 14px;
+}
+
+.form-help {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 4px;
+}
+
+.sync-status {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-secondary {
+    height: 44px;
+    padding: 0 18px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--white);
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: background .2s;
+}
+
+.btn-secondary:hover {
+    background: var(--soft);
+}
+
+.btn-primary {
+    height: 44px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 6px;
+    background: var(--green);
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: background .2s;
+}
+
+.btn-primary:hover {
+    background: #146345;
+}
+
+/* ── Right Column: Account Guide ────────────────────── */
+.profile-guide-col {
+    width: 336px;
+    flex: 0 0 336px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Card: Tentang akun Anda */
+.about-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.about-title {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.guide-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.guide-icon {
+    width: 19px;
+    height: 19px;
+    color: var(--green);
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.guide-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.guide-text strong {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text);
+}
+
+.guide-text p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+/* Card: Bantuan anggota */
+.support-card {
+    background: var(--green-light);
+    border-radius: 10px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.support-card svg {
+    width: 24px;
+    height: 24px;
+    color: var(--green);
+}
+
+.support-card strong {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.support-card p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+/* ── Page Footer ────────────────────────────────────── */
+.page-footer {
+    min-height: 64px;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    color: var(--muted);
+    font-size: 11px;
+    border-top: 1px solid var(--border);
+    margin-top: auto;
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+@media (max-width: 1100px) {
+    .profile-grid { flex-direction: column; }
+    .profile-guide-col { width: 100%; flex-basis: auto; }
+}
+
+@media (max-width: 900px) {
+    .sidebar { width: 76px; flex-basis: 76px; align-items: center; padding: 24px 10px; gap: 26px; }
+    .brand > span:last-child, .nav-label, .nav-link span, .institution-card, .sidebar form .logout-btn { display: none; }
+    .nav-link { justify-content: center; padding: 0; }
+}
+
+@media (max-width: 700px) {
+    .topbar { padding: 0 18px; }
+    .page-content { padding: 24px 16px; gap: 20px; }
+    .member-identity { flex-direction: column; align-items: flex-start; }
+    .form-actions { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .account-label, .account-divider { display: none; }
+    .page-footer { padding: 18px; flex-direction: column; align-items: flex-start; }
+}

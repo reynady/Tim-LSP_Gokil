@@ -1,0 +1,447 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --green-dark: #102F28;
+    --green-card: #21473D;
+    --green-button: #187653;
+    --green-muted: #B5C9BE;
+    --text-dark: #1C3029;
+    --text-muted: #6D7972;
+    --background: #F5F6F2;
+    --border: #DFE5DE;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: var(--background);
+    color: var(--text-dark);
+}
+
+.login-page {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Panel kiri */
+.intro-panel {
+    width: 43.06%;
+    min-height: 100vh;
+    padding: 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 54px;
+    background: var(--green-dark);
+    color: white;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+}
+
+.brand-icon {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 6px;
+    background: var(--green-card);
+}
+
+.brand-icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.intro-copy {
+    padding-top: 38px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.eyebrow {
+    margin: 0;
+    color: var(--green-muted);
+    font: 600 11px/1.5 'IBM Plex Mono', monospace;
+    letter-spacing: 1px;
+}
+
+.intro-copy h1 {
+    margin: 0;
+    font-size: clamp(30px, 3.05vw, 44px);
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+.intro-description {
+    margin: 0;
+    color: var(--green-muted);
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.inventory-card {
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    background: var(--green-card);
+    border: 1px solid #537065;
+    border-radius: 14px;
+}
+
+.card-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--green-muted);
+    font: 400 11px/1.5 'IBM Plex Mono', monospace;
+}
+
+.card-heading svg {
+    width: 20px;
+    height: 20px;
+}
+
+.inventory-modules {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.inventory-module {
+    min-height: 108px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border-radius: 6px;
+    background: var(--green-dark);
+}
+
+.inventory-module svg {
+    width: 29px;
+    height: 29px;
+    color: var(--green-muted);
+    stroke-width: 1.4;
+}
+
+.archive-line {
+    width: 40px;
+    height: 3px;
+    background: #507768;
+}
+
+.loan-flow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+}
+
+.loan-flow svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    color: var(--green-muted);
+}
+
+.institution {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.institution-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+}
+
+.institution-name svg {
+    width: 18px;
+    height: 18px;
+    color: var(--green-muted);
+}
+
+.institution p {
+    margin: 0;
+    color: var(--green-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Panel kanan */
+.login-panel {
+    flex: 1;
+    min-width: 0;
+    padding: 70px 32px 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.access-label {
+    width: 100%;
+    max-width: 460px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.access-label span:last-child {
+    font-family: 'IBM Plex Mono', monospace;
+}
+
+.login-form {
+    width: 100%;
+    max-width: 460px;
+    padding-top: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+}
+
+.form-intro {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-intro h2 {
+    margin: 0;
+    font-size: 32px;
+    line-height: 1.5;
+    font-weight: 600;
+}
+
+.form-intro p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.form-group input {
+    width: 100%;
+    height: 48px;
+    padding: 0 14px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-dark);
+    font: 400 14px 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input::placeholder {
+    color: #929B94;
+}
+
+.form-group input:focus {
+    border-color: var(--green-button);
+    box-shadow: 0 0 0 3px rgb(24 118 83 / 12%);
+}
+
+.error-message {
+    padding: 12px;
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+    background: #FCF0EC;
+    border-radius: 6px;
+    color: #A3483D;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.error-message p {
+    margin: 0;
+}
+
+.error-message svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.login-button {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border: 0;
+    border-radius: 6px;
+    background: var(--green-button);
+    color: white;
+    font: 600 14px 'Inter', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.login-button:hover {
+    background: #125E43;
+}
+
+.login-button svg {
+    width: 18px;
+    height: 18px;
+}
+
+.access-help {
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.access-help h3 {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.access-help p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.access-help small {
+    color: var(--text-muted);
+    font-size: 11px;
+}
+
+/* Tampilan tablet dan HP */
+@media (max-width: 1050px) {
+    .intro-panel {
+        width: 42%;
+        padding: 36px;
+        gap: 36px;
+    }
+
+    .inventory-card {
+        padding: 20px;
+    }
+
+    .inventory-modules {
+        gap: 8px;
+    }
+
+    .login-panel {
+        padding-right: 24px;
+        padding-left: 24px;
+    }
+}
+
+@media (max-width: 760px) {
+    .login-page {
+        flex-direction: column;
+    }
+
+    .intro-panel {
+        width: 100%;
+        min-height: auto;
+        padding: 28px 24px;
+        gap: 24px;
+    }
+
+    .intro-copy {
+        padding-top: 8px;
+        gap: 12px;
+    }
+
+    .intro-copy h1 {
+        font-size: 30px;
+        line-height: 1.3;
+    }
+
+    .intro-description {
+        font-size: 14px;
+    }
+
+    .inventory-card {
+        gap: 16px;
+    }
+
+    .inventory-module {
+        min-height: 80px;
+    }
+
+    .loan-flow {
+        font-size: 10px;
+    }
+
+    .institution {
+        display: none;
+    }
+
+    .login-panel {
+        width: 100%;
+        padding: 32px 24px 40px;
+    }
+
+    .login-form {
+        padding-top: 40px;
+        gap: 24px;
+    }
+
+    .form-intro h2 {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 380px) {
+    .intro-panel {
+        padding: 24px 18px;
+    }
+
+    .login-panel {
+        padding-right: 18px;
+        padding-left: 18px;
+    }
+
+    .inventory-card {
+        padding: 16px;
+    }
+
+    .loan-flow {
+        gap: 4px;
+        font-size: 9px;
+    }
+}
