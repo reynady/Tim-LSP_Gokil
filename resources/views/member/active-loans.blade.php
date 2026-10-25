@@ -194,17 +194,7 @@
             <div class="table-card">
                 <div class="table-card-header">
                     <h2>Daftar monster aktif</h2>
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <span class="count-label">{{ $totalBorrowed }} transaksi aktif</span>
-                        @if ($totalBorrowed > 0)
-                            <form action="{{ route('loan.reset') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus / reset seluruh peminjaman aktif?');">
-                                @csrf
-                                <button type="submit" style="background: #fff; border: 1px solid #fca5a5; color: #dc2626; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
-                                    <i data-lucide="trash-2" style="width: 13px; height: 13px;"></i> Reset Semua
-                                </button>
-                            </form>
-                        @endif
-                    </div>
+                    <span class="count-label">{{ $totalBorrowed }} transaksi aktif</span>
                 </div>
 
                 {{-- Kepala tabel --}}

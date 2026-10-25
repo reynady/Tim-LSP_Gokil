@@ -34,7 +34,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/peminjaman-berhasil', [\App\Http\Controllers\Member\LoanController::class, 'success'])->name('loan.success');
     Route::get('/peminjaman-aktif', [\App\Http\Controllers\Member\LoanController::class, 'activeLoans'])->name('loan.active');
     Route::post('/peminjaman/{loan}/kembalikan', [\App\Http\Controllers\Member\LoanController::class, 'returnLoan'])->name('loan.return');
-    Route::post('/peminjaman/reset', [\App\Http\Controllers\Member\LoanController::class, 'resetLoans'])->name('loan.reset');
     Route::get('/riwayat', [\App\Http\Controllers\Member\LoanController::class, 'history'])->name('loan.history');
 });
 

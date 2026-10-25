@@ -211,29 +211,4 @@ class LoanController extends Controller
         return redirect()->route('loan.active')
             ->with('success', "Entitas monster pada transaksi {$loan->loan_code} berhasil dikembalikan. Kuota peminjaman Anda bertambah.");
     }
-
-    /**
-     * Reset / Hapus seluruh data peminjaman anggota untuk pengujian ulang
-     */
-    public function resetLoans(Request $request)
-    {
-        $user = auth()->user();
-
-        DB::transaction(function () use ($user) {
-            $loans = Loan::with('details.monster')->where('user_id', $user->id)->get();
-
-            foreach ($loans as $loan) {
-                foreach ($loan->details as $detail) {
-                    if ($detail->monster) {
-                        $detail->monster->update(['status' => 'available']);
-                    }
-                    $detail->delete();
-                }
-                $loan->delete();
-            }
-        });
-
-        return redirect()->route('loan.active')
-            ->with('success', 'Seluruh data peminjaman Anda berhasil direset. Kuota peminjaman kembali 0 dari 2 unit.');
-    }
 }
