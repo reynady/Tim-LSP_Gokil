@@ -34,7 +34,7 @@
     $historyLoans = $dbHistoryLoans->map(function($loan) {
         $detail = $loan->details->first();
         $monster = $detail?->monster;
-        $returnDate = $loan->return_date ?? $detail?->return_date;
+        $returnDate = $detail?->returned_at ? \Carbon\Carbon::parse($detail->returned_at) : ($loan->updated_at ? \Carbon\Carbon::parse($loan->updated_at) : null);
         $dueDate = $loan->due_date;
         $isLate = false;
         $note = 'Tepat waktu';

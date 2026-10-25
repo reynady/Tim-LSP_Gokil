@@ -27,25 +27,16 @@ Route::get('/admin/dashboard', function () {
     return view('admin.dashboard');
 })->middleware(['auth', 'admin'])->name('admin.dashboard');
 
-Route::get('/katalog', function () {
-    return view('member.catalog');
-})->middleware('auth')->name('catalog');
-
-Route::get('/detail-unit', function () {
-    return view('member.detail-unit');
-})->middleware('auth')->name('unit.detail');
-
-Route::get('/peminjaman-berhasil', function () {
-    return view('member.loan-success');
-})->middleware('auth')->name('loan.success');
-
-Route::get('/peminjaman-aktif', function () {
-    return view('member.active-loans');
-})->middleware('auth')->name('loan.active');
-
-Route::get('/riwayat', function () {
-    return view('member.history');
-})->middleware('auth')->name('loan.history');
+Route::middleware('auth')->group(function () {
+    Route::get('/katalog', [\App\Http\Controllers\Member\LoanController::class, 'catalog'])->name('catalog');
+    Route::get('/detail-unit', [\App\Http\Controllers\Member\LoanController::class, 'detailUnit'])->name('unit.detail');
+    Route::post('/peminjaman', [\App\Http\Controllers\Member\LoanController::class, 'store'])->name('loan.store');
+    Route::get('/peminjaman-berhasil', [\App\Http\Controllers\Member\LoanController::class, 'success'])->name('loan.success');
+    Route::get('/peminjaman-aktif', [\App\Http\Controllers\Member\LoanController::class, 'activeLoans'])->name('loan.active');
+    Route::post('/peminjaman/{loan}/kembalikan', [\App\Http\Controllers\Member\LoanController::class, 'returnLoan'])->name('loan.return');
+    Route::post('/peminjaman/reset', [\App\Http\Controllers\Member\LoanController::class, 'resetLoans'])->name('loan.reset');
+    Route::get('/riwayat', [\App\Http\Controllers\Member\LoanController::class, 'history'])->name('loan.history');
+});
 
 Route::get('/profil', function () {
     return view('member.profile');

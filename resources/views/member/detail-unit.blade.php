@@ -14,15 +14,30 @@
 @php
     $user = auth()->user();
 
+    $code = request('code') ?? request('kode');
+    $currentMonster = isset($monster) ? $monster : null;
+    if (!$currentMonster && $code) {
+        $currentMonster = \App\Models\Monster::with('categories')->where('monster_code', $code)->first();
+    }
+    if (!$currentMonster) {
+        $currentMonster = \App\Models\Monster::with('categories')->first();
+    }
+
     $unit = [
-        'code'     => request('kode', 'MON-001'),
-        'name'     => request('nama', 'Kaiju Alpha'),
-        'category' => request('kategori', 'Kelas I'),
-        'location' => request('lokasi', 'Hanggar A-01'),
-        'status'   => 'Tersedia',
-        'type'     => request('tipe', 'Unit Monster Terdaftar'),
-        'description' => 'Unit monster terdaftar untuk kebutuhan operasional dan simulasi anggota sesuai ketentuan pengelolaan entitas. Dicatat sebagai satu unit inventaris.',
+        'id'          => $currentMonster->id ?? 1,
+        'code'        => $currentMonster->monster_code ?? 'MON-001',
+        'name'        => $currentMonster->name ?? 'Entitas Monster',
+        'category'    => $currentMonster?->categories?->pluck('name')->implode(', ') ?: ($currentMonster->origin_type ?? 'Kelas Khusus'),
+        'condition'   => $currentMonster->condition ?? 'Hanggar Utama',
+        'status'      => ($currentMonster?->status === 'available') ? 'Tersedia' : 'Dipinjam',
+        'type'        => $currentMonster->origin_type ?? 'Unit Monster Terdaftar',
+        'threat'      => $currentMonster->threat_level ?? 'Normal',
+        'description' => $currentMonster->description ?: 'Unit monster terdaftar untuk kebutuhan operasional dan simulasi anggota sesuai ketentuan pengelolaan entitas. Dicatat sebagai satu unit inventaris.',
     ];
+
+    $activeCount = isset($activeLoansCount) ? $activeLoansCount : ($user ? \App\Models\Loan::where('user_id', $user->id)->whereIn('status', ['active', 'borrowed', 'approved', 'pending'])->count() : 0);
+    $isAvailable = ($unit['status'] === 'Tersedia');
+    $canBorrow = ($activeCount < 2) && $isAvailable;
 
     $loanDate   = now();
     $returnDate = now()->addDays(5);
@@ -45,6 +60,9 @@
             </a>
             <a href="{{ route('loan.active') }}" class="nav-link">
                 <i data-lucide="clipboard-list"></i> <span>Peminjaman aktif</span>
+                @if ($activeCount > 0)
+                    <span class="badge" style="margin-left:auto; background: #059669; color:#fff; font-size:11px; font-weight:600; padding:2px 7px; border-radius:10px;">{{ $activeCount }}</span>
+                @endif
             </a>
             <a href="{{ route('loan.history') }}" class="nav-link">
                 <i data-lucide="history"></i> <span>Riwayat</span>
@@ -90,6 +108,20 @@
         </header>
 
         <div class="page-content">
+            @if (session('error'))
+                <div style="background: #fef2f2; border: 1px solid #f87171; color: #991b1b; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="alert-circle" style="width: 18px; height: 18px; flex-shrink: 0;"></i>
+                    <span>{{ session('error') }}</span>
+                </div>
+            @endif
+
+            @if (session('success'))
+                <div style="background: #f0fdf4; border: 1px solid #86efac; color: #166534; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="check-circle" style="width: 18px; height: 18px; flex-shrink: 0;"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
+
             <div class="page-heading">
                 <div>
                     <h1>Detail Unit Monster</h1>
@@ -105,7 +137,9 @@
                     <article class="panel unit-panel">
                         <div class="unit-status-row">
                             <span class="eyebrow">INVENTARIS / {{ strtoupper($unit['category']) }}</span>
-                            <span class="status-pill"><span></span>Tersedia</span>
+                            <span class="status-pill {{ $isAvailable ? '' : 'status-borrowed' }}" style="{{ $isAvailable ? '' : 'background: #fee2e2; color: #991b1b;' }}">
+                                <span></span>{{ $unit['status'] }}
+                            </span>
                         </div>
 
                         <div class="unit-visual">
@@ -137,6 +171,14 @@
                                 <span>Kategori</span>
                                 <strong>{{ $unit['category'] }}</strong>
                             </div>
+                            <div>
+                                <span>Tingkat Ancaman</span>
+                                <strong>{{ $unit['threat'] }}</strong>
+                            </div>
+                            <div>
+                                <span>Kondisi Fisik</span>
+                                <strong>{{ $unit['condition'] }}</strong>
+                            </div>
                         </div>
 
                         <p class="unit-footnote">
@@ -151,7 +193,15 @@
                             <i data-lucide="package-check"></i>
                             <div>
                                 <strong>Satu unit per transaksi</strong>
-                                <p>Transaksi ini hanya mencatat {{ $unit['name'] }}.</p>
+                                <p>Transaksi ini hanya mencatat entitas {{ $unit['name'] }}.</p>
+                            </div>
+                        </div>
+
+                        <div class="rule-item">
+                            <i data-lucide="shield-alert"></i>
+                            <div>
+                                <strong>Batas Kuota Peminjaman (FR-008)</strong>
+                                <p>Setiap anggota dibatasi maksimal 2 entitas monster aktif dalam waktu bersamaan.</p>
                             </div>
                         </div>
 
@@ -159,7 +209,7 @@
                             <i data-lucide="handshake"></i>
                             <div>
                                 <strong>Pengembalian dicatat oleh Admin</strong>
-                                <p>Serahkan unit secara langsung dan hubungi Admin melalui kanal internal di luar aplikasi.</p>
+                                <p>Serahkan unit secara fisik ke petugas Admin di ruang inventaris saat masa peminjaman selesai.</p>
                             </div>
                         </div>
                     </article>
@@ -171,13 +221,31 @@
                         <p>Pastikan rincian berikut sudah sesuai.</p>
                     </div>
 
-                    <div class="review-notice">
-                        <i data-lucide="circle-check"></i>
-                        <div>
-                            <strong>1 dari 2 unit aktif</strong>
-                            <p>Tersisa 1 slot. Setelah transaksi ini, kapasitas Anda menjadi 2 dari 2 unit.</p>
+                    @if ($activeCount >= 2)
+                        <div class="review-notice" style="background: #fef2f2; border: 1px solid #fca5a5;">
+                            <i data-lucide="alert-octagon" style="color: #dc2626;"></i>
+                            <div>
+                                <strong style="color: #991b1b;">Kapasitas Penuh · 2 dari 2 unit aktif</strong>
+                                <p style="color: #7f1d1d;">Anda telah mencapai batas kuota maksimal 2 peminjaman aktif. Kembalikan salah satu unit untuk dapat meminjam kembali.</p>
+                            </div>
                         </div>
-                    </div>
+                    @elseif (!$isAvailable)
+                        <div class="review-notice" style="background: #fffbeb; border: 1px solid #fcd34d;">
+                            <i data-lucide="alert-triangle" style="color: #d97706;"></i>
+                            <div>
+                                <strong style="color: #92400e;">Unit Sedang Dipinjam</strong>
+                                <p style="color: #78350f;">Entitas monster ini sedang tidak tersedia untuk dipinjam saat ini.</p>
+                            </div>
+                        </div>
+                    @else
+                        <div class="review-notice">
+                            <i data-lucide="circle-check"></i>
+                            <div>
+                                <strong>{{ $activeCount }} dari 2 unit aktif</strong>
+                                <p>Tersisa {{ 2 - $activeCount }} slot. Setelah transaksi ini, kapasitas Anda menjadi {{ $activeCount + 1 }} dari 2 unit.</p>
+                            </div>
+                        </div>
+                    @endif
 
                     <div class="review-field">
                         <span>Peminjam</span>
@@ -204,20 +272,34 @@
 
                     <div class="review-divider"></div>
 
-                    <form id="loanReviewForm" action="{{ route('loan.success') }}" method="GET">
-                        <label class="consent">
-                            <input type="checkbox" id="consentCheck" required>
-                            <span>Saya memahami batas waktu dan ketentuan pengembalian melalui Admin.</span>
-                        </label>
+                    <form id="loanReviewForm" action="{{ route('loan.store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="monster_id" value="{{ $unit['id'] }}">
 
-                        <button class="confirm-button" type="submit">
-                            Konfirmasi &amp; pinjam unit
-                            <i data-lucide="arrow-right"></i>
-                        </button>
+                        @if ($canBorrow)
+                            <label class="consent">
+                                <input type="checkbox" id="consentCheck" name="consent" required>
+                                <span>Saya memahami batas waktu dan ketentuan pengembalian melalui Admin.</span>
+                            </label>
+
+                            <button class="confirm-button" type="submit" id="btnConfirmLoan">
+                                Konfirmasi &amp; pinjam unit
+                                <i data-lucide="arrow-right"></i>
+                            </button>
+                        @else
+                            <button class="confirm-button" type="button" disabled style="opacity: 0.6; cursor: not-allowed; background: #6b7280;">
+                                @if ($activeCount >= 2)
+                                    Kuota Penuh (Maks 2 Unit)
+                                @else
+                                    Unit Tidak Tersedia
+                                @endif
+                                <i data-lucide="ban"></i>
+                            </button>
+                        @endif
                     </form>
 
                     <p class="review-footnote">
-                        Dengan konfirmasi, peminjaman langsung tercatat. Tidak ada tahap persetujuan atau reservasi.
+                        Dengan konfirmasi, peminjaman langsung tercatat di sistem secara resmi.
                     </p>
                 </aside>
             </div>
@@ -232,16 +314,6 @@
 
 <script>
     if (window.lucide) lucide.createIcons();
-
-    document.getElementById('loanReviewForm').addEventListener('submit', function (event) {
-        if (!document.getElementById('consentCheck').checked) {
-            event.preventDefault();
-            return;
-        }
-
-        event.preventDefault();
-        window.location.href = "{{ route('loan.success') }}";
-    });
 </script>
 </body>
 </html>

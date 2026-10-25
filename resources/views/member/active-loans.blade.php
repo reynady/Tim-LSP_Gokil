@@ -28,6 +28,7 @@
     $activeLoans = $dbActiveLoans->map(function($loan) {
         $monster = $loan->details->first()?->monster;
         return [
+            'id'        => $loan->id,
             'tx_code'   => $loan->loan_code,
             'unit_name' => $monster->name ?? 'Entitas Monster',
             'unit_code' => $monster->monster_code ?? '-',
@@ -117,7 +118,20 @@
         {{-- Konten halaman --}}
         <div class="page-content">
 
-            {{-- Judul halaman --}}
+            @if (session('error'))
+                <div style="background: #fef2f2; border: 1px solid #f87171; color: #991b1b; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="alert-circle" style="width: 18px; height: 18px; flex-shrink: 0;"></i>
+                    <span>{{ session('error') }}</span>
+                </div>
+            @endif
+
+            @if (session('success'))
+                <div style="background: #f0fdf4; border: 1px solid #86efac; color: #166534; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="check-circle" style="width: 18px; height: 18px; flex-shrink: 0;"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
+
             {{-- Judul halaman --}}
             <section class="page-heading">
                 <h1>Peminjaman aktif</h1>
@@ -163,7 +177,7 @@
                     <i data-lucide="info"></i>
                     <div class="warn-body">
                         <strong>Kapasitas penuh · {{ $totalBorrowed }} dari 2 monster dipinjam</strong>
-                        <p>Anda telah mencapai batas maksimal peminjaman. Kembalikan salah satu entitas monster untuk dapat meminjam kembali.</p>
+                        <p>Anda telah mencapai batas maksimal peminjaman (VAL-L-03). Kembalikan salah satu entitas monster untuk dapat meminjam kembali.</p>
                     </div>
                 </div>
             @else
@@ -180,7 +194,17 @@
             <div class="table-card">
                 <div class="table-card-header">
                     <h2>Daftar monster aktif</h2>
-                    <span class="count-label">{{ $totalBorrowed }} transaksi aktif</span>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span class="count-label">{{ $totalBorrowed }} transaksi aktif</span>
+                        @if ($totalBorrowed > 0)
+                            <form action="{{ route('loan.reset') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus / reset seluruh peminjaman aktif?');">
+                                @csrf
+                                <button type="submit" style="background: #fff; border: 1px solid #fca5a5; color: #dc2626; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                                    <i data-lucide="trash-2" style="width: 13px; height: 13px;"></i> Reset Semua
+                                </button>
+                            </form>
+                        @endif
+                    </div>
                 </div>
 
                 {{-- Kepala tabel --}}
@@ -190,6 +214,7 @@
                     <span class="table-col-header">TANGGAL PINJAM</span>
                     <span class="table-col-header">BATAS PENGEMBALIAN</span>
                     <span class="table-col-header">STATUS</span>
+                    <span class="table-col-header" style="text-align: right;">AKSI</span>
                 </div>
 
                 {{-- Baris transaksi / Empty State --}}
@@ -211,6 +236,14 @@
                                     <span class="dot"></span>
                                     {{ $loan['status'] }}
                                 </span>
+                            </div>
+                            <div class="col-action" style="text-align: right;">
+                                <form action="{{ route('loan.return', $loan['id']) }}" method="POST" onsubmit="return confirm('Kembalikan entitas monster {{ $loan['unit_name'] }}?');">
+                                    @csrf
+                                    <button type="submit" style="background: #f0fdf4; border: 1px solid #86efac; color: #166534; border-radius: 6px; padding: 5px 10px; font-size: 12px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                                        <i data-lucide="rotate-ccw" style="width: 13px; height: 13px;"></i> Kembalikan
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     @endforeach

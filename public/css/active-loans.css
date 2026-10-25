@@ -389,7 +389,7 @@ button, input { font: inherit; }
 /* Table Head */
 .table-head {
     display: grid;
-    grid-template-columns: 218px 1fr 166px 175px 90px;
+    grid-template-columns: 200px 1fr 140px 150px 95px 115px;
     align-items: center;
     padding: 0 22px;
     height: 44px;
@@ -406,7 +406,7 @@ button, input { font: inherit; }
 /* Table Row */
 .table-row {
     display: grid;
-    grid-template-columns: 218px 1fr 166px 175px 90px;
+    grid-template-columns: 200px 1fr 140px 150px 95px 115px;
     align-items: center;
     padding: 24px 22px;
     border-top: 1px solid var(--border);

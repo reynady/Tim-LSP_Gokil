@@ -30,6 +30,12 @@
             </a>
             <a href="{{ route('loan.active') }}" class="nav-link">
                 <i data-lucide="clipboard-list"></i> <span>Peminjaman aktif</span>
+                @php
+                    $sidebarActiveCount = $activeLoansCount ?? (auth()->check() ? \App\Models\Loan::where('user_id', auth()->id())->whereIn('status', ['active', 'borrowed', 'approved', 'pending'])->count() : 0);
+                @endphp
+                @if ($sidebarActiveCount > 0)
+                    <span class="badge" style="margin-left:auto; background: #059669; color:#fff; font-size:11px; font-weight:600; padding:2px 7px; border-radius:10px;">{{ $sidebarActiveCount }}</span>
+                @endif
             </a>
             <a href="{{ route('loan.history') }}" class="nav-link">
                 <i data-lucide="history"></i> <span>Riwayat</span>
@@ -91,21 +97,22 @@
                 </div>
             </section>
 
+            @if (session('error'))
+                <div style="background: #fef2f2; border: 1px solid #f87171; color: #991b1b; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="alert-circle" style="width: 18px; height: 18px; flex-shrink: 0;"></i>
+                    <span>{{ session('error') }}</span>
+                </div>
+            @endif
+
+            @if (session('success'))
+                <div style="background: #f0fdf4; border: 1px solid #86efac; color: #166534; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="check-circle" style="width: 18px; height: 18px; flex-shrink: 0;"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
+
             @php
-                /*
-                 * Data sementara untuk tampilan.
-                 * Nantinya dapat diganti dengan data dari tabel monsters.
-                 */
-                $monsters = [
-                    ['code' => 'MON-001', 'name' => 'Kaiju Alpha', 'category' => 'Kelas I', 'location' => 'Hanggar A-01', 'status' => 'Tersedia'],
-                    ['code' => 'MON-002', 'name' => 'Kaiju Beta', 'category' => 'Kelas II', 'location' => 'Hanggar A-02', 'status' => 'Tersedia'],
-                    ['code' => 'MON-003', 'name' => 'Guardian Unit', 'category' => 'Pertahanan', 'location' => 'Hanggar B-01', 'status' => 'Tersedia'],
-                    ['code' => 'MON-004', 'name' => 'SCP Sentinel', 'category' => 'Pengawasan', 'location' => 'Sektor C-04', 'status' => 'Dipinjam'],
-                    ['code' => 'MON-005', 'name' => 'Titan Striker', 'category' => 'Kelas III', 'location' => 'Hanggar B-03', 'status' => 'Dipinjam'],
-                    ['code' => 'MON-006', 'name' => 'Mecha Ranger', 'category' => 'Pendukung', 'location' => 'Hanggar C-02', 'status' => 'Tersedia'],
-                    ['code' => 'MON-007', 'name' => 'Containment Unit', 'category' => 'Pengamanan', 'location' => 'Sektor D-01', 'status' => 'Tersedia'],
-                    ['code' => 'MON-008', 'name' => 'Kaiju Omega', 'category' => 'Kelas Khusus', 'location' => 'Hanggar X-01', 'status' => 'Dipinjam'],
-                ];
+                $monstersList = isset($monsters) ? $monsters : \App\Models\Monster::with('categories')->get();
             @endphp
 
             <section class="inventory-panel">
@@ -123,7 +130,7 @@
                     </select>
 
                     <span class="unit-count" id="unitCount">
-                        {{ count($monsters) }} unit ditemukan
+                        {{ count($monstersList) }} unit ditemukan
                     </span>
                 </div>
 
@@ -135,33 +142,40 @@
                                 <th>NAMA UNIT</th>
                                 <th>KATEGORI</th>
                                 <th>STATUS</th>
-                                <th>LOKASI</th>
+                                <th>KONDISI / LOKASI</th>
                                 <th>AKSI</th>
                             </tr>
                         </thead>
                         <tbody id="monsterTable">
-                            @foreach ($monsters as $monster)
-                                <tr data-name="{{ strtolower($monster['name']) }}"
-                                    data-code="{{ strtolower($monster['code']) }}"
-                                    data-status="{{ $monster['status'] }}">
-                                    <td class="unit-code">{{ $monster['code'] }}</td>
+                            @foreach ($monstersList as $m)
+                                @php
+                                    $isAvail = ($m->status === 'available');
+                                    $statusLabel = $isAvail ? 'Tersedia' : 'Dipinjam';
+                                    $categoryLabel = $m->categories->isNotEmpty() 
+                                        ? $m->categories->pluck('name')->implode(', ') 
+                                        : ($m->origin_type ?? 'Anomali');
+                                @endphp
+                                <tr data-name="{{ strtolower($m->name) }}"
+                                    data-code="{{ strtolower($m->monster_code) }}"
+                                    data-status="{{ $statusLabel }}">
+                                    <td class="unit-code">{{ $m->monster_code }}</td>
                                     <td>
                                         <div class="monster-name">
                                             <span class="monster-icon">◇</span>
-                                            <span>{{ $monster['name'] }}</span>
+                                            <span>{{ $m->name }}</span>
                                         </div>
                                     </td>
-                                    <td class="muted-cell">{{ $monster['category'] }}</td>
+                                    <td class="muted-cell">{{ $categoryLabel }}</td>
                                     <td>
-                                        <span class="status-pill {{ $monster['status'] === 'Tersedia' ? 'available' : 'borrowed' }}">
+                                        <span class="status-pill {{ $isAvail ? 'available' : 'borrowed' }}">
                                             <span class="status-dot"></span>
-                                            {{ $monster['status'] }}
+                                            {{ $statusLabel }}
                                         </span>
                                     </td>
-                                    <td class="muted-cell">{{ $monster['location'] }}</td>
+                                    <td class="muted-cell">{{ $m->condition ?? 'Hanggar Utama' }}</td>
                                     <td>
-                                        @if ($monster['status'] === 'Tersedia')
-                                            <a href="{{ route('unit.detail', ['code' => $monster['code']]) }}"
+                                        @if ($isAvail)
+                                            <a href="{{ route('unit.detail', ['code' => $m->monster_code]) }}"
                                                 class="detail-button">
                                                 Lihat unit <span>→</span>
                                             </a>

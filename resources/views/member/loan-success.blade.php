@@ -27,42 +27,33 @@
 
     $activeCount = $dbActiveLoans->count();
 
-    /* Data transaksi */
-    $latestLoan = $dbActiveLoans->last();
-    $latestMonster = $latestLoan?->details->first()?->monster;
+    /* Data transaksi peminjaman */
+    $currentTxLoan = (isset($latestLoan) && $latestLoan) ? $latestLoan : (
+        request('code') ? \App\Models\Loan::with('details.monster')->where('loan_code', request('code'))->first() : $dbActiveLoans->last()
+    );
+    $txMonster = $currentTxLoan?->details->first()?->monster;
 
     $tx = [
-        'number'    => $latestLoan->loan_code ?? ('AT-PJM-' . now()->format('ymd') . '-001'),
-        'unit_name' => $latestMonster->name ?? session('loan_unit_name', 'Entitas Monster'),
-        'unit_code' => $latestMonster->monster_code ?? session('loan_unit_code', 'MNST-001'),
-        'unit_type' => $latestMonster->origin_type ?? session('loan_unit_type', 'Kaiju/SCP Anomaly'),
+        'number'    => $currentTxLoan->loan_code ?? ('AT-PJM-' . now()->format('ymd') . '-001'),
+        'unit_name' => $txMonster->name ?? 'Entitas Monster',
+        'unit_code' => $txMonster->monster_code ?? 'MNST-001',
+        'unit_type' => $txMonster->origin_type ?? 'Kaiju/SCP Anomaly',
         'borrower'  => $userName,
         'qty'       => '1 unit',
-        'loan_date' => $latestLoan?->loan_date ? $latestLoan->loan_date->translatedFormat('d F Y') : now()->translatedFormat('d F Y'),
-        'due_date'  => $latestLoan?->due_date ? $latestLoan->due_date->translatedFormat('d F Y') : now()->addDays(5)->translatedFormat('d F Y'),
+        'loan_date' => $currentTxLoan?->loan_date ? $currentTxLoan->loan_date->translatedFormat('d F Y') : now()->translatedFormat('d F Y'),
+        'due_date'  => $currentTxLoan?->due_date ? $currentTxLoan->due_date->translatedFormat('d F Y') : now()->addDays(5)->translatedFormat('d F Y'),
     ];
 
     /* Peminjaman aktif saat ini */
-    $activeLoans = $dbActiveLoans->map(function($loan) {
+    $activeLoans = $dbActiveLoans->map(function($loan) use ($currentTxLoan) {
         $monster = $loan->details->first()?->monster;
         return [
             'name'    => $monster->name ?? 'Entitas Monster',
             'code'    => $monster->monster_code ?? $loan->loan_code,
             'due'     => $loan->due_date ? $loan->due_date->translatedFormat('d F Y') : now()->addDays(5)->translatedFormat('d F Y'),
-            'is_new'  => true,
+            'is_new'  => ($currentTxLoan && $currentTxLoan->id === $loan->id),
         ];
     })->values()->all();
-
-    if (empty($activeLoans)) {
-        $activeLoans = [
-            [
-                'name'    => $tx['unit_name'],
-                'code'    => $tx['unit_code'],
-                'due'     => $tx['due_date'],
-                'is_new'  => true,
-            ]
-        ];
-    }
 @endphp
 
 <div class="app-shell">
@@ -238,13 +229,23 @@
                 <aside class="right-col">
 
                     {{-- Capacity warning --}}
-                    <div class="warn-notice">
-                        <i data-lucide="info"></i>
-                        <div class="warn-body">
-                            <strong>Kapasitas penuh · {{ count($activeLoans) }} dari 2 unit</strong>
-                            <p>Anda tidak dapat membuat peminjaman lain sampai salah satu unit dikembalikan dan dicatat oleh Admin.</p>
+                    @if (count($activeLoans) >= 2)
+                        <div class="warn-notice">
+                            <i data-lucide="info"></i>
+                            <div class="warn-body">
+                                <strong>Kapasitas penuh · 2 dari 2 unit</strong>
+                                <p>Anda tidak dapat membuat peminjaman lain sampai salah satu unit dikembalikan dan dicatat oleh Admin.</p>
+                            </div>
                         </div>
-                    </div>
+                    @else
+                        <div class="warn-notice" style="background: var(--green-light); border-color: var(--border);">
+                            <i data-lucide="circle-check" style="color: var(--green);"></i>
+                            <div class="warn-body">
+                                <strong style="color: var(--green);">Kapasitas tersedia · {{ count($activeLoans) }} dari 2 unit</strong>
+                                <p>Anda masih memiliki kuota 1 entitas monster lagi jika dibutuhkan.</p>
+                            </div>
+                        </div>
+                    @endif
 
                     {{-- Active loans --}}
                     <div class="active-panel">
