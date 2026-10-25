@@ -89,8 +89,7 @@
                 class="login-form"
                 method="POST"
                 action="{{ route('login.process') }}"
-            >
-                @csrf
+            > @csrf
 
                 <div class="form-intro">
                     <h2>Selamat datang kembali.</h2>

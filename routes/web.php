@@ -23,19 +23,39 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware('auth')->name('dashboard');
 
-<<<<<<< Updated upstream
-Route::get('/admin/dashboard', function () {
-    return view('admin.dashboard');
-})->middleware(['auth', 'admin'])->name('admin.dashboard');
-=======
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
-    Route::resource('monsters', \App\Http\Controllers\Admin\MonsterController::class);
-    Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class);
-    Route::resource('members', \App\Http\Controllers\Admin\MemberController::class);
-    Route::patch('members/{member}/toggle-status', [\App\Http\Controllers\Admin\MemberController::class, 'toggleStatus'])->name('members.toggle-status');
-});
->>>>>>> Stashed changes
+
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/dashboard', [
+            \App\Http\Controllers\Admin\DashboardController::class,
+            'index',
+        ])->name('dashboard');
+
+        Route::resource(
+            'monsters',
+            \App\Http\Controllers\Admin\MonsterController::class
+        );
+
+        Route::resource(
+            'categories',
+            \App\Http\Controllers\Admin\CategoryController::class
+        );
+
+        Route::resource(
+            'members',
+            \App\Http\Controllers\Admin\MemberController::class
+        );
+
+        Route::patch(
+            'members/{member}/toggle-status',
+            [
+                \App\Http\Controllers\Admin\MemberController::class,
+                'toggleStatus',
+            ]
+        )->name('members.toggle-status');
+    });
 
 Route::middleware('auth')->group(function () {
     Route::get('/katalog', [\App\Http\Controllers\Member\LoanController::class, 'catalog'])->name('catalog');
