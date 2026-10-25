@@ -23,9 +23,11 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware('auth')->name('dashboard');
 
-Route::get('/admin/dashboard', function () {
-    return view('admin.dashboard');
-})->middleware(['auth', 'admin'])->name('admin.dashboard');
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('monsters', \App\Http\Controllers\Admin\MonsterController::class);
+    Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class);
+});
 
 Route::get('/katalog', function () {
     return view('member.catalog');
