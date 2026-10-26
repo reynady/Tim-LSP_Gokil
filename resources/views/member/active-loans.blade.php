@@ -27,21 +27,30 @@
 
     $activeLoans = $dbActiveLoans->map(function($loan) {
         $monster = $loan->details->first()?->monster;
+        $due = $loan->due_date ? $loan->due_date->startOfDay() : now()->startOfDay();
+        $today = now()->startOfDay();
+        $isOverdue = $today->gt($due);
+        $overdueDays = $isOverdue ? $due->diffInDays($today) : 0;
         return [
-            'id'        => $loan->id,
-            'tx_code'   => $loan->loan_code,
-            'unit_name' => $monster->name ?? 'Entitas Monster',
-            'unit_code' => $monster->monster_code ?? '-',
-            'borrowed'  => $loan->loan_date ? $loan->loan_date->translatedFormat('d F Y') : '-',
-            'due'       => $loan->due_date ? $loan->due_date->translatedFormat('d F Y') : '-',
-            'remaining' => $loan->due_date ? (now()->diffInDays($loan->due_date, false) >= 0 ? now()->diffInDays($loan->due_date) . ' hari lagi' : 'Terlambat') : '-',
-            'status'    => ucfirst($loan->status ?? 'Dipinjam'),
+            'id'          => $loan->id,
+            'tx_code'     => $loan->loan_code,
+            'unit_name'   => $monster->name ?? 'Entitas Monster',
+            'unit_code'   => $monster->monster_code ?? '-',
+            'borrowed'    => $loan->loan_date ? $loan->loan_date->translatedFormat('d F Y') : '-',
+            'due'         => $loan->due_date ? $loan->due_date->translatedFormat('d F Y') : '-',
+            'remaining'   => $isOverdue
+                ? 'Terlambat ' . $overdueDays . ' hari'
+                : ($loan->due_date ? (now()->diffInDays($loan->due_date, false) >= 0 ? now()->diffInDays($loan->due_date) . ' hari lagi' : 'Terlambat') : '-'),
+            'is_overdue'  => $isOverdue,
+            'overdue_days'=> $overdueDays,
+            'status'      => ucfirst($loan->status ?? 'Dipinjam'),
         ];
     })->values()->all();
 
     $totalBorrowed = count($activeLoans);
-    $nearestDue = $totalBorrowed > 0 ? $activeLoans[0]['due'] : '-';
-    $nearestUnit = $totalBorrowed > 0 ? $activeLoans[0]['unit_name'] : 'Tidak ada pinjaman';
+    $hasOverdue    = collect($activeLoans)->contains('is_overdue', true);
+    $nearestDue    = $totalBorrowed > 0 ? $activeLoans[0]['due'] : '-';
+    $nearestUnit   = $totalBorrowed > 0 ? $activeLoans[0]['unit_name'] : 'Tidak ada pinjaman';
     $nearestRemaining = $totalBorrowed > 0 ? ' · ' . $activeLoans[0]['remaining'] : '';
 @endphp
 
@@ -161,13 +170,18 @@
                 </div>
 
                 {{-- Card 3 --}}
-                <div class="summary-card">
+                <div class="summary-card" style="{{ $hasOverdue ? 'border-color: #F5E5C9; background: #FBF4E6;' : '' }}">
                     <div class="summary-card-header">
                         <span class="summary-label">Status pengembalian</span>
-                        <i data-lucide="circle-check" class="summary-icon"></i>
+                        <i data-lucide="{{ $hasOverdue ? 'alert-triangle' : 'circle-check' }}" class="summary-icon" style="color: {{ $hasOverdue ? '#94651E' : '' }};"></i>
                     </div>
-                    <span class="summary-val">{{ $totalBorrowed > 0 ? 'Tepat waktu' : 'Tertib' }}</span>
-                    <span class="summary-sub">{{ $totalBorrowed > 0 ? 'Tidak ada unit yang melewati batas' : 'Tidak ada tanggungan peminjaman' }}</span>
+                    @if($hasOverdue)
+                        <span class="summary-val" style="color: #94651E;">Ada keterlambatan</span>
+                        <span class="summary-sub" style="color: #94651E;">Segera temui Admin untuk pengembalian</span>
+                    @else
+                        <span class="summary-val">{{ $totalBorrowed > 0 ? 'Tepat waktu' : 'Tertib' }}</span>
+                        <span class="summary-sub">{{ $totalBorrowed > 0 ? 'Tidak ada unit yang melewati batas' : 'Tidak ada tanggungan peminjaman' }}</span>
+                    @endif
                 </div>
             </div>
 
@@ -204,7 +218,7 @@
                     <span class="table-col-header">TANGGAL PINJAM</span>
                     <span class="table-col-header">BATAS PENGEMBALIAN</span>
                     <span class="table-col-header">STATUS</span>
-                    <span class="table-col-header" style="text-align: right;">AKSI</span>
+                    <span class="table-col-header" style="text-align: right;">INFO</span>
                 </div>
 
                 {{-- Baris transaksi / Empty State --}}
@@ -218,22 +232,32 @@
                             </div>
                             <div class="col-date">{{ $loan['borrowed'] }}</div>
                             <div class="col-due">
-                                <span class="due-date">{{ $loan['due'] }}</span>
-                                <span class="due-remaining">{{ $loan['remaining'] }}</span>
+                                <span class="due-date" style="{{ $loan['is_overdue'] ? 'color: #94651E; font-weight: 600;' : '' }}">{{ $loan['due'] }}</span>
+                                <span class="due-remaining" style="{{ $loan['is_overdue'] ? 'color: #94651E;' : '' }}">{{ $loan['remaining'] }}</span>
                             </div>
                             <div class="col-status">
-                                <span class="status-badge">
-                                    <span class="dot"></span>
-                                    {{ $loan['status'] }}
-                                </span>
+                                @if($loan['is_overdue'])
+                                    <span class="status-badge" style="background: #FBF4E6; color: #94651E; border-color: #F5E5C9;">
+                                        <span class="dot" style="background: #94651E;"></span>
+                                        Terlambat
+                                    </span>
+                                @else
+                                    <span class="status-badge">
+                                        <span class="dot"></span>
+                                        {{ $loan['status'] }}
+                                    </span>
+                                @endif
                             </div>
                             <div class="col-action" style="text-align: right;">
-                                <form action="{{ route('loan.return', $loan['id']) }}" method="POST" onsubmit="return confirm('Kembalikan entitas monster {{ $loan['unit_name'] }}?');">
-                                    @csrf
-                                    <button type="submit" style="background: #f0fdf4; border: 1px solid #86efac; color: #166534; border-radius: 6px; padding: 5px 10px; font-size: 12px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
-                                        <i data-lucide="rotate-ccw" style="width: 13px; height: 13px;"></i> Kembalikan
-                                    </button>
-                                </form>
+                                @if($loan['is_overdue'])
+                                    <span style="background: #FBF4E6; border: 1px solid #F5E5C9; color: #94651E; border-radius: 6px; padding: 5px 10px; font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
+                                        <i data-lucide="alert-triangle" style="width: 13px; height: 13px;"></i> Hubungi Admin
+                                    </span>
+                                @else
+                                    <span style="background: var(--soft); border: 1px solid var(--border); color: var(--muted); border-radius: 6px; padding: 5px 10px; font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
+                                        <i data-lucide="shield-check" style="width: 13px; height: 13px;"></i> Lewat Admin
+                                    </span>
+                                @endif
                             </div>
                         </div>
                     @endforeach

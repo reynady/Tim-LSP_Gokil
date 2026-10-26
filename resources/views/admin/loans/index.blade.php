@@ -14,6 +14,20 @@
     </div>
 </div>
 
+@if(session('success'))
+    <div style="background: #f0fdf4; border: 1px solid #86efac; color: #166534; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="check-circle" style="width: 16px; height: 16px; flex-shrink: 0;"></i>
+        <span>{{ session('success') }}</span>
+    </div>
+@endif
+
+@if(session('error'))
+    <div style="background: #fef2f2; border: 1px solid #f87171; color: #991b1b; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="alert-circle" style="width: 16px; height: 16px; flex-shrink: 0;"></i>
+        <span>{{ session('error') }}</span>
+    </div>
+@endif
+
 <div class="card-panel">
     <div class="card-panel-header">
         <form method="GET" action="{{ route('admin.loans.index') }}" class="filter-bar">
@@ -46,7 +60,7 @@
                     <th>Tanggal Pinjam</th>
                     <th>Batas Kembali</th>
                     <th>Status</th>
-                    <th style="text-align: right; width: 180px;">Aksi</th>
+                    <th style="text-align: right; width: 290px;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -97,7 +111,18 @@
                             @endif
                         </td>
                         <td>
-                            <div class="action-buttons" style="justify-content: flex-end;">
+                            <div class="action-buttons" style="justify-content: flex-end; gap: 6px; flex-wrap: wrap;">
+                                @if(!$isOverdue)
+                                    <form method="POST" action="{{ route('admin.loans.simulate-overdue', $loan->id) }}"
+                                          onsubmit="return confirm('Simulasikan keterlambatan untuk transaksi {{ $loan->loan_code }}? Due date akan diubah ke kemarin.');">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #94651E; background: #FBF4E6; border: 1px solid #F5E5C9;" title="Demo: Ubah jatuh tempo ke kemarin">
+                                            <i data-lucide="timer-off" style="width: 13px; height: 13px;"></i>
+                                            <span>Simulasi Terlambat</span>
+                                        </button>
+                                    </form>
+                                @endif
                                 <a href="{{ route('admin.loans.return', $loan->id) }}" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
                                     <i data-lucide="corner-down-left" style="width: 14px; height: 14px;"></i>
                                     <span>Proses Pengembalian</span>

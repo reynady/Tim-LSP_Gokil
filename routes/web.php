@@ -71,6 +71,11 @@ Route::middleware(['auth', 'admin'])
             'processReturn',
         ])->name('loans.process-return');
 
+        Route::patch('/loans/{loan}/simulate-overdue', [
+            \App\Http\Controllers\Admin\LoanController::class,
+            'simulateOverdue',
+        ])->name('loans.simulate-overdue');
+
         Route::get('/keterlambatan-denda', [
             \App\Http\Controllers\Admin\FineController::class,
             'index',
@@ -93,7 +98,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/peminjaman', [\App\Http\Controllers\Member\LoanController::class, 'store'])->name('loan.store');
     Route::get('/peminjaman-berhasil', [\App\Http\Controllers\Member\LoanController::class, 'success'])->name('loan.success');
     Route::get('/peminjaman-aktif', [\App\Http\Controllers\Member\LoanController::class, 'activeLoans'])->name('loan.active');
-    Route::post('/peminjaman/{loan}/kembalikan', [\App\Http\Controllers\Member\LoanController::class, 'returnLoan'])->name('loan.return');
     Route::get('/riwayat', [\App\Http\Controllers\Member\LoanController::class, 'history'])->name('loan.history');
     Route::get('/riwayat/cetak', [\App\Http\Controllers\Member\LoanController::class, 'printHistory'])->name('loan.history.print');
 });

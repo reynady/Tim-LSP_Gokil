@@ -114,6 +114,24 @@ class LoanController extends Controller
     }
 
     /**
+     * [DEMO] Simulasi keterlambatan — mengubah due_date transaksi aktif menjadi kemarin.
+     * Digunakan khusus untuk keperluan demonstrasi denda keterlambatan.
+     */
+    public function simulateOverdue(Loan $loan)
+    {
+        if (!in_array($loan->status, ['active', 'borrowed', 'pending'])) {
+            return redirect()->route('admin.loans.index')
+                ->with('error', 'Simulasi hanya berlaku pada transaksi yang masih aktif.');
+        }
+
+        $loan->update(['due_date' => now()->subDay()->toDateString()]);
+
+        return redirect()->route('admin.loans.index')
+            ->with('success', "Demo: Batas pengembalian {$loan->loan_code} diubah ke kemarin. Transaksi sekarang terlambat 1 hari.");
+    }
+
+
+    /**
      * Menampilkan daftar riwayat seluruh transaksi peminjaman (FR-011).
      */
     public function history(Request $request)

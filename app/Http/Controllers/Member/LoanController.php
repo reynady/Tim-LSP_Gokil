@@ -117,7 +117,7 @@ class LoanController extends Controller
                 'loan_code' => $code,
                 'user_id'   => $user->id,
                 'loan_date' => now()->toDateString(),
-                'due_date'  => now()->addDays(5)->toDateString(),
+                'due_date'  => now()->addDays(2)->toDateString(),
                 'status'    => 'active',
                 'notes'     => 'Peminjaman mandiri oleh anggota melalui portal inventaris.',
             ]);
@@ -241,33 +241,4 @@ class LoanController extends Controller
         ));
     }
 
-    /**
-     * Kembalikan peminjaman unit (proses return)
-     */
-    public function returnLoan(Request $request, Loan $loan)
-    {
-        $user = auth()->user();
-
-        // Pastikan hanya pemilik peminjaman atau admin yang bisa mengembalikan
-        if (!$user->isAdmin() && $loan->user_id !== $user->id) {
-            abort(403, 'Akses tidak diizinkan.');
-        }
-
-        DB::transaction(function () use ($loan, $user) {
-            $loan->update([
-                'status'      => 'returned',
-                'returned_by' => $user->id,
-            ]);
-
-            foreach ($loan->details as $detail) {
-                $detail->update(['returned_at' => now()]);
-                if ($detail->monster) {
-                    $detail->monster->update(['status' => 'available']);
-                }
-            }
-        });
-
-        return redirect()->route('loan.active')
-            ->with('success', "Entitas monster pada transaksi {$loan->loan_code} berhasil dikembalikan. Kuota peminjaman Anda bertambah.");
-    }
 }
