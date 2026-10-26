@@ -148,6 +148,10 @@ class MemberController extends Controller
 
             $member->update($userData);
 
+            if (! $member->is_active) {
+                $member->revokeSessions();
+            }
+
             $member->profile()->updateOrCreate(
                 ['user_id' => $member->id],
                 [
@@ -170,8 +174,14 @@ class MemberController extends Controller
             abort(404, 'Data anggota tidak ditemukan.');
         }
 
-        $member->is_active = !$member->is_active;
-        $member->save();
+        DB::transaction(function () use ($member) {
+            $member->is_active = !$member->is_active;
+            $member->save();
+
+            if (! $member->is_active) {
+                $member->revokeSessions();
+            }
+        });
 
         $statusText = $member->is_active ? 'diaktifkan' : 'dinonaktifkan';
 
@@ -200,7 +210,10 @@ class MemberController extends Controller
 
         // FR-004 Alt A3: Jika memiliki riwayat transaksi lampau, nonaktifkan akun agar integritas riwayat tetap utuh (NFR-008)
         if ($member->loans()->exists()) {
-            $member->update(['is_active' => false]);
+            DB::transaction(function () use ($member) {
+                $member->update(['is_active' => false]);
+                $member->revokeSessions();
+            });
 
             return redirect()->route('admin.members.index')
                 ->with('success', "Anggota '{$member->name}' memiliki riwayat transaksi, sehingga akun dinonaktifkan (arsip transaksi tetap tersimpan sesuai NFR-008 / FR-004 Alt A3).");

@@ -14,7 +14,7 @@ class AdminMemberEditTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create(['role' => 'admin']));
+        $this->actingAs(User::factory()->create(['role' => 'admin', 'is_active' => true]));
     }
 
     public function test_edit_displays_member_and_profile_data(): void
