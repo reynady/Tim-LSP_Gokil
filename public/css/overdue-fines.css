@@ -1,0 +1,455 @@
+/* ==========================================================================
+   Keterlambatan & Denda (Figma Design Implementation)
+   ========================================================================== */
+
+.overdue-page {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    width: 100%;
+    max-width: 1112px;
+}
+
+/* ── Judul Halaman ─────────────────────────────────────────────────────── */
+.overdue-header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.overdue-title {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 30px;
+    line-height: 150%;
+    color: #1C3029;
+}
+
+.overdue-subtitle {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 150%;
+    color: #6D7972;
+}
+
+/* ── Pesan Kontekstual (Notice Alert) ──────────────────────────────────── */
+.overdue-alert {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 18px;
+    gap: 12px;
+    background: #FBF4E6;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.overdue-alert-icon {
+    width: 20px;
+    height: 20px;
+    color: #94651E;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.overdue-alert-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.overdue-alert-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 150%;
+    color: #94651E;
+}
+
+.overdue-alert-desc {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 150%;
+    color: #6D7972;
+}
+
+/* ── Ringkasan Keterlambatan (KPI Cards) ────────────────────────────────── */
+.overdue-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.overdue-summary-card {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 22px;
+    gap: 10px;
+    background: #FFFFFF;
+    border: 1px solid #DFE5DE;
+    border-radius: 10px;
+    min-height: 148px;
+}
+
+.overdue-summary-top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.overdue-summary-label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 16px;
+    color: #6D7972;
+}
+
+.overdue-summary-icon {
+    width: 18px;
+    height: 18px;
+    color: #187653;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.overdue-summary-value {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 150%;
+    color: #1C3029;
+}
+
+.overdue-summary-desc {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 150%;
+    color: #6D7972;
+}
+
+/* ── Section Prioritas & Konteks Riwayat ─────────────────────────────────── */
+.overdue-section {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.overdue-section-title {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 150%;
+    color: #1C3029;
+}
+
+.overdue-table-card {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    background: #FFFFFF;
+    border: 1px solid #DFE5DE;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* ── Filter / Search Bar ───────────────────────────────────────────────── */
+.overdue-filter-bar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    gap: 12px;
+    box-sizing: border-box;
+}
+
+.overdue-search-wrapper {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0 12px;
+    gap: 10px;
+    width: 350px;
+    height: 44px;
+    border: 1px solid #DFE5DE;
+    border-radius: 6px;
+    background: #FFFFFF;
+}
+
+.overdue-search-wrapper svg {
+    width: 18px;
+    height: 18px;
+    color: #6D7972;
+    flex-shrink: 0;
+}
+
+.overdue-search-input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 150%;
+    color: #1C3029;
+    background: transparent;
+}
+
+.overdue-search-input::placeholder {
+    color: #6D7972;
+}
+
+.overdue-filter-date {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    text-align: right;
+    color: #6D7972;
+}
+
+/* ── Data Tables ───────────────────────────────────────────────────────── */
+.overdue-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.overdue-data-table thead tr {
+    background: #F8F9F6;
+    height: 44px;
+}
+
+.overdue-data-table th {
+    padding: 12px 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 150%;
+    text-transform: uppercase;
+    color: #6D7972;
+    letter-spacing: 0.04em;
+    border: none;
+}
+
+.overdue-data-table td {
+    padding: 16px 20px;
+    border-top: 1px solid #DFE5DE;
+    vertical-align: middle;
+}
+
+/* Transaksi & Anggota */
+.cell-tx-member {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cell-tx-code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 150%;
+    color: #6D7972;
+}
+
+.cell-member-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 150%;
+    color: #1C3029;
+}
+
+.cell-member-name-plain {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 150%;
+    color: #1C3029;
+}
+
+/* Unit */
+.cell-unit {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cell-unit-code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 150%;
+    color: #1C3029;
+}
+
+.cell-unit-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 150%;
+    color: #6D7972;
+}
+
+/* Tanggal & Hari */
+.cell-date-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 150%;
+    color: #1C3029;
+}
+
+/* Badges */
+.badge-overdue-warning {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 4px 10px;
+    gap: 6px;
+    background: #FBF4E6;
+    border-radius: 100px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 150%;
+    color: #94651E;
+}
+
+.badge-overdue-dot {
+    width: 4px;
+    height: 4px;
+    background: #94651E;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.badge-completed-status {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 4px 10px;
+    gap: 6px;
+    background: #F5F6F2;
+    border-radius: 100px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 150%;
+    color: #6D7972;
+}
+
+.badge-completed-dot {
+    width: 4px;
+    height: 4px;
+    background: #6D7972;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.cell-fine-pending {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 150%;
+    color: #1C3029;
+}
+
+.cell-fine-returned {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.cell-fine-returned-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 150%;
+    color: #1C3029;
+}
+
+/* Action Links */
+.overdue-action-link {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 150%;
+    color: #187653;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+    transition: opacity .15s;
+}
+
+.overdue-action-link:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+/* Table Footer / Summary */
+.overdue-table-summary {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 18px 20px;
+    background: #F8F9F6;
+    border-top: 1px solid #DFE5DE;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 150%;
+    color: #6D7972;
+}
+
+/* ── Catatan Halaman (Footer) ─────────────────────────────────────────── */
+.overdue-page-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 0 10px;
+    border-top: 1px solid #DFE5DE;
+    margin-top: 14px;
+}
+
+.overdue-footer-left,
+.overdue-footer-right {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 13px;
+    color: #6D7972;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .overdue-summary-grid {
+        grid-template-columns: 1fr;
+    }
+    .overdue-filter-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .overdue-search-wrapper {
+        width: 100%;
+    }
+}

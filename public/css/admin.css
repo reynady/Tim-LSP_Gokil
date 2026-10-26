@@ -155,9 +155,9 @@ button, input, select, textarea {
 }
 
 .nav-link.active {
-    background: var(--green);
+    background: #21473D;
     color: var(--white);
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .nav-link svg {
@@ -223,6 +223,31 @@ button, input, select, textarea {
     height: 16px;
 }
 
+.institution-card {
+    background: #21473D;
+    border-radius: 6px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: var(--white);
+}
+
+.institution-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 12px;
+    color: #FFFFFF;
+}
+
+.institution-card-desc {
+    font-size: 11px;
+    line-height: 150%;
+    color: #B5C9BE;
+}
+
 /* ── Main Area ─────────────────────────────────────────── */
 .main-area {
     flex: 1;
@@ -232,6 +257,56 @@ button, input, select, textarea {
 }
 
 /* ── Topbar ────────────────────────────────────────────── */
+.topbar-date {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 400;
+}
+
+.topbar-divider {
+    width: 1px;
+    height: 26px;
+    background: var(--border);
+}
+
+.user-profile-menu {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: default;
+}
+
+.user-avatar-circle {
+    width: 34px;
+    height: 34px;
+    background: #E9F3EC;
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #187653;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.user-meta-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.user-meta-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 15px;
+}
+
+.user-meta-role {
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 12px;
+}
 .topbar {
     min-height: 64px;
     padding: 0 32px;

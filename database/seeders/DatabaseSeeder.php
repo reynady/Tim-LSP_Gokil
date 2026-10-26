@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             MonsterSeeder::class,
             MemberSeeder::class,
+            OverdueLoanSeeder::class,
         ]);
     }
 }

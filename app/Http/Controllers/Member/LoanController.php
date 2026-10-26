@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Loan;
 use App\Models\LoanDetail;
 use App\Models\Monster;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -180,6 +181,64 @@ class LoanController extends Controller
     public function history()
     {
         return view('member.history');
+    }
+
+    /**
+     * Tampilkan halaman pratinjau cetak riwayat sirkulasi untuk anggota
+     */
+    public function printHistory(Request $request)
+    {
+        $user = auth()->user();
+        $today = Carbon::today();
+
+        $loans = Loan::with(['details.monster', 'details.fine'])
+            ->where('user_id', $user->id)
+            ->latest('loan_date')
+            ->get();
+
+        $loans->each(function ($loan) use ($today) {
+            $detail = $loan->details->first();
+            $dueDate = $loan->due_date ? $loan->due_date->startOfDay() : $today;
+
+            if ($loan->status === 'returned') {
+                if ($detail?->fine && $detail->fine->overdue_days > 0) {
+                    $loan->calculated_overdue_days = $detail->fine->overdue_days;
+                } elseif ($detail?->returned_at && $loan->due_date) {
+                    $returnDate = $detail->returned_at->startOfDay();
+                    $loan->calculated_overdue_days = $returnDate->gt($dueDate) ? $dueDate->diffInDays($returnDate) : 0;
+                } else {
+                    $loan->calculated_overdue_days = 0;
+                }
+            } else {
+                $loan->calculated_overdue_days = $today->gt($dueDate) ? $dueDate->diffInDays($today) : 0;
+            }
+        });
+
+        $totalLoans = $loans->count();
+        $onTimeCount = $loans->filter(fn($l) => $l->status === 'returned' && ($l->calculated_overdue_days ?? 0) === 0)->count();
+        $lateCount = $loans->filter(fn($l) => $l->status === 'returned' && ($l->calculated_overdue_days ?? 0) > 0)->count();
+        $activeCount = $loans->filter(fn($l) => in_array($l->status, ['active', 'borrowed', 'pending']))->count();
+
+        $backUrl = route('loan.history');
+        $scopeTitle = 'Catatan Arsip Pribadi - ' . ($user->name ?? 'Anggota');
+        $referenceCode = 'REF-RWY-' . strtoupper(substr(md5(($user->id ?? 1) . '-' . now()->timestamp), 0, 8));
+        $printedBy = $user->name ?? 'Anggota';
+        $printedRole = 'Anggota';
+        $printedAt = now();
+
+        return view('shared.print-history', compact(
+            'loans',
+            'totalLoans',
+            'onTimeCount',
+            'lateCount',
+            'activeCount',
+            'backUrl',
+            'scopeTitle',
+            'referenceCode',
+            'printedBy',
+            'printedRole',
+            'printedAt'
+        ));
     }
 
     /**

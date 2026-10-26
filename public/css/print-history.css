@@ -1,0 +1,479 @@
+/* ==========================================================================
+   Cetak Riwayat (Figma Design Implementation)
+   ========================================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+body.print-preview-body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #FFFFFF;
+    color: #1C3029;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Kontrol Pratinjau Cetak (Top Control Bar) ─────────────────────────── */
+.print-control-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 64px;
+    height: 80px;
+    background: #F8F9F6;
+    border-bottom: 1px solid #DFE5DE;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.print-guidance {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.print-context-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 16px;
+    color: #1C3029;
+}
+
+.print-context-hint {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    color: #6D7972;
+}
+
+.print-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-print-back {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 18px;
+    height: 44px;
+    background: #FFFFFF;
+    border: 1px solid #DFE5DE;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 17px;
+    color: #1C3029;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+}
+
+.btn-print-back:hover {
+    background: #F1F4F0;
+    border-color: #CBD5E1;
+}
+
+.btn-print-action {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 18px;
+    gap: 9px;
+    height: 44px;
+    background: #187653;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 17px;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: background .15s;
+}
+
+.btn-print-action:hover {
+    background: #125e42;
+}
+
+.btn-print-action svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+/* ── Dokumen Riwayat Institusi ─────────────────────────────────────────── */
+.print-doc-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 44px 64px 36px;
+    gap: 24px;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+/* Kop Dokumen */
+.print-kop {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    min-height: 44px;
+}
+
+.print-institution {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+}
+
+.print-institution-logo {
+    box-sizing: border-box;
+    width: 32px;
+    height: 32px;
+    border: 1.3px solid #187653;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #187653;
+}
+
+.print-institution-logo svg {
+    width: 18px;
+    height: 18px;
+}
+
+.print-institution-identity {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.print-institution-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 24px;
+    color: #1C3029;
+}
+
+.print-institution-system {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    color: #6D7972;
+}
+
+.print-doc-reference {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    color: #6D7972;
+}
+
+/* Garis Kop */
+.print-kop-line {
+    width: 100%;
+    height: 2px;
+    background: #102F28;
+    margin: 0;
+}
+
+/* Judul dan Pencetak */
+.print-header-grid {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 32px;
+    width: 100%;
+}
+
+.print-report-title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.print-report-title {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 140%;
+    color: #1C3029;
+}
+
+.print-report-desc {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 150%;
+    color: #1C3029;
+}
+
+.print-report-status {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 150%;
+    color: #6D7972;
+}
+
+.print-metadata-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    width: 320px;
+    flex-shrink: 0;
+}
+
+.print-meta-label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 150%;
+    color: #6D7972;
+}
+
+.print-meta-user {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 150%;
+    color: #1C3029;
+}
+
+.print-meta-time {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 150%;
+    color: #6D7972;
+}
+
+.print-meta-scope {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 150%;
+    color: #6D7972;
+}
+
+/* ── Tabel Data Riwayat ────────────────────────────────────────────────── */
+.print-table-wrapper {
+    width: 100%;
+    border: 1px solid #DFE5DE;
+    border-radius: 10px;
+    background: #FFFFFF;
+    overflow: hidden;
+}
+
+.print-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.print-data-table thead tr {
+    background: #F8F9F6;
+    height: 44px;
+}
+
+.print-data-table th {
+    padding: 12px 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 150%;
+    text-transform: uppercase;
+    color: #6D7972;
+    letter-spacing: 0.05em;
+    border: none;
+}
+
+.print-data-table td {
+    padding: 16px 20px;
+    border-top: 1px solid #DFE5DE;
+    vertical-align: middle;
+}
+
+.cell-print-tx-unit {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cell-print-tx-code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 150%;
+    color: #1C3029;
+}
+
+.cell-print-unit-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 150%;
+    color: #1C3029;
+}
+
+.cell-print-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 150%;
+    color: #1C3029;
+}
+
+.print-table-summary {
+    display: flex;
+    align-items: center;
+    padding: 18px 20px;
+    background: #F8F9F6;
+    border-top: 1px solid #DFE5DE;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 150%;
+    color: #6D7972;
+}
+
+/* ── Total Laporan (Summary 4 Cards) ──────────────────────────────────── */
+.print-totals-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 36px;
+    width: 100%;
+    padding: 14px 0;
+}
+
+.print-total-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+}
+
+.print-total-label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 150%;
+    color: #6D7972;
+}
+
+.print-total-value {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 150%;
+    color: #1C3029;
+}
+
+/* Pemisah */
+.print-section-divider {
+    width: 100%;
+    height: 1px;
+    background: #DFE5DE;
+}
+
+/* Catatan Dokumen */
+.print-doc-notes {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    padding-bottom: 24px;
+}
+
+.print-notes-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.print-notes-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 150%;
+    color: #6D7972;
+}
+
+.print-page-num {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 13px;
+    color: #6D7972;
+    flex-shrink: 0;
+}
+
+/* ── Print Media Query ─────────────────────────────────────────────────── */
+@media print {
+    @page {
+        size: A4 landscape;
+        margin: 10mm 15mm;
+    }
+
+    body.print-preview-body {
+        background: #FFFFFF !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .print-control-bar {
+        display: none !important;
+    }
+
+    .print-doc-container {
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        gap: 16px !important;
+    }
+
+    .print-table-wrapper {
+        border-color: #DFE5DE !important;
+    }
+
+    .print-data-table thead tr {
+        background: #F8F9F6 !important;
+    }
+
+    .print-table-summary {
+        background: #F8F9F6 !important;
+    }
+
+    .btn-print-back,
+    .btn-print-action {
+        display: none !important;
+    }
+}

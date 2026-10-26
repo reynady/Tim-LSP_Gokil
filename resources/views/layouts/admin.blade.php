@@ -19,43 +19,44 @@
         <a href="{{ route('admin.dashboard') }}" class="brand">
             <span class="brand-icon"><i data-lucide="layers"></i></span>
             <span>ArsenalTrack</span>
-            <span class="brand-badge">ADMIN</span>
         </a>
 
         <div class="nav-section">
-            <div class="nav-label">Menu Utama</div>
+            <div class="nav-label">RUANG ADMIN</div>
             <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
             </a>
-        </div>
-
-        <div class="nav-section">
-            <div class="nav-label">Master Data</div>
             <a href="{{ route('admin.members.index') }}" class="nav-link {{ request()->routeIs('admin.members.*') ? 'active' : '' }}">
-                <i data-lucide="users"></i> <span>Daftar Anggota</span>
+                <i data-lucide="users"></i> <span>Anggota</span>
             </a>
             <a href="{{ route('admin.monsters.index') }}" class="nav-link {{ request()->routeIs('admin.monsters.*') ? 'active' : '' }}">
-                <i data-lucide="boxes"></i> <span>Kelola Monster</span>
+                <i data-lucide="boxes"></i> <span>Unit</span>
             </a>
             <a href="{{ route('admin.categories.index') }}" class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
-                <i data-lucide="tags"></i> <span>Kelola Kategori</span>
+                <i data-lucide="tags"></i> <span>Kategori</span>
             </a>
-        </div>
-
-        <div class="nav-section">
-            <div class="nav-label">Navigasi Luar</div>
-            <a href="{{ route('dashboard') }}" class="nav-link" target="_blank" title="Buka Portal Anggota di tab baru">
-                <i data-lucide="external-link"></i> <span>Portal Anggota</span>
+            <a href="{{ route('admin.loans.index') }}" class="nav-link {{ request()->routeIs('admin.loans.*') ? 'active' : '' }}">
+                <i data-lucide="archive"></i> <span>Peminjaman aktif</span>
+            </a>
+            <a href="{{ route('admin.fines.index') }}" class="nav-link {{ request()->routeIs('admin.fines.*') ? 'active' : '' }}">
+                <i data-lucide="calendar-clock"></i> <span>Keterlambatan & denda</span>
+            </a>
+            <a href="{{ route('admin.loans.history') }}" class="nav-link {{ request()->routeIs('admin.loans.history*') ? 'active' : '' }}">
+                <i data-lucide="history"></i> <span>Riwayat</span>
+            </a>
+            <a href="{{ route('profile') }}" class="nav-link {{ request()->routeIs('profile*') ? 'active' : '' }}">
+                <i data-lucide="user"></i> <span>Profil saya</span>
             </a>
         </div>
 
         <div class="sidebar-spacer"></div>
 
-        <div class="admin-card">
-            <div class="admin-card-title">
-                <i data-lucide="shield-check"></i> Mode Administrator
+        <div class="institution-card">
+            <div class="institution-card-header">
+                <i data-lucide="shield-check" style="width: 16px; height: 16px; color: #4ADE80;"></i>
+                <span>Pusat Pelatihan Arunika</span>
             </div>
-            <span>Hak akses penuh terhadap Master Data inventaris & kategori monster.</span>
+            <span class="institution-card-desc">Lingkungan simulasi akademik. Seluruh data bersifat fiktif.</span>
         </div>
 
         <form method="POST" action="{{ route('logout') }}">
@@ -71,22 +72,28 @@
         {{-- Topbar Header --}}
         <header class="topbar">
             <nav class="breadcrumb" aria-label="Breadcrumb">
-                <a href="{{ route('admin.dashboard') }}"><i data-lucide="home" style="width: 14px; height: 14px;"></i></a>
+                <span>Ruang Admin</span>
                 <span class="separator">/</span>
                 @yield('breadcrumbs')
             </nav>
 
             <div class="topbar-right">
+                <div class="topbar-date">
+                    {{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM Y') }}
+                </div>
+                <div class="topbar-divider"></div>
+
                 @php
                     $admin = auth()->user();
-                    $initial = $admin ? strtoupper(substr($admin->name ?? 'AD', 0, 2)) : 'AD';
+                    $initial = $admin ? strtoupper(substr($admin->name ?? 'AL', 0, 2)) : 'AL';
                 @endphp
-                <div class="user-chip">
-                    <div class="user-avatar">{{ $initial }}</div>
-                    <div class="user-meta">
-                        <span class="user-name">{{ $admin->name ?? 'Administrator' }}</span>
-                        <span class="user-role">Administrator</span>
+                <div class="user-profile-menu">
+                    <div class="user-avatar-circle">{{ $initial }}</div>
+                    <div class="user-meta-block">
+                        <span class="user-meta-name">{{ $admin->name ?? 'Aditya Laksono' }}</span>
+                        <span class="user-meta-role">Admin</span>
                     </div>
+                    <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #6D7972;"></i>
                 </div>
             </div>
         </header>

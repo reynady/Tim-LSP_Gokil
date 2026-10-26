@@ -55,6 +55,36 @@ Route::middleware(['auth', 'admin'])
                 'toggleStatus',
             ]
         )->name('members.toggle-status');
+
+        Route::get('/loans', [
+            \App\Http\Controllers\Admin\LoanController::class,
+            'index',
+        ])->name('loans.index');
+
+        Route::get('/loans/{loan}/return', [
+            \App\Http\Controllers\Admin\LoanController::class,
+            'returnProcess',
+        ])->name('loans.return');
+
+        Route::post('/loans/{loan}/return', [
+            \App\Http\Controllers\Admin\LoanController::class,
+            'processReturn',
+        ])->name('loans.process-return');
+
+        Route::get('/keterlambatan-denda', [
+            \App\Http\Controllers\Admin\FineController::class,
+            'index',
+        ])->name('fines.index');
+
+        Route::get('/riwayat', [
+            \App\Http\Controllers\Admin\LoanController::class,
+            'history',
+        ])->name('loans.history');
+
+        Route::get('/riwayat/cetak', [
+            \App\Http\Controllers\Admin\LoanController::class,
+            'printHistory',
+        ])->name('loans.print');
     });
 
 Route::middleware('auth')->group(function () {
@@ -65,6 +95,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/peminjaman-aktif', [\App\Http\Controllers\Member\LoanController::class, 'activeLoans'])->name('loan.active');
     Route::post('/peminjaman/{loan}/kembalikan', [\App\Http\Controllers\Member\LoanController::class, 'returnLoan'])->name('loan.return');
     Route::get('/riwayat', [\App\Http\Controllers\Member\LoanController::class, 'history'])->name('loan.history');
+    Route::get('/riwayat/cetak', [\App\Http\Controllers\Member\LoanController::class, 'printHistory'])->name('loan.history.print');
 });
 
 Route::get('/profil', function () {

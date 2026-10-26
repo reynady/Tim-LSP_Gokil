@@ -146,9 +146,15 @@
         <div class="page-content">
 
             {{-- Judul halaman --}}
-            <section class="page-heading">
-                <h1>Riwayat peminjaman</h1>
-                <p>Arsip seluruh transaksi peminjaman yang telah selesai dan dicatat oleh Admin.</p>
+            <section class="page-heading" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <h1>Riwayat peminjaman</h1>
+                    <p>Arsip seluruh transaksi peminjaman yang telah selesai dan dicatat oleh Admin.</p>
+                </div>
+                <a href="{{ route('loan.history.print') }}" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; background: #187653; color: #FFFFFF; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                    <i data-lucide="printer" style="width: 16px; height: 16px;"></i>
+                    <span>Cetak Riwayat</span>
+                </a>
             </section>
 
             {{-- Ringkasan riwayat (3 Cards) --}}
