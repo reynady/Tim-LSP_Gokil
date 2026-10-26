@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             CategorySeeder::class,
             MonsterSeeder::class,
+            MemberSeeder::class,
         ]);
     }
 }
