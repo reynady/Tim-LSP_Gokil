@@ -21,6 +21,21 @@ class Monster extends Model
         'status',
     ];
 
+    public function imageUrl(): string
+    {
+        if ($this->image) {
+            return filter_var($this->image, FILTER_VALIDATE_URL)
+                ? $this->image
+                : asset($this->image);
+        }
+
+        $imagePath = 'images/monsters/' . strtolower($this->monster_code) . '.svg';
+
+        return asset(file_exists(public_path($imagePath))
+            ? $imagePath
+            : 'images/monsters/default.svg');
+    }
+
     public function blockingLoanDetails(): HasMany
     {
         return $this->loanDetails()->whereNull('returned_at')

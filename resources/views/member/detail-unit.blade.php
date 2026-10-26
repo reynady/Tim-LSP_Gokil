@@ -33,6 +33,7 @@
         'type'        => $currentMonster->origin_type ?? 'Unit Monster Terdaftar',
         'threat'      => $currentMonster->threat_level ?? 'Normal',
         'description' => $currentMonster->description ?: 'Unit monster terdaftar untuk kebutuhan operasional dan simulasi anggota sesuai ketentuan pengelolaan entitas. Dicatat sebagai satu unit inventaris.',
+        'image'       => $currentMonster?->imageUrl() ?? asset('images/monsters/default.svg'),
     ];
 
     $activeCount = isset($activeLoansCount) ? $activeLoansCount : ($user ? \App\Models\Loan::where('user_id', $user->id)->whereIn('status', ['active', 'borrowed', 'approved', 'pending'])->count() : 0);
@@ -151,8 +152,8 @@
                         </div>
 
                         <div class="unit-visual">
-                            <div class="unit-symbol">
-                                <i data-lucide="boxes"></i>
+                            <div class="unit-art-frame">
+                                <img src="{{ $unit['image'] }}" alt="Ilustrasi {{ $unit['name'] }}">
                             </div>
                             <div class="unit-identity">
                                 <span>{{ strtoupper($unit['type']) }}</span>

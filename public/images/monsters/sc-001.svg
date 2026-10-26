@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="Ilustrasi Shadow Crawler">
+  <defs>
+    <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#24243b"/><stop offset="1" stop-color="#090d19"/></linearGradient>
+    <radialGradient id="mist"><stop stop-color="#706b9f" stop-opacity=".45"/><stop offset="1" stop-color="#706b9f" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shade" x2=".8" y2="1"><stop stop-color="#55526f"/><stop offset="1" stop-color="#171a2b"/></linearGradient>
+  </defs>
+  <rect width="640" height="420" fill="url(#bg)"/>
+  <ellipse cx="327" cy="229" rx="270" ry="190" fill="url(#mist)"/>
+  <path d="M80 370h480" stroke="#6b668a" stroke-width="2" opacity=".55"/>
+  <path d="m196 282-90 70 83-18 57-59m-2 17-61 100 86-57 31-47m83 0 52 49 82 37-57-80-55-37m8 23 90 38 65 85-105-45-81-46" fill="none" stroke="#5a5773" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M187 264q20-81 92-86l28-47 34 36q64-9 100 47l28 50-69 31-113-3-80 20Z" fill="url(#shade)" stroke="#8f8aaa" stroke-width="5" stroke-linejoin="round"/>
+  <path d="m245 204 19-37 20 26m54-2 23-38 12 44m-91-2 14 27m55-30 12 30" fill="#37364f" stroke="#8f8aaa" stroke-width="4" stroke-linejoin="round"/>
+  <path d="m277 226 14 3m42-4 14-3" stroke="#d6b4ff" stroke-width="8" stroke-linecap="round"/>
+  <path d="m297 252 23 4" stroke="#aaa2bc" stroke-width="3" stroke-linecap="round"/>
+  <path d="M65 67h120m277 0h113M82 80h67m367 0h63" stroke="#a29db9" stroke-width="3" opacity=".35"/>
+  <circle cx="320" cy="213" r="110" fill="none" stroke="#817b9b" stroke-dasharray="3 12" opacity=".4"/>
+</svg>

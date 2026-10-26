@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="Ilustrasi Aether Wraith">
+  <defs>
+    <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#302c55"/><stop offset="1" stop-color="#11182b"/></linearGradient>
+    <radialGradient id="aura"><stop stop-color="#a994ff" stop-opacity=".5"/><stop offset="1" stop-color="#6a73d4" stop-opacity="0"/></radialGradient>
+    <linearGradient id="form" x2=".8" y2="1"><stop stop-color="#e1d7ff"/><stop offset=".55" stop-color="#9ea6df"/><stop offset="1" stop-color="#5c70aa" stop-opacity=".15"/></linearGradient>
+  </defs>
+  <rect width="640" height="420" fill="url(#bg)"/>
+  <circle cx="321" cy="203" r="218" fill="url(#aura)"/>
+  <path d="M0 354q83-51 166 0t166 0 166 0 142 0v66H0Z" fill="#171c35"/>
+  <ellipse cx="320" cy="352" rx="142" ry="20" fill="#a7a5ed" opacity=".18"/>
+  <path d="M242 307c-29-53-33-98-11-136l-24-53 52 24c13-47 48-74 76-74s62 27 76 74l53-24-25 56c23 43 13 92-15 133l-12 58-46-20-30 36-35-30-44 16Z" fill="url(#form)" stroke="#ded6ff" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M255 173q32-47 66-27l-10 52-36 17m108-42q-31-47-65-27l11 52 35 17" fill="#d3d3f2" opacity=".7"/>
+  <path d="m282 197 16 5m45 0 16-5" stroke="#5e4ca0" stroke-width="8" stroke-linecap="round"/>
+  <path d="M307 226q13 8 26 0" fill="none" stroke="#6477b3" stroke-width="4" stroke-linecap="round"/>
+  <path d="m245 278-49 43 68-13m131-26 49 43-68-13" fill="none" stroke="#aeb9ed" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M83 69h90m313 0h71M110 82h45m356 0h52" stroke="#d0c9ff" stroke-width="3" opacity=".4"/>
+  <path d="M160 167q17 16 0 34m323-63q17 16 0 34M174 253q16 12 0 24m298-10q16 12 0 24" fill="none" stroke="#a8afff" stroke-width="4" opacity=".65" stroke-linecap="round"/>
+</svg>

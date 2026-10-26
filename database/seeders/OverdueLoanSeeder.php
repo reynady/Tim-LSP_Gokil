@@ -183,9 +183,9 @@ class OverdueLoanSeeder extends Seeder
         Fine::updateOrCreate(
             ['loan_detail_id' => $detail3->id],
             [
-                'amount'       => 0,
+                'amount'       => Fine::amountForOverdueDays(1),
                 'overdue_days' => 1,
-                'status'       => 'unpaid',
+                'status'       => 'waived',
             ]
         );
 
@@ -214,8 +214,38 @@ class OverdueLoanSeeder extends Seeder
         Fine::updateOrCreate(
             ['loan_detail_id' => $detail4->id],
             [
-                'amount'       => 0,
+                'amount'       => Fine::amountForOverdueDays(2),
                 'overdue_days' => 2,
+                'status'       => 'waived',
+            ]
+        );
+
+        // Transaksi 5: contoh riwayat dengan denda setelah melewati masa tenggang 5 hari.
+        $due5 = Carbon::today()->subDays(8);
+        $returned5 = Carbon::today()->subDay()->setTime(14, 0);
+        $loan5 = Loan::updateOrCreate(
+            ['loan_code' => 'AT-PJM-DEMO-FINE-001'],
+            [
+                'user_id'     => $users['Raka Pratama']->id,
+                'returned_by' => $admin?->id,
+                'loan_date'   => $due5->copy()->subDays(5),
+                'due_date'    => $due5,
+                'status'      => 'returned',
+                'notes'       => 'Contoh riwayat pengembalian terlambat dengan denda Ether.',
+            ]
+        );
+        $detail5 = LoanDetail::updateOrCreate(
+            ['loan_id' => $loan5->id],
+            [
+                'monster_id'  => $monsters['AT-PL-015']->id,
+                'returned_at' => $returned5,
+            ]
+        );
+        Fine::updateOrCreate(
+            ['loan_detail_id' => $detail5->id],
+            [
+                'amount'       => Fine::amountForOverdueDays(7),
+                'overdue_days' => 7,
                 'status'       => 'unpaid',
             ]
         );

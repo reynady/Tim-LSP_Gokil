@@ -16,16 +16,16 @@
     {{-- Judul Halaman --}}
     <div class="overdue-header">
         <h1 class="overdue-title">Keterlambatan & denda</h1>
-        <p class="overdue-subtitle">Pantau hari keterlambatan tanpa menetapkan nominal atau status pembayaran.</p>
+        <p class="overdue-subtitle">Denda berlaku setelah masa tenggang 5 hari keterlambatan.</p>
     </div>
 
     {{-- Pesan Kontekstual --}}
     <div class="overdue-alert">
         <i data-lucide="info" class="overdue-alert-icon"></i>
         <div class="overdue-alert-body">
-            <span class="overdue-alert-title">Kebijakan denda belum ditetapkan</span>
+        <span class="overdue-alert-title">Tarif denda keterlambatan</span>
             <span class="overdue-alert-desc">
-                Nominal denda: Belum ditetapkan. Status pembayaran: Belum dikonfigurasi. Sistem hanya mencatat hari terlambat; tidak ada tarif, tagihan, atau pembayaran melalui aplikasi.
+            5 hari keterlambatan pertama bebas denda. Mulai hari ke-6, denda sebesar {{ number_format(\App\Models\Fine::DAILY_RATE_ETHER, 0, ',', '.') }} Ether per hari. Total denda dihitung saat pengembalian dikonfirmasi.
             </span>
         </div>
     </div>
@@ -137,7 +137,9 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="cell-fine-pending">Belum ditetapkan</span>
+                                    <span class="cell-fine-pending">
+                                        {{ number_format($loan->calculated_fine_amount, 0, ',', '.') }} Ether
+                                    </span>
                                 </td>
                                 <td>
                                     <a href="{{ route('admin.loans.return', $loan->id) }}" class="overdue-action-link">
@@ -219,10 +221,12 @@
                                 </td>
                                 <td>
                                     <div class="cell-fine-returned">
-                                        <span class="cell-fine-returned-text">Belum ditetapkan</span>
+                                        <span class="cell-fine-returned-text">
+                                            {{ number_format($loan->calculated_fine_amount, 0, ',', '.') }} Ether
+                                        </span>
                                         <span class="badge-completed-status">
                                             <span class="badge-completed-dot"></span>
-                                            <span>Selesai</span>
+                                            <span>Selesai · {{ $loan->calculated_fine_amount > 0 ? (($detail?->fine?->status === 'paid') ? 'Lunas' : 'Belum dibayar') : 'Tidak dikenakan' }}</span>
                                         </span>
                                     </div>
                                 </td>

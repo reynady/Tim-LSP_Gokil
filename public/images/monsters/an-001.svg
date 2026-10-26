@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="Ilustrasi The Pale Wanderer">
+  <defs>
+    <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#263842"/><stop offset="1" stop-color="#111923"/></linearGradient>
+    <linearGradient id="cloak" x2="1" y2="1"><stop stop-color="#d5d0bd"/><stop offset=".55" stop-color="#989b91"/><stop offset="1" stop-color="#59656a"/></linearGradient>
+    <radialGradient id="moon"><stop stop-color="#d5e6df" stop-opacity=".32"/><stop offset="1" stop-color="#d5e6df" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="640" height="420" fill="url(#bg)"/>
+  <circle cx="323" cy="176" r="186" fill="url(#moon)"/>
+  <path d="M88 420 173 295l41 34 53-75 56 62 66-66 46 65 51-30 71 135Z" fill="#1a2830"/>
+  <path d="M243 337c17-45 12-83 19-120 4-24 14-41 24-54-24-27-22-68 4-94 30-30 84-24 106 10 16 24 13 57-7 81 24 21 43 43 49 76l26 129H197Z" fill="url(#cloak)" stroke="#d0d1c4" stroke-width="5"/>
+  <ellipse cx="330" cy="139" rx="46" ry="58" fill="#d7d4c4"/>
+  <path d="M300 133q12-10 23 0m20 0q12-10 23 0" fill="none" stroke="#26343b" stroke-width="7" stroke-linecap="round"/>
+  <path d="M316 161q15 8 31 0" fill="none" stroke="#89938d" stroke-width="4" stroke-linecap="round"/>
+  <path d="m286 202-76 99 35 16 70-66m95-33 69 91-31 21-74-67" fill="none" stroke="#aeb0a4" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m246 315-18 34m39-43-4 49m151-38 20 36m-42-43 5 48" stroke="#d4d0bf" stroke-width="5" stroke-linecap="round"/>
+  <path d="M62 66h94m-94 12h51m376-10h88" stroke="#b4c9c5" stroke-width="3" opacity=".4"/>
+  <circle cx="330" cy="138" r="4" fill="#d6f5e9"/>
+</svg>

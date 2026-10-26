@@ -162,7 +162,7 @@
                                     <td class="unit-code">{{ $m->monster_code }}</td>
                                     <td>
                                         <div class="monster-name">
-                                            <span class="monster-icon">◇</span>
+                                            <img class="monster-icon" src="{{ $m->imageUrl() }}" alt="Ilustrasi {{ $m->name }}" loading="lazy">
                                             <span>{{ $m->name }}</span>
                                         </div>
                                     </td>

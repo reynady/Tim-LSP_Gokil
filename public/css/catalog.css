@@ -427,15 +427,13 @@ td:last-child {
 }
 
 .monster-icon {
-    display: grid;
-    place-items: center;
-    width: 30px;
-    height: 30px;
+    display: block;
+    width: 48px;
+    height: 48px;
     flex-shrink: 0;
     border-radius: 6px;
-    background: #f0f3ee;
-    color: var(--green);
-    font-size: 20px;
+    background: #102f28;
+    object-fit: cover;
 }
 
 .muted-cell {

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="Ilustrasi Iron Warden">
+  <defs>
+    <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#3c4b4d"/><stop offset="1" stop-color="#182323"/></linearGradient>
+    <linearGradient id="metal" x2="1" y2="1"><stop stop-color="#d0c9a8"/><stop offset=".5" stop-color="#808d82"/><stop offset="1" stop-color="#455958"/></linearGradient>
+    <linearGradient id="glow" x2="0" y2="1"><stop stop-color="#f8df9b"/><stop offset="1" stop-color="#c27743"/></linearGradient>
+  </defs>
+  <rect width="640" height="420" fill="url(#bg)"/>
+  <path d="M0 345h640v75H0Z" fill="#172526"/>
+  <path d="M63 345V90h7v255m500 0V90h7v255M46 116h34m464 0h34" stroke="#82928a" stroke-width="3" opacity=".4"/>
+  <path d="m232 345 24-111-38-37 23-75 35-15 8-40h80l9 40 36 15 21 75-38 37 24 111Z" fill="url(#metal)" stroke="#e0d8b8" stroke-width="5" stroke-linejoin="round"/>
+  <path d="m268 138 28-27h50l29 27-8 63-23 27h-46l-23-27Z" fill="#293a3b" stroke="#abb3a1" stroke-width="4"/>
+  <path d="m281 167 26-9v14l-26 8m76-22 24 9v13l-24-8" fill="url(#glow)"/>
+  <path d="m291 252 59 0 14 65h-88Zm-29-103-50-12 23 54-17 28m144-70 51-12-23 54 17 28" fill="#627672" stroke="#c4c6aa" stroke-width="5" stroke-linejoin="round"/>
+  <path d="m286 273 67 0m-70 14h72m-66 18h58" stroke="#e4bd78" stroke-width="5" opacity=".8"/>
+  <circle cx="320" cy="238" r="9" fill="#f2c978"/>
+  <path d="M94 69h82m-82 12h50m318-12h82" stroke="#d4d0b6" stroke-width="3" opacity=".4"/>
+</svg>

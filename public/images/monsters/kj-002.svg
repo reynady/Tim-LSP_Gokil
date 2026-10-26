@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="Ilustrasi Leviathan Prime">
+  <defs>
+    <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#143b53"/><stop offset="1" stop-color="#061c32"/></linearGradient>
+    <linearGradient id="body" x2="1" y2=".6"><stop stop-color="#56b8ac"/><stop offset=".45" stop-color="#287d85"/><stop offset="1" stop-color="#19495f"/></linearGradient>
+    <linearGradient id="fin" x2="0" y2="1"><stop stop-color="#a3e7c8"/><stop offset="1" stop-color="#368f91"/></linearGradient>
+    <radialGradient id="light"><stop stop-color="#64cfca" stop-opacity=".5"/><stop offset="1" stop-color="#64cfca" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="640" height="420" fill="url(#bg)"/>
+  <circle cx="370" cy="185" r="210" fill="url(#light)"/>
+  <path d="M0 270q80-43 160 0t160 0 160 0 160 0v150H0Z" fill="#0b3048"/>
+  <path d="M0 326q90-36 180 0t180 0 180 0 180 0v94H0Z" fill="#08253e"/>
+  <path d="M127 237q53-73 142-54 52 11 84-27 27-33 71-17l85 30-62 36q-42 25-89 17-61-9-105 43-48 58-114 36-41-14-61-64 30 27 68 24-30-13-19-24Z" fill="url(#body)" stroke="#99ded1" stroke-width="5" stroke-linejoin="round"/>
+  <path d="m356 184 26-88 40 65 43-99 35 110 48-12-39 40-68-7-40 23Z" fill="url(#fin)" stroke="#a8eed4" stroke-width="4" stroke-linejoin="round"/>
+  <path d="m133 236-66-52 18 77-53 36 103-11m216-82-31 72 60-20" fill="#328c91" stroke="#8fd3c4" stroke-width="4" stroke-linejoin="round"/>
+  <path d="m459 184 13 4" stroke="#ffda8a" stroke-width="7" stroke-linecap="round"/>
+  <path d="M85 112q19 13 0 26m26-45q20 13 0 26m397 79q22 14 0 29" fill="none" stroke="#a4e8df" stroke-width="4" opacity=".65" stroke-linecap="round"/>
+  <path d="M42 54h90M512 54h84" stroke="#a5d9dc" stroke-width="3" opacity=".45"/>
+</svg>

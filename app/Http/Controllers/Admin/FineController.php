@@ -43,6 +43,7 @@ class FineController extends Controller
         $activeOverdueLoans->each(function ($loan) use ($today) {
             $dueDate = $loan->due_date ? $loan->due_date->startOfDay() : $today;
             $loan->calculated_overdue_days = max(1, $dueDate->diffInDays($today));
+            $loan->calculated_fine_amount = Fine::amountForOverdueDays($loan->calculated_overdue_days);
         });
 
         // 2. Query Peminjaman Selesai yang Memiliki Catatan Keterlambatan
@@ -84,6 +85,8 @@ class FineController extends Controller
             } else {
                 $loan->calculated_overdue_days = 0;
             }
+
+            $loan->calculated_fine_amount = Fine::amountForOverdueDays($loan->calculated_overdue_days);
         });
 
         // 3. Ringkasan KPI Cards

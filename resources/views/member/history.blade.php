@@ -36,18 +36,23 @@
         $monster = $detail?->monster;
         $returnDate = $detail?->returned_at ? \Carbon\Carbon::parse($detail->returned_at) : ($loan->updated_at ? \Carbon\Carbon::parse($loan->updated_at) : null);
         $dueDate = $loan->due_date;
+        $overdueDays = $detail?->fine && $detail->fine->overdue_days > 0
+            ? $detail->fine->overdue_days
+            : ($returnDate && $dueDate && $returnDate->startOfDay()->gt($dueDate->startOfDay())
+                ? $dueDate->startOfDay()->diffInDays($returnDate->startOfDay())
+                : 0);
         $isLate = false;
         $note = 'Tepat waktu';
         $subNote = null;
 
-        if ($returnDate && $dueDate && $returnDate->gt($dueDate)) {
+        if ($overdueDays > 0) {
             $isLate = true;
-            $diff = $returnDate->diffInDays($dueDate);
-            $note = 'Terlambat ' . $diff . ' hari';
-            if ($detail && $detail->fine) {
-                $subNote = 'Denda Rp ' . number_format($detail->fine->amount ?? 0, 0, ',', '.');
+            $note = 'Terlambat ' . $overdueDays . ' hari';
+            $fineAmount = \App\Models\Fine::amountForOverdueDays($overdueDays);
+            if ($fineAmount > 0) {
+                $subNote = 'Denda ' . number_format($fineAmount, 0, ',', '.') . ' Ether';
             } else {
-                $subNote = 'Denda tercatat';
+                $subNote = 'Belum dikenakan denda (masa tenggang 5 hari)';
             }
         }
 

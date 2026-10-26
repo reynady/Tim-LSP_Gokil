@@ -52,12 +52,14 @@ class LoanController extends Controller
         $today = now()->startOfDay();
         $dueDate = $loan->due_date ? $loan->due_date->startOfDay() : $today;
         $overdueDays = $today->gt($dueDate) ? $dueDate->diffInDays($today) : 0;
+        $fineAmount = Fine::amountForOverdueDays($overdueDays);
         $isOverdue = $overdueDays > 0;
 
         return view('admin.loans.return', compact(
             'loan',
             'monster',
             'overdueDays',
+            'fineAmount',
             'isOverdue',
             'today'
         ));
@@ -108,12 +110,13 @@ class LoanController extends Controller
 
                 // Jika terlambat, simpan pencatatan denda
                 if ($overdueDays > 0) {
+                    $fineAmount = Fine::amountForOverdueDays($overdueDays);
                     Fine::updateOrCreate(
                         ['loan_detail_id' => $detail->id],
                         [
-                            'amount'       => 0, // Denda dapat dikonfigurasi / belum ditetapkan
+                            'amount'       => $fineAmount,
                             'overdue_days' => $overdueDays,
-                            'status'       => 'unpaid',
+                            'status'       => $fineAmount > 0 ? 'unpaid' : 'waived',
                         ]
                     );
                 }
