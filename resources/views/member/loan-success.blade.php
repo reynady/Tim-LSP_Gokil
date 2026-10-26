@@ -40,8 +40,8 @@
         'unit_type' => $txMonster->origin_type ?? 'Kaiju/SCP Anomaly',
         'borrower'  => $userName,
         'qty'       => '1 unit',
-        'loan_date' => $currentTxLoan?->loan_date ? $currentTxLoan->loan_date->translatedFormat('d F Y') : now()->translatedFormat('d F Y'),
-        'due_date'  => $currentTxLoan?->due_date ? $currentTxLoan->due_date->translatedFormat('d F Y') : now()->addDays(5)->translatedFormat('d F Y'),
+        'loan_date' => $currentTxLoan?->scheduled_start ? $currentTxLoan->scheduled_start->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-',
+        'due_date'  => $currentTxLoan?->scheduled_end ? $currentTxLoan->scheduled_end->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-',
     ];
 
     /* Peminjaman aktif saat ini */
@@ -50,7 +50,8 @@
         return [
             'name'    => $monster->name ?? 'Entitas Monster',
             'code'    => $monster->monster_code ?? $loan->loan_code,
-            'due'     => $loan->due_date ? $loan->due_date->translatedFormat('d F Y') : now()->addDays(5)->translatedFormat('d F Y'),
+            'start'   => $loan->scheduled_start ? $loan->scheduled_start->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-',
+            'due'     => $loan->scheduled_end ? $loan->scheduled_end->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-',
             'is_new'  => ($currentTxLoan && $currentTxLoan->id === $loan->id),
         ];
     })->values()->all();
@@ -198,17 +199,17 @@
                     {{-- Dates --}}
                     <div class="detail-grid">
                         <div class="detail-field">
-                            <span>Tanggal pinjam</span>
+                            <span>Jadwal mulai</span>
                             <strong>{{ $tx['loan_date'] }}</strong>
                         </div>
                         <div class="detail-field">
-                            <span>Batas pengembalian</span>
+                            <span>Jadwal selesai</span>
                             <strong>{{ $tx['due_date'] }}</strong>
                         </div>
                     </div>
 
                     <p class="duration-note">
-                        Durasi 5 hari kalender. Tanggal ditetapkan otomatis oleh sistem.
+                        Jadwal peminjaman ditampilkan dalam Waktu Indonesia Barat (WIB).
                     </p>
 
                     {{-- Actions --}}
@@ -264,7 +265,8 @@
                                     @endif
                                 </div>
                                 <span class="loan-code">{{ $loan['code'] }}</span>
-                                <span class="loan-due">Batas kembali: {{ $loan['due'] }}</span>
+                                <span class="loan-due">Jadwal mulai: {{ $loan['start'] }}</span>
+                                <span class="loan-due">Jadwal selesai: {{ $loan['due'] }}</span>
                             </div>
                         @endforeach
                     </div>

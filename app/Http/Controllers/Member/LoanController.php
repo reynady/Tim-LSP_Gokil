@@ -6,9 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Loan;
 use App\Models\LoanDetail;
 use App\Models\Monster;
+use App\Models\User;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class LoanController extends Controller
 {
@@ -73,7 +78,7 @@ class LoanController extends Controller
             ->whereIn('status', ['active', 'borrowed', 'approved', 'pending'])
             ->count() : 0;
 
-        $canBorrow = ($activeLoansCount < 2) && ($monster && $monster->status === 'available');
+        $canBorrow = ($activeLoansCount < 2) && ($monster && $monster->canSchedule());
 
         return view('member.detail-unit', compact('monster', 'activeLoansCount', 'canBorrow'));
     }
@@ -83,57 +88,108 @@ class LoanController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'monster_id' => 'required|exists:monsters,id',
-        ]);
-
+        abort_unless(auth()->user()->role === 'member', 403, 'Hanya member yang dapat mengajukan peminjaman.');
+        $validated = $this->validateSchedule($request);
         $user = auth()->user();
 
-        // Validasi Aturan BRD: Maksimal 2 peminjaman aktif per anggota (VAL-L-03 / BReq-05)
-        $activeLoansCount = Loan::where('user_id', $user->id)
-            ->whereIn('status', ['active', 'borrowed', 'approved', 'pending'])
-            ->count();
+        $loan = DB::transaction(function () use ($user, $validated) {
+            // SQLite ignores FOR UPDATE; acquire its writer lock before any reads.
+            if (DB::connection()->getDriverName() === 'sqlite') {
+                DB::table('users')->where('id', $user->id)->update(['is_active' => DB::raw('is_active')]);
+            }
 
-        if ($activeLoansCount >= 2) {
-            return redirect()->route('loan.active')
-                ->with('error', 'Peminjaman ditolak: Anda telah mencapai batas maksimal 2 entitas monster aktif (VAL-L-03).');
-        }
+            User::whereKey($user->id)->lockForUpdate()->firstOrFail();
+            $monster = Monster::whereKey($validated['monster_id'])->lockForUpdate()->firstOrFail();
+            $start = CarbonImmutable::parse($validated['starts_at'], config('app.timezone'));
+            $end = CarbonImmutable::parse($validated['ends_at'], config('app.timezone'));
 
-        $monster = Monster::find($request->monster_id);
-        if (!$monster || $monster->status !== 'available') {
-            return back()->with('error', 'Peminjaman gagal: Entitas monster ini sedang tidak tersedia atau sudah dipinjam.');
-        }
+            if ($start->lt(now())) {
+                throw ValidationException::withMessages(['starts_at' => 'Waktu mulai peminjaman tidak boleh di masa lalu.']);
+            }
 
-        $loan = DB::transaction(function () use ($user, $monster) {
-            // Generate nomor transaksi unik: AT-PJM-ymd-XXX
-            $datePrefix = 'AT-PJM-' . now()->format('ymd') . '-';
-            $todayCount = Loan::whereDate('created_at', today())->count() + 1;
-            $code = $datePrefix . str_pad($todayCount, 3, '0', STR_PAD_LEFT);
-            while (Loan::where('loan_code', $code)->exists()) {
-                $code = $datePrefix . rand(100, 999);
+            if (Loan::where('user_id', $user->id)->whereIn('status', Loan::STOCK_LOCKING_STATUSES)->count() >= 2) {
+                throw ValidationException::withMessages(['monster_id' => 'Peminjaman ditolak: batas maksimal 2 peminjaman aktif, termasuk reservasi mendatang, telah tercapai.']);
+            }
+
+            if ($monster->availableUnitsDuring($start, $end) === 0) {
+                throw ValidationException::withMessages(['starts_at' => 'Produk tidak tersedia pada jadwal yang dipilih. Pilih jadwal lain atau produk lain.']);
             }
 
             $newLoan = Loan::create([
-                'loan_code' => $code,
-                'user_id'   => $user->id,
-                'loan_date' => now()->toDateString(),
-                'due_date'  => now()->addDays(2)->toDateString(),
-                'status'    => 'active',
-                'notes'     => 'Peminjaman mandiri oleh anggota melalui portal inventaris.',
+                // ULID avoids counter collisions between concurrent bookings of different units.
+                'loan_code' => 'AT-PJM-'.now()->format('ymd').'-'.Str::ulid(),
+                'user_id' => $user->id,
+                'loan_date' => $start->toDateString(),
+                'due_date' => $end->toDateString(),
+                'starts_at' => $start,
+                'ends_at' => $end,
+                'status' => 'active',
+                'notes' => 'Peminjaman mandiri oleh anggota melalui portal inventaris.',
             ]);
 
             LoanDetail::create([
-                'loan_id'    => $newLoan->id,
+                'loan_id' => $newLoan->id,
                 'monster_id' => $monster->id,
             ]);
 
             $monster->update(['status' => 'borrowed']);
 
             return $newLoan;
-        });
+        }, 5);
 
         return redirect()->route('loan.success', ['code' => $loan->loan_code])
             ->with('success', 'Peminjaman berhasil dicatat.');
+    }
+
+    public function availability(Request $request)
+    {
+        abort_unless(auth()->user()->role === 'member', 403, 'Hanya member yang dapat memeriksa jadwal peminjaman.');
+        $validated = $this->validateSchedule($request);
+        $monster = Monster::findOrFail($validated['monster_id']);
+        $available = $monster->availableUnitsDuring(
+            CarbonImmutable::parse($validated['starts_at'], config('app.timezone')),
+            CarbonImmutable::parse($validated['ends_at'], config('app.timezone')),
+        );
+
+        return response()->json([
+            'available_quantity' => $available,
+            'message' => $available
+                ? '1 unit tersedia pada jadwal ini. Ketersediaan akan diperiksa ulang saat konfirmasi.'
+                : 'Produk tidak tersedia pada jadwal yang dipilih. Pilih jadwal lain atau produk lain.',
+        ]);
+    }
+
+    private function validateSchedule(Request $request): array
+    {
+        $validator = Validator::make($request->all(), [
+            'monster_id' => ['required', 'integer', 'exists:monsters,id'],
+            'starts_at' => ['bail', 'required', 'date_format:Y-m-d\\TH:i', 'after_or_equal:'.now()->format('Y-m-d H:i:s')],
+            'ends_at' => ['bail', 'required', 'date_format:Y-m-d\\TH:i', 'after:starts_at'],
+        ], [
+            'monster_id.required' => 'Produk wajib dipilih.',
+            'monster_id.integer' => 'Produk yang dipilih tidak valid.',
+            'monster_id.exists' => 'Produk yang dipilih tidak ditemukan.',
+            'starts_at.required' => 'Tanggal dan jam mulai peminjaman wajib diisi.',
+            'starts_at.date_format' => 'Tanggal dan jam mulai peminjaman tidak valid.',
+            'starts_at.after_or_equal' => 'Waktu mulai peminjaman tidak boleh di masa lalu.',
+            'ends_at.required' => 'Tanggal dan jam selesai peminjaman wajib diisi.',
+            'ends_at.date_format' => 'Tanggal dan jam selesai peminjaman tidak valid.',
+            'ends_at.after' => 'Waktu selesai harus lebih besar daripada waktu mulai peminjaman.',
+        ]);
+
+        $validator->after(function ($validator) use ($request) {
+            if ($validator->errors()->has('starts_at') || $validator->errors()->has('ends_at')) {
+                return;
+            }
+
+            $start = CarbonImmutable::parse($request->input('starts_at'), config('app.timezone'));
+            $end = CarbonImmutable::parse($request->input('ends_at'), config('app.timezone'));
+            if ($end->gt($start->addDays(5))) {
+                $validator->errors()->add('ends_at', 'Durasi peminjaman maksimal 5 hari (120 jam).');
+            }
+        });
+
+        return $validator->validate();
     }
 
     /**

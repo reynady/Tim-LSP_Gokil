@@ -36,8 +36,8 @@
             'tx_code'     => $loan->loan_code,
             'unit_name'   => $monster->name ?? 'Entitas Monster',
             'unit_code'   => $monster->monster_code ?? '-',
-            'borrowed'    => $loan->loan_date ? $loan->loan_date->translatedFormat('d F Y') : '-',
-            'due'         => $loan->due_date ? $loan->due_date->translatedFormat('d F Y') : '-',
+            'borrowed'    => $loan->scheduled_start ? $loan->scheduled_start->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-',
+            'due'         => $loan->scheduled_end ? $loan->scheduled_end->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-',
             'remaining'   => $isOverdue
                 ? 'Terlambat ' . $overdueDays . ' hari'
                 : ($loan->due_date ? (now()->diffInDays($loan->due_date, false) >= 0 ? now()->diffInDays($loan->due_date) . ' hari lagi' : 'Terlambat') : '-'),
@@ -162,7 +162,7 @@
                 {{-- Card 2 --}}
                 <div class="summary-card">
                     <div class="summary-card-header">
-                        <span class="summary-label">Batas kembali terdekat</span>
+                        <span class="summary-label">Jadwal selesai terdekat</span>
                         <i data-lucide="calendar-days" class="summary-icon"></i>
                     </div>
                     <span class="summary-val">{{ $nearestDue }}</span>
@@ -215,8 +215,8 @@
                 <div class="table-head">
                     <span class="table-col-header">KODE TRANSAKSI</span>
                     <span class="table-col-header">MONSTER &amp; KODE</span>
-                    <span class="table-col-header">TANGGAL PINJAM</span>
-                    <span class="table-col-header">BATAS PENGEMBALIAN</span>
+                    <span class="table-col-header">JADWAL MULAI</span>
+                    <span class="table-col-header">JADWAL SELESAI</span>
                     <span class="table-col-header">STATUS</span>
                     <span class="table-col-header" style="text-align: right;">INFO</span>
                 </div>

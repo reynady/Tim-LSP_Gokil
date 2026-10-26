@@ -95,6 +95,7 @@ Route::middleware(['auth', 'admin'])
 Route::middleware('auth')->group(function () {
     Route::get('/katalog', [\App\Http\Controllers\Member\LoanController::class, 'catalog'])->name('catalog');
     Route::get('/detail-unit', [\App\Http\Controllers\Member\LoanController::class, 'detailUnit'])->name('unit.detail');
+    Route::get('/peminjaman/ketersediaan', [\App\Http\Controllers\Member\LoanController::class, 'availability'])->name('loan.availability');
     Route::post('/peminjaman', [\App\Http\Controllers\Member\LoanController::class, 'store'])->name('loan.store');
     Route::get('/peminjaman-berhasil', [\App\Http\Controllers\Member\LoanController::class, 'success'])->name('loan.success');
     Route::get('/peminjaman-aktif', [\App\Http\Controllers\Member\LoanController::class, 'activeLoans'])->name('loan.active');

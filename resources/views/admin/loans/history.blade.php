@@ -58,8 +58,8 @@
                     <th style="padding: 12px 20px; font-size: 10px; font-weight: 600; text-transform: uppercase; color: #6D7972;">KODE TRANSAKSI</th>
                     <th style="padding: 12px 20px; font-size: 10px; font-weight: 600; text-transform: uppercase; color: #6D7972;">PEMINJAM</th>
                     <th style="padding: 12px 20px; font-size: 10px; font-weight: 600; text-transform: uppercase; color: #6D7972;">UNIT</th>
-                    <th style="padding: 12px 20px; font-size: 10px; font-weight: 600; text-transform: uppercase; color: #6D7972;">TGL PINJAM</th>
-                    <th style="padding: 12px 20px; font-size: 10px; font-weight: 600; text-transform: uppercase; color: #6D7972;">BATAS KEMBALI</th>
+                    <th style="padding: 12px 20px; font-size: 10px; font-weight: 600; text-transform: uppercase; color: #6D7972;">JADWAL MULAI</th>
+                    <th style="padding: 12px 20px; font-size: 10px; font-weight: 600; text-transform: uppercase; color: #6D7972;">JADWAL SELESAI</th>
                     <th style="padding: 12px 20px; font-size: 10px; font-weight: 600; text-transform: uppercase; color: #6D7972;">TGL KEMBALI</th>
                     <th style="padding: 12px 20px; font-size: 10px; font-weight: 600; text-transform: uppercase; color: #6D7972;">STATUS</th>
                 </tr>
@@ -90,10 +90,10 @@
                             </div>
                         </td>
                         <td style="padding: 16px 20px; font-size: 13px; color: #1C3029;">
-                            {{ $loan->loan_date ? $loan->loan_date->locale('id')->translatedFormat('d M Y') : '-' }}
+                            {{ $loan->scheduled_start ? $loan->scheduled_start->locale('id')->translatedFormat('d M Y H:i') . ' WIB' : '-' }}
                         </td>
                         <td style="padding: 16px 20px; font-size: 13px; color: #1C3029;">
-                            {{ $loan->due_date ? $loan->due_date->locale('id')->translatedFormat('d M Y') : '-' }}
+                            {{ $loan->scheduled_end ? $loan->scheduled_end->locale('id')->translatedFormat('d M Y H:i') . ' WIB' : '-' }}
                         </td>
                         <td style="padding: 16px 20px; font-size: 13px; color: #1C3029;">
                             {{ $returnDate ? $returnDate->locale('id')->translatedFormat('d M Y') : 'Belum kembali' }}

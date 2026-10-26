@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Fine;
 use App\Models\Loan;
+use App\Models\Monster;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -75,8 +76,17 @@ class LoanController extends Controller
         ]);
 
         $admin = auth()->user();
+        $monsterIds = $loan->details()->orderBy('monster_id')->pluck('monster_id');
 
-        DB::transaction(function () use ($loan, $admin) {
+        DB::transaction(function () use ($loan, $admin, $monsterIds) {
+            // Use the same unit lock as booking before changing reservation state.
+            if (DB::connection()->getDriverName() === 'sqlite') {
+                DB::table('users')->where('id', $admin->id)->update(['is_active' => DB::raw('is_active')]);
+            }
+            $monsters = Monster::whereIn('id', $monsterIds)->orderBy('id')->lockForUpdate()->get()->keyBy('id');
+            $loan = Loan::whereKey($loan->id)->lockForUpdate()->firstOrFail();
+            abort_unless(in_array($loan->status, Loan::STOCK_LOCKING_STATUSES, true), 422, 'Peminjaman ini sudah selesai dan tidak dapat dikembalikan lagi.');
+
             $today = now()->startOfDay();
             $dueDate = $loan->due_date ? $loan->due_date->startOfDay() : $today;
             $overdueDays = $today->gt($dueDate) ? $dueDate->diffInDays($today) : 0;
@@ -91,8 +101,9 @@ class LoanController extends Controller
             foreach ($loan->details as $detail) {
                 $detail->update(['returned_at' => now()]);
 
-                if ($detail->monster) {
-                    $detail->monster->update(['status' => 'available']);
+                $monster = $monsters->get($detail->monster_id);
+                if ($monster && in_array($monster->status, ['available', 'borrowed'], true)) {
+                    $monster->update(['status' => $monster->blockingLoanDetails()->exists() ? 'borrowed' : 'available']);
                 }
 
                 // Jika terlambat, simpan pencatatan denda
@@ -107,10 +118,10 @@ class LoanController extends Controller
                     );
                 }
             }
-        });
+        }, 5);
 
         return redirect()->route('admin.loans.index')
-            ->with('success', "Pengembalian transaksi {$loan->loan_code} berhasil diselesaikan. Unit telah dilepas dan status kini tersedia.");
+            ->with('success', "Pengembalian transaksi {$loan->loan_code} berhasil diselesaikan. Ketersediaan unit telah diperbarui sesuai reservasi yang masih aktif.");
     }
 
     /**

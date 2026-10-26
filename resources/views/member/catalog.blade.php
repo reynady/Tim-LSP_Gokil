@@ -93,7 +93,7 @@
                 <span class="notice-icon">✓</span>
                 <div>
                     <strong>Informasi ketersediaan unit</strong>
-                    <p>Pastikan status unit tersedia sebelum melanjutkan proses peminjaman. Unit yang sedang dipinjam tidak dapat dipilih.</p>
+                    <p>Pilih unit dan tentukan jadwal peminjaman. Unit yang sudah dipesan dapat dipinjam pada jadwal lain yang tidak bertabrakan; status Dipinjam mencakup reservasi mendatang.</p>
                 </div>
             </section>
 
@@ -127,6 +127,7 @@
                         <option value="">Semua status</option>
                         <option value="Tersedia">Tersedia</option>
                         <option value="Dipinjam">Dipinjam</option>
+                        <option value="Perawatan">Perawatan</option>
                     </select>
 
                     <span class="unit-count" id="unitCount">
@@ -150,7 +151,7 @@
                             @foreach ($monstersList as $m)
                                 @php
                                     $isAvail = ($m->status === 'available');
-                                    $statusLabel = $isAvail ? 'Tersedia' : 'Dipinjam';
+                                    $statusLabel = $isAvail ? 'Tersedia' : ($m->status === 'maintenance' ? 'Perawatan' : 'Dipinjam');
                                     $categoryLabel = $m->categories->isNotEmpty() 
                                         ? $m->categories->pluck('name')->implode(', ') 
                                         : ($m->origin_type ?? 'Anomali');
@@ -174,7 +175,7 @@
                                     </td>
                                     <td class="muted-cell">{{ $m->condition ?? 'Hanggar Utama' }}</td>
                                     <td>
-                                        @if ($isAvail)
+                                        @if (in_array($m->status, ['available', 'borrowed'], true))
                                             <a href="{{ route('unit.detail', ['code' => $m->monster_code]) }}"
                                                 class="detail-button">
                                                 Lihat unit <span>→</span>

@@ -82,15 +82,15 @@
                 {{-- Tanggal Asli Peminjaman --}}
                 <div class="rp-row-2col">
                     <div class="rp-info-block">
-                        <span class="rp-info-label">Tanggal pinjam</span>
+                        <span class="rp-info-label">Jadwal mulai</span>
                         <span class="rp-info-val">
-                            {{ $loan->loan_date ? $loan->loan_date->translatedFormat('d F Y') : '-' }}
+                            {{ $loan->scheduled_start ? $loan->scheduled_start->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-' }}
                         </span>
                     </div>
                     <div class="rp-info-block">
-                        <span class="rp-info-label">Batas pengembalian</span>
+                        <span class="rp-info-label">Jadwal selesai</span>
                         <span class="rp-info-val">
-                            {{ $loan->due_date ? $loan->due_date->translatedFormat('d F Y') : '-' }}
+                            {{ $loan->scheduled_end ? $loan->scheduled_end->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-' }}
                         </span>
                     </div>
                 </div>
@@ -121,7 +121,7 @@
                     </div>
                     <div class="rp-calc-note">
                         @if($overdueDays > 0)
-                            {{ now()->translatedFormat('d F') }} – {{ $loan->due_date ? $loan->due_date->translatedFormat('d F') : '-' }} = {{ $overdueDays }} hari terlambat. Pengembalian pada tanggal jatuh tempo dihitung 0 hari.
+                            Jadwal selesai: {{ $loan->scheduled_end ? $loan->scheduled_end->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-' }}. Keterlambatan {{ $overdueDays }} hari dihitung berdasarkan tanggal jatuh tempo. Pengembalian pada tanggal jatuh tempo dihitung 0 hari.
                         @else
                             Unit dikembalikan sebelum atau tepat pada batas tanggal jatuh tempo (0 hari terlambat).
                         @endif

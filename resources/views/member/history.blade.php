@@ -55,8 +55,8 @@
             'tx_code'     => $loan->loan_code,
             'unit_name'   => $monster->name ?? 'Entitas Monster',
             'unit_code'   => $monster->monster_code ?? '-',
-            'loan_date'   => $loan->loan_date ? $loan->loan_date->translatedFormat('d F Y') : '-',
-            'due_date'    => $dueDate ? $dueDate->translatedFormat('d F Y') : '-',
+            'loan_date'   => $loan->scheduled_start ? $loan->scheduled_start->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-',
+            'due_date'    => $loan->scheduled_end ? $loan->scheduled_end->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-',
             'return_date' => $returnDate ? $returnDate->translatedFormat('d F Y') : '-',
             'status'      => 'Selesai',
             'is_late'     => $isLate,
@@ -203,8 +203,8 @@
                 {{-- Kepala riwayat --}}
                 <div class="table-head">
                     <span class="table-col-header">MONSTER &amp; KODE TRANSAKSI</span>
-                    <span class="table-col-header">TANGGAL PINJAM</span>
-                    <span class="table-col-header">BATAS KEMBALI</span>
+                    <span class="table-col-header">JADWAL MULAI</span>
+                    <span class="table-col-header">JADWAL SELESAI</span>
                     <span class="table-col-header">TANGGAL KEMBALI</span>
                     <span class="table-col-header">STATUS</span>
                     <span class="table-col-header">CATATAN / DENDA</span>

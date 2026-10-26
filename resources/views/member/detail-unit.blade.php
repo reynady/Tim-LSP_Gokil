@@ -29,7 +29,7 @@
         'name'        => $currentMonster->name ?? 'Entitas Monster',
         'category'    => $currentMonster?->categories?->pluck('name')->implode(', ') ?: ($currentMonster->origin_type ?? 'Kelas Khusus'),
         'condition'   => $currentMonster->condition ?? 'Hanggar Utama',
-        'status'      => ($currentMonster?->status === 'available') ? 'Tersedia' : 'Dipinjam',
+        'status'      => ($currentMonster?->status === 'available') ? 'Tersedia' : ($currentMonster?->status === 'maintenance' ? 'Perawatan' : 'Dipinjam'),
         'type'        => $currentMonster->origin_type ?? 'Unit Monster Terdaftar',
         'threat'      => $currentMonster->threat_level ?? 'Normal',
         'description' => $currentMonster->description ?: 'Unit monster terdaftar untuk kebutuhan operasional dan simulasi anggota sesuai ketentuan pengelolaan entitas. Dicatat sebagai satu unit inventaris.',
@@ -37,10 +37,8 @@
 
     $activeCount = isset($activeLoansCount) ? $activeLoansCount : ($user ? \App\Models\Loan::where('user_id', $user->id)->whereIn('status', ['active', 'borrowed', 'approved', 'pending'])->count() : 0);
     $isAvailable = ($unit['status'] === 'Tersedia');
-    $canBorrow = ($activeCount < 2) && $isAvailable;
-
-    $loanDate   = now();
-    $returnDate = now()->addDays(5);
+    $canSchedule = $currentMonster && $currentMonster->canSchedule();
+    $canBorrow = ($activeCount < 2) && $canSchedule;
 @endphp
 
 <div class="app-shell">
@@ -112,6 +110,16 @@
                 <div style="background: #fef2f2; border: 1px solid #f87171; color: #991b1b; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; display: flex; align-items: center; gap: 8px;">
                     <i data-lucide="alert-circle" style="width: 18px; height: 18px; flex-shrink: 0;"></i>
                     <span>{{ session('error') }}</span>
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="schedule-errors" role="alert">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
             @endif
 
@@ -201,7 +209,7 @@
                             <i data-lucide="shield-alert"></i>
                             <div>
                                 <strong>Batas Kuota Peminjaman (FR-008)</strong>
-                                <p>Setiap anggota dibatasi maksimal 2 entitas monster aktif dalam waktu bersamaan.</p>
+                                <p>Setiap anggota dibatasi maksimal 2 peminjaman aktif, termasuk reservasi mendatang. Durasi setiap peminjaman maksimal 5 hari (120 jam).</p>
                             </div>
                         </div>
 
@@ -229,12 +237,12 @@
                                 <p style="color: #7f1d1d;">Anda telah mencapai batas kuota maksimal 2 peminjaman aktif. Kembalikan salah satu unit untuk dapat meminjam kembali.</p>
                             </div>
                         </div>
-                    @elseif (!$isAvailable)
+                    @elseif (!$canSchedule)
                         <div class="review-notice" style="background: #fffbeb; border: 1px solid #fcd34d;">
                             <i data-lucide="alert-triangle" style="color: #d97706;"></i>
                             <div>
-                                <strong style="color: #92400e;">Unit Sedang Dipinjam</strong>
-                                <p style="color: #78350f;">Entitas monster ini sedang tidak tersedia untuk dipinjam saat ini.</p>
+                                <strong style="color: #92400e;">Unit Tidak Tersedia</strong>
+                                <p style="color: #78350f;">Unit sedang dalam perawatan atau tidak dapat dijadwalkan. Silakan pilih unit lain.</p>
                             </div>
                         </div>
                     @else
@@ -254,31 +262,37 @@
 
                     <div class="review-divider"></div>
 
-                    <div class="date-grid">
+                    <form id="loanReviewForm" action="{{ route('loan.store') }}" method="POST"
+                        data-availability-url="{{ route('loan.availability') }}" data-server-now="{{ now()->getTimestampMs() }}">
+                    <div class="schedule-fields">
                         <div class="review-field">
-                            <span>Tanggal pinjam</span>
-                            <strong>{{ $loanDate->translatedFormat('d F Y') }}</strong>
+                            <label for="starts_at">Tanggal dan jam mulai (WIB)</label>
+                            <input type="datetime-local" id="starts_at" name="starts_at" form="loanReviewForm"
+                                value="{{ old('starts_at') }}" min="{{ now()->ceilMinute()->format('Y-m-d\\TH:i') }}"
+                                step="60" required aria-describedby="scheduleHelp availabilityMessage" @disabled(!$canBorrow)>
                         </div>
                         <div class="review-field">
-                            <span>Batas kembali</span>
-                            <strong>{{ $returnDate->translatedFormat('d F Y') }}</strong>
+                            <label for="ends_at">Tanggal dan jam selesai (WIB)</label>
+                            <input type="datetime-local" id="ends_at" name="ends_at" form="loanReviewForm"
+                                value="{{ old('ends_at') }}" step="60" required
+                                aria-describedby="scheduleHelp availabilityMessage" @disabled(!$canBorrow)>
                         </div>
                     </div>
-
-                    <div class="locked-note">
-                        <i data-lucide="lock-keyhole"></i>
-                        5 hari kalender &middot; Tanggal otomatis dan tidak dapat diubah.
+                    <p id="scheduleHelp" class="schedule-help">Semua waktu menggunakan WIB (Asia/Jakarta). Durasi maksimal 5 hari (120 jam). Jadwal yang bersebelahan diperbolehkan.</p>
+                    <p id="availabilityMessage" class="schedule-help" role="status" aria-live="polite">Pilih jadwal untuk memeriksa ketersediaan unit.</p>
+                    <div class="review-field schedule-summary">
+                        <span>Ringkasan jadwal</span>
+                        <strong id="scheduleSummary">Tanggal dan jam belum dipilih.</strong>
                     </div>
 
                     <div class="review-divider"></div>
 
-                    <form id="loanReviewForm" action="{{ route('loan.store') }}" method="POST">
                         @csrf
                         <input type="hidden" name="monster_id" value="{{ $unit['id'] }}">
 
                         @if ($canBorrow)
                             <label class="consent">
-                                <input type="checkbox" id="consentCheck" name="consent" required>
+                                <input type="checkbox" id="consentCheck" name="consent" required @checked(old('consent'))>
                                 <span>Saya memahami batas waktu dan ketentuan pengembalian melalui Admin.</span>
                             </label>
 
@@ -312,6 +326,7 @@
     </main>
 </div>
 
+<script src="{{ asset('js/loan-schedule.js') }}" defer></script>
 <script>
     if (window.lucide) lucide.createIcons();
 </script>

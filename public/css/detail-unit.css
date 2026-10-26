@@ -1,3 +1,43 @@
+.schedule-fields {
+    display: grid;
+    gap: 16px;
+}
+
+.schedule-fields input {
+    width: 100%;
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--white);
+    color: var(--text);
+}
+
+.schedule-fields label,
+.schedule-help {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+.schedule-summary strong {
+    line-height: 1.7;
+}
+
+.schedule-errors {
+    background: #fef2f2;
+    border: 1px solid #f87171;
+    color: #991b1b;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.schedule-errors ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
 :root {
     --green-dark: #102f28;
     --green-panel: #21473d;

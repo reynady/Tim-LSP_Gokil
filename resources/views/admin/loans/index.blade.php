@@ -57,8 +57,8 @@
                     <th>Kode Transaksi</th>
                     <th>Peminjam</th>
                     <th>Unit Monster</th>
-                    <th>Tanggal Pinjam</th>
-                    <th>Batas Kembali</th>
+                    <th>Jadwal mulai</th>
+                    <th>Jadwal selesai</th>
                     <th>Status</th>
                     <th style="text-align: right; width: 290px;">Aksi</th>
                 </tr>
@@ -90,11 +90,11 @@
                             </div>
                         </td>
                         <td style="color: var(--muted); font-size: 13px;">
-                            {{ $loan->loan_date ? $loan->loan_date->translatedFormat('d M Y') : '-' }}
+                            {{ $loan->scheduled_start ? $loan->scheduled_start->locale('id')->translatedFormat('d M Y H:i') . ' WIB' : '-' }}
                         </td>
                         <td style="font-size: 13px;">
                             <span style="font-weight: 500; color: {{ $isOverdue ? '#94651E' : 'var(--text)' }};">
-                                {{ $loan->due_date ? $loan->due_date->translatedFormat('d M Y') : '-' }}
+                                {{ $loan->scheduled_end ? $loan->scheduled_end->locale('id')->translatedFormat('d M Y H:i') . ' WIB' : '-' }}
                             </span>
                         </td>
                         <td>

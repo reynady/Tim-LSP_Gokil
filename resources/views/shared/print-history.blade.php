@@ -71,8 +71,8 @@
                     <tr>
                         <th style="width: 24%;">KODE TRANSAKSI / UNIT</th>
                         <th style="width: 14%;">PEMINJAM</th>
-                        <th style="width: 12%;">TGL PINJAM</th>
-                        <th style="width: 12%;">BATAS KEMBALI</th>
+                        <th style="width: 12%;">JADWAL MULAI</th>
+                        <th style="width: 12%;">JADWAL SELESAI</th>
                         <th style="width: 12%;">TGL KEMBALI</th>
                         <th style="width: 10%;">HARI TERLAMBAT</th>
                         <th style="width: 16%;">STATUS / CATATAN</th>
@@ -99,12 +99,12 @@
                             </td>
                             <td>
                                 <span class="cell-print-text">
-                                    {{ $loan->loan_date ? $loan->loan_date->locale('id')->translatedFormat('d M Y') : '-' }}
+                                    {{ $loan->scheduled_start ? $loan->scheduled_start->locale('id')->translatedFormat('d M Y H:i') . ' WIB' : '-' }}
                                 </span>
                             </td>
                             <td>
                                 <span class="cell-print-text">
-                                    {{ $loan->due_date ? $loan->due_date->locale('id')->translatedFormat('d M Y') : '-' }}
+                                    {{ $loan->scheduled_end ? $loan->scheduled_end->locale('id')->translatedFormat('d M Y H:i') . ' WIB' : '-' }}
                                 </span>
                             </td>
                             <td>
