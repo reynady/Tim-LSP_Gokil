@@ -31,6 +31,9 @@
 
         <div class="nav-section">
             <div class="nav-label">Master Data</div>
+            <a href="{{ route('admin.members.index') }}" class="nav-link {{ request()->routeIs('admin.members.*') ? 'active' : '' }}">
+                <i data-lucide="users"></i> <span>Daftar Anggota</span>
+            </a>
             <a href="{{ route('admin.monsters.index') }}" class="nav-link {{ request()->routeIs('admin.monsters.*') ? 'active' : '' }}">
                 <i data-lucide="boxes"></i> <span>Kelola Monster</span>
             </a>

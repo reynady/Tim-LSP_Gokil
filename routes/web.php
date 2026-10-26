@@ -27,6 +27,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     Route::resource('monsters', \App\Http\Controllers\Admin\MonsterController::class);
     Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class);
+    Route::resource('members', \App\Http\Controllers\Admin\MemberController::class);
+    Route::patch('members/{member}/toggle-status', [\App\Http\Controllers\Admin\MemberController::class, 'toggleStatus'])->name('members.toggle-status');
 });
 
 Route::get('/katalog', function () {
