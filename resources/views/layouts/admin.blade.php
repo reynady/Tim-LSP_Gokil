@@ -44,6 +44,9 @@
             <a href="{{ route('admin.loans.history') }}" class="nav-link {{ request()->routeIs('admin.loans.history*') ? 'active' : '' }}">
                 <i data-lucide="history"></i> <span>Riwayat</span>
             </a>
+            <a href="{{ route('admin.loan-policy.edit') }}" class="nav-link {{ request()->routeIs('admin.loan-policy.*') ? 'active' : '' }}">
+                <i data-lucide="settings-2"></i> <span>Aturan peminjaman</span>
+            </a>
             <a href="{{ route('profile') }}" class="nav-link {{ request()->routeIs('profile*') ? 'active' : '' }}">
                 <i data-lucide="user"></i> <span>Profil saya</span>
             </a>

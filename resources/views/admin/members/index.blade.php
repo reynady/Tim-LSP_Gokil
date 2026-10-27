@@ -10,7 +10,7 @@
 <div class="page-header">
     <div>
         <h1 class="page-title">Daftar Anggota</h1>
-        <p class="page-subtitle">Kelola data anggota peminjam monster, status keaktifan akun, dan kontrol keanggotaan (FR-004, BR-003, BR-004).</p>
+        <p class="page-subtitle">Kelola pendaftaran anggota, validasi akun, status keaktifan, dan kontrol keanggotaan (FR-004, BR-003, BR-004).</p>
     </div>
     <div>
         <a href="{{ route('admin.members.create') }}" class="btn btn-primary">
@@ -33,9 +33,10 @@
             {{-- Filter Status Akun --}}
             <select name="status" class="select-filter" onchange="this.form.submit()">
                 <option value="">Semua Status</option>
-                <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Menunggu Persetujuan</option>
+                <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Menunggu Validasi</option>
                 <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Aktif</option>
                 <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nonaktif</option>
+                <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Ditolak</option>
             </select>
 
             <button type="submit" class="btn btn-secondary btn-sm">
@@ -70,11 +71,13 @@
             <tbody>
                 @forelse($members as $member)
                     @php
-                        $statusBadge = ! $member->approved_at
-                            ? ['class' => 'badge-status-maintenance', 'label' => 'Menunggu Persetujuan', 'icon' => 'clock-3']
-                            : ($member->is_active
+                        $statusBadge = match ($member->approval_status) {
+                            'pending' => ['class' => 'badge-status-borrowed', 'label' => 'Menunggu Validasi', 'icon' => 'clock-3'],
+                            'rejected' => ['class' => 'badge-status-maintenance', 'label' => 'Pendaftaran Ditolak', 'icon' => 'x-circle'],
+                            default => $member->is_active
                                 ? ['class' => 'badge-status-available', 'label' => 'Aktif', 'icon' => 'check-circle-2']
-                                : ['class' => 'badge-status-maintenance', 'label' => 'Nonaktif', 'icon' => 'x-circle']);
+                                : ['class' => 'badge-status-maintenance', 'label' => 'Nonaktif', 'icon' => 'x-circle'],
+                        };
                     @endphp
                     <tr>
                         <td>
@@ -116,7 +119,29 @@
                         </td>
                         <td>
                             <div class="action-buttons" style="justify-content: flex-end;">
+                                @if(in_array($member->approval_status, ['pending', 'rejected'], true))
+                                    <form method="POST" action="{{ route('admin.members.review-registration', $member) }}" style="display: inline;">
+                                        @csrf
+                                        @method('PATCH')
+                                        <input type="hidden" name="decision" value="approve">
+                                        <button type="submit" class="btn btn-secondary btn-sm" title="Setujui pendaftaran dan aktifkan akun">
+                                            <i data-lucide="user-check"></i> Setujui
+                                        </button>
+                                    </form>
+                                @endif
+                                @if($member->approval_status === 'pending')
+                                    <form method="POST" action="{{ route('admin.members.review-registration', $member) }}" style="display: inline;">
+                                        @csrf
+                                        @method('PATCH')
+                                        <input type="hidden" name="decision" value="reject">
+                                        <button type="submit" class="btn btn-danger-soft btn-sm" title="Tolak pendaftaran">
+                                            <i data-lucide="user-x"></i> Tolak
+                                        </button>
+                                    </form>
+                                @endif
+
                                 {{-- Toggle Status --}}
+                                @if($member->approval_status === 'approved')
                                 <form method="POST" action="{{ route('admin.members.toggle-status', $member) }}"
                                       style="display: inline;">
                                     @csrf
@@ -126,6 +151,7 @@
                                         <i data-lucide="{{ $member->is_active ? 'user-x' : 'user-check' }}"></i>
                                     </button>
                                 </form>
+                                @endif
 
                                 {{-- Edit --}}
                                 <a href="{{ route('admin.members.edit', $member) }}" class="btn btn-secondary btn-sm" title="Ubah Data Anggota">

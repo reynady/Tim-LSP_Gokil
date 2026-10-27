@@ -86,7 +86,7 @@
 
                 <div class="form-intro">
                     <h2>Buat akun baru.</h2>
-                    <p>Daftar sebagai anggota. Akun perlu disetujui admin sebelum bisa digunakan.</p>
+                    <p>Daftar dan tunggu validasi admin sebelum masuk ke ArsenalTrack.</p>
                 </div>
 
                 <div class="form-fields">

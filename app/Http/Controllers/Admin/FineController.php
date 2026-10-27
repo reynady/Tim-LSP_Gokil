@@ -5,8 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Fine;
 use App\Models\Loan;
+use App\Services\CurrencyConverter;
 use Carbon\Carbon;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
+use UnexpectedValueException;
 
 class FineController extends Controller
 {
@@ -128,5 +134,29 @@ class FineController extends Controller
             'totalReturnedOverdueDays',
             'today'
         ));
+    }
+
+    public function convertCurrency(Request $request, CurrencyConverter $converter)
+    {
+        $validated = $request->validate([
+            'amount' => ['required', 'numeric', 'min:0', 'max:1000000000000'],
+            'currency' => ['required', 'string', Rule::in(CurrencyConverter::SUPPORTED_CURRENCIES)],
+        ]);
+
+        try {
+            return response()->json($converter->convertFromRupiah(
+                (float) $validated['amount'],
+                $validated['currency'],
+            ));
+        } catch (ConnectionException|RequestException|UnexpectedValueException $exception) {
+            Log::warning('Currency conversion request failed.', [
+                'currency' => $validated['currency'],
+                'exception' => $exception->getMessage(),
+            ]);
+
+            return response()->json([
+                'message' => 'Kurs mata uang tidak dapat diambil saat ini. Silakan coba lagi.',
+            ], 503);
+        }
     }
 }

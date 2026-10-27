@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -40,11 +40,11 @@ class AuthController extends Controller
             'password' => $validated['password'],
             'role' => 'member',
             'is_active' => false,
-            'approved_at' => null,
+            'approval_status' => User::APPROVAL_PENDING,
         ]);
 
         return redirect()->route('login')
-            ->with('status', 'Pendaftaran berhasil. Akun kamu menunggu persetujuan admin sebelum bisa digunakan.');
+            ->with('status', 'Pendaftaran berhasil. Akun menunggu validasi admin; kamu bisa masuk setelah disetujui.');
     }
 
     public function login(Request $request)
@@ -62,22 +62,27 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
+        /** @var User $user */
         $user = Auth::user();
 
-        if ($user->role === 'member' && ! $user->approved_at) {
+        if ($user->approval_status === User::APPROVAL_PENDING) {
             Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
 
             return back()->withErrors([
-                'email' => 'Pendaftaran kamu masih menunggu persetujuan admin.',
+                'email' => 'Akun masih menunggu persetujuan admin.',
             ]);
         }
 
-        if (! $user->is_active) {
+        if ($user->approval_status !== User::APPROVAL_APPROVED) {
             Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
+
+            return back()->withErrors([
+                'email' => 'Pendaftaran akun tidak disetujui. Hubungi administrator jika membutuhkan bantuan.',
+            ]);
+        }
+
+        if (! $user->canLogin()) {
+            Auth::logout();
 
             return back()->withErrors([
                 'email' => 'Akun kamu tidak aktif.',

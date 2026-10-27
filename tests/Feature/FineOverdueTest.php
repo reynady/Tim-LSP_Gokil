@@ -43,7 +43,8 @@ class FineOverdueTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Keterlambatan &amp; denda', false);
         $response->assertSee('Tarif denda keterlambatan');
-        $response->assertSee('Rp 25.000 per hari keterlambatan');
+        $response->assertSee('Rp25.000 per hari keterlambatan');
+        $response->assertSee('Lihat nilai');
         $response->assertSee('Aktif terlambat');
         $response->assertSee('Keterlambatan berjalan');
         $response->assertSee('Sudah kembali terlambat');
@@ -57,14 +58,15 @@ class FineOverdueTest extends TestCase
         $response->assertSee('AT-PJM-261008-007');
         $response->assertSee('Selesai');
         $response->assertSee('AT-PJM-DEMO-FINE-001');
-        $response->assertSee('Rp 175.000');
+        $response->assertSee('Rp175.000');
 
         $member = User::where('email', 'raka.pratama@arsenaltrack.test')->firstOrFail();
         $historyResponse = $this->actingAs($member)->get(route('loan.history'));
 
         $historyResponse->assertStatus(200);
         $historyResponse->assertSee('AT-PJM-DEMO-FINE-001');
-        $historyResponse->assertSee('Rp 175.000');
+        $historyResponse->assertSee('Rp175.000');
+        $historyResponse->assertSee('Lihat nilai');
     }
 
     public function test_returning_a_loan_one_day_late_records_a_rupiah_fine(): void
@@ -81,17 +83,31 @@ class FineOverdueTest extends TestCase
         $loan = Loan::where('loan_code', 'AT-PJM-261017-012')->firstOrFail();
         $loan->update(['due_date' => now()->subDay()->toDateString()]);
 
+        $returnPage = $this->actingAs($admin)->get(route('admin.loans.return', $loan));
+        $returnPage->assertOk()
+            ->assertSee('confirm_fine_paid')
+            ->assertSee('sudah dibayar');
+
         $response = $this->actingAs($admin)->post(route('admin.loans.process-return', $loan), [
             'confirm_physical' => '1',
+        ]);
+
+        $response->assertSessionHasErrors('confirm_fine_paid');
+        $this->assertSame('borrowed', $loan->fresh()->status);
+
+        $response = $this->actingAs($admin)->post(route('admin.loans.process-return', $loan), [
+            'confirm_physical' => '1',
+            'confirm_fine_paid' => '1',
         ]);
 
         $response->assertRedirect(route('admin.loans.index'));
         $this->assertDatabaseHas('fines', [
             'loan_detail_id' => $loan->details()->firstOrFail()->id,
-            'amount' => 25_000,
+            'amount' => 25000,
             'overdue_days' => 1,
-            'status' => 'unpaid',
+            'status' => 'paid',
         ]);
+        $this->assertNotNull(Fine::where('loan_detail_id', $loan->details()->firstOrFail()->id)->value('paid_at'));
     }
 
     public function test_currency_migration_converts_existing_fines_to_rupiah(): void

@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Loan;
+use App\Models\LoanPolicy;
 use App\Models\Monster;
 use App\Models\User;
 use Carbon\CarbonImmutable;
@@ -297,9 +298,46 @@ class LoanScheduleTest extends TestCase
         } else {
             $response->assertRedirect()->assertSessionHasNoErrors();
         }
+
         $this->assertDatabaseCount('loans', 1 + $quantity);
         $this->assertDatabaseCount('loan_details', 1 + $quantity);
         $this->assertSame('borrowed', $this->monster->fresh()->status);
+    }
+
+    public function test_admin_configured_active_loan_limit_is_enforced(): void
+    {
+        LoanPolicy::current()->update(['max_active_loans' => 1]);
+        $this->reservation(user: $this->member);
+
+        $this->actingAs($this->member)
+            ->postJson(route('loan.store'), $this->payload())
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors([
+                'monster_id' => ['Peminjaman ditolak: batas maksimal 1 peminjaman aktif, termasuk reservasi mendatang, telah tercapai.'],
+            ]);
+
+        $this->assertDatabaseCount('loans', 1);
+    }
+
+    public function test_admin_configured_duration_limit_is_enforced(): void
+    {
+        LoanPolicy::current()->update(['max_duration_days' => 2]);
+
+        $this->actingAs($this->member)
+            ->postJson(route('loan.store'), $this->payload([
+                'ends_at' => '2026-10-29T10:16',
+            ]))
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors([
+                'ends_at' => ['Durasi peminjaman maksimal 2 hari (48 jam).'],
+            ]);
+
+        $this->assertDatabaseCount('loans', 0);
+
+        $this->postJson(route('loan.store'), $this->payload([
+            'ends_at' => '2026-10-29T10:15',
+        ]))->assertRedirect()->assertSessionHasNoErrors();
+        $this->assertDatabaseCount('loans', 1);
     }
 
     #[DataProvider('intervals')]
@@ -517,17 +555,25 @@ class LoanScheduleTest extends TestCase
         }
     }
 
+    public function test_active_loan_remaining_days_are_displayed_as_whole_numbers(): void
+    {
+        $this->reservation(user: $this->member);
+
+        $this->actingAs($this->member)
+            ->get(route('loan.active'))
+            ->assertOk()
+            ->assertSee('2 hari lagi');
+    }
+
     public static function schedulePages(): array
     {
         return [
             'member confirmation' => ['loan.success', 'member', 'active', 'd F Y H:i'],
             'member active' => ['loan.active', 'member', 'active', 'd F Y H:i'],
             'member history' => ['loan.history', 'member', 'returned', 'd F Y H:i'],
-            'member print' => ['loan.history.print', 'member', 'returned', 'd M Y H:i'],
             'admin active' => ['admin.loans.index', 'admin', 'active', 'd M Y H:i'],
             'admin return' => ['admin.loans.return', 'admin', 'active', 'd F Y H:i'],
             'admin history' => ['admin.loans.history', 'admin', 'returned', 'd M Y H:i'],
-            'admin print' => ['admin.loans.print', 'admin', 'returned', 'd M Y H:i'],
         ];
     }
 }

@@ -11,6 +11,9 @@
         hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
     });
     const serverNow = Number(form.dataset.serverNow);
+    const maxDurationDays = Number(form.dataset.maxDurationDays || 5);
+    const maxDurationMs = maxDurationDays * 86400000;
+    const maxDurationHours = maxDurationDays * 24;
     const loadedAt = performance.now();
     const now = () => serverNow + performance.now() - loadedAt;
     const wibInput = (timestamp) => new Date(timestamp + 7 * 3600000).toISOString().slice(0, 16);
@@ -31,10 +34,10 @@
         end.setCustomValidity(!end.value ? 'Tanggal dan jam selesai peminjaman wajib diisi.'
             : !Number.isFinite(finishes) ? 'Tanggal dan jam selesai peminjaman tidak valid.'
             : finishes <= begins ? 'Waktu selesai harus lebih besar daripada waktu mulai peminjaman.'
-            : finishes > begins + 5 * 86400000 ? 'Durasi peminjaman maksimal 5 hari (120 jam).' : '');
+            : finishes > begins + maxDurationMs ? `Durasi peminjaman maksimal ${maxDurationDays} hari (${maxDurationHours} jam).` : '');
         if (Number.isFinite(begins)) {
             end.min = wibInput(begins + 60000);
-            end.max = wibInput(begins + 5 * 86400000);
+            end.max = wibInput(begins + maxDurationMs);
         } else {
             end.removeAttribute('min');
             end.removeAttribute('max');

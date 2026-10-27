@@ -11,6 +11,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
+    public const APPROVAL_PENDING = 'pending';
+
+    public const APPROVAL_APPROVED = 'approved';
+
+    public const APPROVAL_REJECTED = 'rejected';
+
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
@@ -20,7 +26,7 @@ class User extends Authenticatable
         'password',
         'role',
         'is_active',
-        'approved_at',
+        'approval_status',
     ];
 
     protected $hidden = [
@@ -56,5 +62,10 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    public function canLogin(): bool
+    {
+        return $this->approval_status === self::APPROVAL_APPROVED && $this->is_active;
     }
 }

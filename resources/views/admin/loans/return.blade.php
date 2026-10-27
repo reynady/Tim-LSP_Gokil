@@ -39,6 +39,18 @@
         </div>
     </div>
 
+    @if ($errors->any())
+        <div class="rp-alert-warning" role="alert">
+            <i data-lucide="alert-circle"></i>
+            <div class="rp-alert-body">
+                <div class="rp-alert-title">Pengembalian belum diselesaikan</div>
+                @foreach ($errors->all() as $error)
+                    <p class="rp-alert-text">{{ $error }}</p>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     {{-- ── 3. Formulir & Pratinjau Grid ── --}}
     <form method="POST" action="{{ route('admin.loans.process-return', $loan->id) }}" id="returnForm">
         @csrf
@@ -116,12 +128,12 @@
                         </div>
                         <div class="rp-calc-item">
                             <span class="calc-lbl">Nominal denda</span>
-                            <span class="calc-val">Rp {{ number_format($fineAmount, 0, ',', '.') }}</span>
+                            <span class="calc-val">Rp{{ number_format($fineAmount, 0, ',', '.') }}</span>
                         </div>
                     </div>
                     <div class="rp-calc-note">
                         @if($overdueDays > 0)
-                            Jadwal selesai: {{ $loan->scheduled_end ? $loan->scheduled_end->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-' }}. Keterlambatan {{ $overdueDays }} hari dihitung berdasarkan tanggal jatuh tempo, dengan denda Rp {{ number_format(\App\Models\Fine::DAILY_RATE_RUPIAH, 0, ',', '.') }} per hari.
+                            Jadwal selesai: {{ $loan->scheduled_end ? $loan->scheduled_end->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-' }}. Keterlambatan {{ $overdueDays }} hari dihitung berdasarkan tanggal jatuh tempo, dengan denda Rp{{ number_format(\App\Models\Fine::DAILY_RATE_RUPIAH, 0, ',', '.') }} per hari.
                         @else
                             Unit dikembalikan sebelum atau tepat pada batas tanggal jatuh tempo (0 hari terlambat), sehingga tidak dikenakan denda.
                         @endif
@@ -140,6 +152,16 @@
                         </span>
                     </div>
                 </label>
+
+                @if ($isOverdue && $fineAmount > 0)
+                    <label class="rp-confirm-box" for="confirm_fine_paid">
+                        <input type="checkbox" name="confirm_fine_paid" id="confirm_fine_paid" value="1" required {{ old('confirm_fine_paid') ? 'checked' : '' }}>
+                        <div class="rp-confirm-text">
+                            <span class="rp-confirm-title">Saya telah memverifikasi denda Rp{{ number_format($fineAmount, 0, ',', '.') }} sudah dibayar.</span>
+                            <span class="rp-confirm-subtitle">Konfirmasi pembayaran dilakukan di luar aplikasi. Jangan centang sebelum pembayaran benar-benar diterima.</span>
+                        </div>
+                    </label>
+                @endif
 
                 {{-- Tombol Aksi --}}
                 <div class="rp-actions">
@@ -174,6 +196,14 @@
                         <span class="item-lbl">Hari terlambat tersimpan</span>
                         <span class="item-val">{{ $overdueDays }} hari</span>
                     </div>
+
+                    @if ($isOverdue && $fineAmount > 0)
+                        <hr class="rp-divider">
+                        <div class="rp-side-item">
+                            <span class="item-lbl">Status denda setelah konfirmasi</span>
+                            <span class="item-val">Lunas · Rp{{ number_format($fineAmount, 0, ',', '.') }}</span>
+                        </div>
+                    @endif
 
                     <p class="rp-side-explain">
                         Tanggal kembali dicatat, unit dilepas untuk dipinjam lagi, dan transaksi dipindahkan ke riwayat. Seluruh relasi tetap tersimpan.

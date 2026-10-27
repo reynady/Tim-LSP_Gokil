@@ -37,9 +37,12 @@
     ];
 
     $activeCount = isset($activeLoansCount) ? $activeLoansCount : ($user ? \App\Models\Loan::where('user_id', $user->id)->whereIn('status', ['active', 'borrowed', 'approved', 'pending'])->count() : 0);
+    $activeLoanLimit = $policy->max_active_loans ?? \App\Models\LoanPolicy::current()->max_active_loans;
+    $maxDurationDays = $policy->max_duration_days ?? \App\Models\LoanPolicy::current()->max_duration_days;
+    $maxDurationHours = $maxDurationDays * 24;
     $isAvailable = ($unit['status'] === 'Tersedia');
     $canSchedule = $currentMonster && $currentMonster->canSchedule();
-    $canBorrow = ($activeCount < 2) && $canSchedule;
+    $canBorrow = ($activeCount < $activeLoanLimit) && $canSchedule;
 @endphp
 
 <div class="app-shell">
@@ -210,7 +213,7 @@
                             <i data-lucide="shield-alert"></i>
                             <div>
                                 <strong>Batas Kuota Peminjaman (FR-008)</strong>
-                                <p>Setiap anggota dibatasi maksimal 2 peminjaman aktif, termasuk reservasi mendatang. Durasi setiap peminjaman maksimal 5 hari (120 jam).</p>
+                                <p>Setiap anggota dibatasi maksimal {{ $activeLoanLimit }} peminjaman aktif, termasuk reservasi mendatang. Durasi setiap peminjaman maksimal {{ $maxDurationDays }} hari ({{ $maxDurationHours }} jam).</p>
                             </div>
                         </div>
 
@@ -230,12 +233,12 @@
                         <p>Pastikan rincian berikut sudah sesuai.</p>
                     </div>
 
-                    @if ($activeCount >= 2)
+                    @if ($activeCount >= $activeLoanLimit)
                         <div class="review-notice" style="background: #fef2f2; border: 1px solid #fca5a5;">
                             <i data-lucide="alert-octagon" style="color: #dc2626;"></i>
                             <div>
-                                <strong style="color: #991b1b;">Kapasitas Penuh · 2 dari 2 unit aktif</strong>
-                                <p style="color: #7f1d1d;">Anda telah mencapai batas kuota maksimal 2 peminjaman aktif. Kembalikan salah satu unit untuk dapat meminjam kembali.</p>
+                                <strong style="color: #991b1b;">Kapasitas Penuh · {{ $activeCount }} dari {{ $activeLoanLimit }} unit aktif</strong>
+                                <p style="color: #7f1d1d;">Anda telah mencapai batas kuota maksimal {{ $activeLoanLimit }} peminjaman aktif. Kembalikan salah satu unit untuk dapat meminjam kembali.</p>
                             </div>
                         </div>
                     @elseif (!$canSchedule)
@@ -250,8 +253,8 @@
                         <div class="review-notice">
                             <i data-lucide="circle-check"></i>
                             <div>
-                                <strong>{{ $activeCount }} dari 2 unit aktif</strong>
-                                <p>Tersisa {{ 2 - $activeCount }} slot. Setelah transaksi ini, kapasitas Anda menjadi {{ $activeCount + 1 }} dari 2 unit.</p>
+                                <strong>{{ $activeCount }} dari {{ $activeLoanLimit }} unit aktif</strong>
+                                <p>Tersisa {{ $activeLoanLimit - $activeCount }} slot. Setelah transaksi ini, kapasitas Anda menjadi {{ $activeCount + 1 }} dari {{ $activeLoanLimit }} unit.</p>
                             </div>
                         </div>
                     @endif
@@ -264,7 +267,8 @@
                     <div class="review-divider"></div>
 
                     <form id="loanReviewForm" action="{{ route('loan.store') }}" method="POST"
-                        data-availability-url="{{ route('loan.availability') }}" data-server-now="{{ now()->getTimestampMs() }}">
+                        data-availability-url="{{ route('loan.availability') }}" data-server-now="{{ now()->getTimestampMs() }}"
+                        data-max-duration-days="{{ $maxDurationDays }}">
                     <div class="schedule-fields">
                         <div class="review-field">
                             <label for="starts_at">Tanggal dan jam mulai (WIB)</label>
@@ -279,7 +283,7 @@
                                 aria-describedby="scheduleHelp availabilityMessage" @disabled(!$canBorrow)>
                         </div>
                     </div>
-                    <p id="scheduleHelp" class="schedule-help">Semua waktu menggunakan WIB (Asia/Jakarta). Durasi maksimal 5 hari (120 jam). Jadwal yang bersebelahan diperbolehkan.</p>
+                    <p id="scheduleHelp" class="schedule-help">Semua waktu menggunakan WIB (Asia/Jakarta). Durasi maksimal {{ $maxDurationDays }} hari ({{ $maxDurationHours }} jam). Jadwal yang bersebelahan diperbolehkan.</p>
                     <p id="availabilityMessage" class="schedule-help" role="status" aria-live="polite">Pilih jadwal untuk memeriksa ketersediaan unit.</p>
                     <div class="review-field schedule-summary">
                         <span>Ringkasan jadwal</span>
@@ -303,8 +307,8 @@
                             </button>
                         @else
                             <button class="confirm-button" type="button" disabled style="opacity: 0.6; cursor: not-allowed; background: #6b7280;">
-                                @if ($activeCount >= 2)
-                                    Kuota Penuh (Maks 2 Unit)
+                                @if ($activeCount >= $activeLoanLimit)
+                                    Kuota Penuh (Maks {{ $activeLoanLimit }} Unit)
                                 @else
                                     Unit Tidak Tersedia
                                 @endif

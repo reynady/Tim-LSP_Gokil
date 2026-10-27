@@ -13,6 +13,9 @@
 <body>
 @php
     $user = auth()->user();
+    $loanPolicy = \App\Models\LoanPolicy::current();
+    $maxActiveLoans = $loanPolicy->max_active_loans;
+    $maxDurationDays = $loanPolicy->max_duration_days;
     $userName = $user->name ?? 'Raka Pratama';
     $words = explode(' ', trim($userName));
     $initial = count($words) >= 2
@@ -34,8 +37,10 @@
             'name'      => $monster->name ?? 'Entitas Monster',
             'code'      => $monster->monster_code ?? $loan->loan_code,
             'category'  => $monster->origin_type ?? 'Kaiju/SCP Anomaly',
-            'due_date'  => $loan->due_date ? $loan->due_date->translatedFormat('d F Y') : '-',
-            'remaining' => $loan->due_date ? (now()->diffInDays($loan->due_date, false) >= 0 ? now()->diffInDays($loan->due_date) . ' hari lagi' : 'Terlambat') : '-',
+            'due_date'  => $loan->scheduled_end->locale('id')->translatedFormat('d F Y'),
+            'remaining' => now()->lt($loan->scheduled_end)
+                ? (int) ceil(now()->diffInSeconds($loan->scheduled_end, false) / 86400).' hari lagi'
+                : 'Terlambat',
             'status'    => ucfirst($loan->status ?? 'Dipinjam'),
         ];
     })->values()->all();
@@ -143,7 +148,7 @@
                         <i data-lucide="clipboard-list" class="summary-icon"></i>
                     </div>
                     <span class="summary-val">{{ $activeCount }} monster</span>
-                    <span class="summary-sub">Kapasitas 2 dari 2 entitas penuh</span>
+                    <span class="summary-sub">Batas maksimal {{ $maxActiveLoans }} transaksi aktif</span>
                 </div>
 
                 <div class="summary-card">
@@ -157,11 +162,11 @@
             </div>
 
             {{-- Informasi Kapasitas --}}
-            @if ($activeCount >= 2)
+            @if ($activeCount >= $maxActiveLoans)
                 <div class="warn-notice">
                     <i data-lucide="info"></i>
                     <div class="warn-body">
-                        <strong>Kapasitas penuh · {{ $activeCount }} dari 2 monster aktif dipinjam</strong>
+                        <strong>Kapasitas penuh · {{ $activeCount }} dari {{ $maxActiveLoans }} monster aktif dipinjam</strong>
                         <p>Anda telah mencapai kuota maksimal. Kembalikan salah satu entitas monster melalui Admin sebelum mengajukan peminjaman baru.</p>
                     </div>
                 </div>
@@ -169,7 +174,7 @@
                 <div class="warn-notice" style="background: var(--green-light); border: 1px solid var(--border);">
                     <i data-lucide="circle-check" style="color: var(--green);"></i>
                     <div class="warn-body">
-                        <strong style="color: var(--green);">Kapasitas tersedia · {{ $activeCount }} dari 2 monster dipinjam</strong>
+                        <strong style="color: var(--green);">Kapasitas tersedia · {{ $activeCount }} dari {{ $maxActiveLoans }} monster dipinjam</strong>
                         <p>Anda memiliki slot peminjaman aktif. Silakan pilih entitas monster melalui Katalog Monster.</p>
                     </div>
                 </div>
@@ -279,7 +284,7 @@
                                 <i data-lucide="calendar-days"></i>
                                 <div class="rule-text">
                                     <strong>Batas Waktu Containment</strong>
-                                    <p>Durasi peminjaman 5 hari kalender dan tanggal pengembalian ditetapkan otomatis oleh sistem.</p>
+                                    <p>Durasi maksimal peminjaman {{ $maxDurationDays }} hari. Pastikan jadwal pengembalian sesuai dengan ketentuan sistem.</p>
                                 </div>
                             </div>
 
