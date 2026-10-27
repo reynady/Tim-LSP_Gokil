@@ -39,11 +39,12 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => $validated['password'],
             'role' => 'member',
-            'is_active' => true,
+            'is_active' => false,
+            'approved_at' => null,
         ]);
 
         return redirect()->route('login')
-            ->with('status', 'Akun berhasil dibuat. Silakan masuk dengan email dan kata sandi kamu.');
+            ->with('status', 'Pendaftaran berhasil. Akun kamu menunggu persetujuan admin sebelum bisa digunakan.');
     }
 
     public function login(Request $request)
@@ -62,6 +63,16 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         $user = Auth::user();
+
+        if ($user->role === 'member' && ! $user->approved_at) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()->withErrors([
+                'email' => 'Pendaftaran kamu masih menunggu persetujuan admin.',
+            ]);
+        }
 
         if (! $user->is_active) {
             Auth::logout();

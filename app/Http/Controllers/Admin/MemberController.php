@@ -35,6 +35,8 @@ class MemberController extends Controller
         if ($request->filled('status')) {
             if ($request->status === 'active' || $request->status === 'Aktif') {
                 $query->where('is_active', true);
+            } elseif ($request->status === 'pending') {
+                $query->whereNull('approved_at');
             } elseif ($request->status === 'inactive' || $request->status === 'Nonaktif') {
                 $query->where('is_active', false);
             }
@@ -82,6 +84,7 @@ class MemberController extends Controller
                 'password'  => Hash::make($request->password),
                 'role'      => 'member',
                 'is_active' => (bool)$request->is_active,
+                'approved_at' => now(),
             ]);
 
             Profile::create([
@@ -141,6 +144,10 @@ class MemberController extends Controller
                 'is_active' => (bool)$request->is_active,
             ];
 
+            if ((bool) $request->is_active && ! $member->approved_at) {
+                $userData['approved_at'] = now();
+            }
+
             if ($request->filled('password')) {
                 $userData['password'] = Hash::make($request->password);
             }
@@ -170,9 +177,14 @@ class MemberController extends Controller
         }
 
         $member->is_active = !$member->is_active;
+        if ($member->is_active && ! $member->approved_at) {
+            $member->approved_at = now();
+        }
         $member->save();
 
-        $statusText = $member->is_active ? 'diaktifkan' : 'dinonaktifkan';
+        $statusText = $member->is_active
+            ? ($member->wasChanged('approved_at') ? 'disetujui dan diaktifkan' : 'diaktifkan')
+            : 'dinonaktifkan';
 
         return redirect()->route('admin.members.index')
             ->with('success', "Status akun '{$member->name}' berhasil {$statusText}.");

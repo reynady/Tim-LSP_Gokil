@@ -10,7 +10,7 @@ class AuthRegistrationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_guest_can_register_an_active_member_account(): void
+    public function test_new_member_must_be_approved_by_admin_before_login(): void
     {
         $this->get(route('register'))
             ->assertOk()
@@ -25,13 +25,36 @@ class AuthRegistrationTest extends TestCase
         ]);
 
         $response->assertRedirect(route('login'));
-        $response->assertSessionHas('status');
+        $response->assertSessionHas('status', 'Pendaftaran berhasil. Akun kamu menunggu persetujuan admin sebelum bisa digunakan.');
         $this->assertGuest();
 
         $user = User::where('email', 'anggota@example.test')->firstOrFail();
         $this->assertSame('member', $user->role);
-        $this->assertTrue($user->is_active);
+        $this->assertFalse($user->is_active);
+        $this->assertNull($user->approved_at);
         $this->assertTrue(password_verify('SecurePass123', $user->password));
+
+        $this->from(route('login'))->post(route('login.process'), [
+            'email' => 'anggota@example.test',
+            'password' => 'SecurePass123',
+        ])->assertRedirect(route('login'))
+            ->assertSessionHasErrors(['email' => 'Pendaftaran kamu masih menunggu persetujuan admin.']);
+        $this->assertGuest();
+
+        $admin = User::factory()->create(['role' => 'admin', 'is_active' => true]);
+        $this->actingAs($admin)
+            ->get(route('admin.members.index', ['status' => 'pending']))
+            ->assertOk()
+            ->assertSee('Menunggu Persetujuan')
+            ->assertSee('anggota@example.test');
+
+        $this->actingAs($admin)
+            ->patch(route('admin.members.toggle-status', $user))
+            ->assertRedirect(route('admin.members.index'));
+
+        $user->refresh();
+        $this->assertTrue($user->is_active);
+        $this->assertNotNull($user->approved_at);
 
         $this->post(route('login.process'), [
             'email' => 'anggota@example.test',

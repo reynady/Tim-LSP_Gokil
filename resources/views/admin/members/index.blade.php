@@ -33,6 +33,7 @@
             {{-- Filter Status Akun --}}
             <select name="status" class="select-filter" onchange="this.form.submit()">
                 <option value="">Semua Status</option>
+                <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Menunggu Persetujuan</option>
                 <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Aktif</option>
                 <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nonaktif</option>
             </select>
@@ -69,9 +70,11 @@
             <tbody>
                 @forelse($members as $member)
                     @php
-                        $statusBadge = $member->is_active
-                            ? ['class' => 'badge-status-available', 'label' => 'Aktif', 'icon' => 'check-circle-2']
-                            : ['class' => 'badge-status-maintenance', 'label' => 'Nonaktif', 'icon' => 'x-circle'];
+                        $statusBadge = ! $member->approved_at
+                            ? ['class' => 'badge-status-maintenance', 'label' => 'Menunggu Persetujuan', 'icon' => 'clock-3']
+                            : ($member->is_active
+                                ? ['class' => 'badge-status-available', 'label' => 'Aktif', 'icon' => 'check-circle-2']
+                                : ['class' => 'badge-status-maintenance', 'label' => 'Nonaktif', 'icon' => 'x-circle']);
                     @endphp
                     <tr>
                         <td>
@@ -119,7 +122,7 @@
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit" class="btn btn-secondary btn-sm"
-                                            title="{{ $member->is_active ? 'Nonaktifkan akun' : 'Aktifkan akun' }}">
+                                            title="{{ $member->is_active ? 'Nonaktifkan akun' : (! $member->approved_at ? 'Setujui dan aktifkan akun' : 'Aktifkan akun') }}">
                                         <i data-lucide="{{ $member->is_active ? 'user-x' : 'user-check' }}"></i>
                                     </button>
                                 </form>
