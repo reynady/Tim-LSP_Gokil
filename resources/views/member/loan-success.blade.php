@@ -230,11 +230,11 @@
                 <aside class="right-col">
 
                     {{-- Capacity warning --}}
-                    @if (count($activeLoans) >= 2)
+                    @if (count($activeLoans) >= $maxActiveLoans)
                         <div class="warn-notice">
                             <i data-lucide="info"></i>
                             <div class="warn-body">
-                                <strong>Kapasitas penuh · 2 dari 2 unit</strong>
+                                <strong>Kapasitas penuh · {{ count($activeLoans) }} dari {{ $maxActiveLoans }} unit</strong>
                                 <p>Anda tidak dapat membuat peminjaman lain sampai salah satu unit dikembalikan dan dicatat oleh Admin.</p>
                             </div>
                         </div>
@@ -242,8 +242,8 @@
                         <div class="warn-notice" style="background: var(--green-light); border-color: var(--border);">
                             <i data-lucide="circle-check" style="color: var(--green);"></i>
                             <div class="warn-body">
-                                <strong style="color: var(--green);">Kapasitas tersedia · {{ count($activeLoans) }} dari 2 unit</strong>
-                                <p>Anda masih memiliki kuota 1 entitas monster lagi jika dibutuhkan.</p>
+                                <strong style="color: var(--green);">Kapasitas tersedia · {{ count($activeLoans) }} dari {{ $maxActiveLoans }} unit</strong>
+                                <p>Sisa kuota {{ $maxActiveLoans - count($activeLoans) }} entitas monster untuk peminjaman berikutnya.</p>
                             </div>
                         </div>
                     @endif

@@ -34,9 +34,15 @@ class MemberController extends Controller
         // Filter status keaktifan akun
         if ($request->filled('status')) {
             if ($request->status === 'active' || $request->status === 'Aktif') {
-                $query->where('is_active', true);
+                $query->where('approval_status', User::APPROVAL_APPROVED)
+                    ->where('is_active', true);
+            } elseif ($request->status === 'pending') {
+                $query->where('approval_status', User::APPROVAL_PENDING);
+            } elseif ($request->status === 'rejected') {
+                $query->where('approval_status', User::APPROVAL_REJECTED);
             } elseif ($request->status === 'inactive' || $request->status === 'Nonaktif') {
-                $query->where('is_active', false);
+                $query->where('approval_status', User::APPROVAL_APPROVED)
+                    ->where('is_active', false);
             }
         }
 
@@ -169,6 +175,11 @@ class MemberController extends Controller
             abort(404, 'Data anggota tidak ditemukan.');
         }
 
+        if ($member->approval_status !== User::APPROVAL_APPROVED) {
+            return redirect()->route('admin.members.index')
+                ->with('error', 'Validasi pendaftaran harus diselesaikan sebelum mengubah status akun.');
+        }
+
         $member->is_active = !$member->is_active;
         $member->save();
 
@@ -176,6 +187,43 @@ class MemberController extends Controller
 
         return redirect()->route('admin.members.index')
             ->with('success', "Status akun '{$member->name}' berhasil {$statusText}.");
+    }
+
+    public function reviewRegistration(Request $request, User $member)
+    {
+        if ($member->role !== 'member') {
+            abort(404, 'Data anggota tidak ditemukan.');
+        }
+
+        $validated = $request->validate([
+            'decision' => ['required', 'in:approve,reject'],
+        ]);
+
+        $canReapproveRejected = $validated['decision'] === 'approve'
+            && $member->approval_status === User::APPROVAL_REJECTED;
+
+        if ($member->approval_status !== User::APPROVAL_PENDING && !$canReapproveRejected) {
+            return redirect()->route('admin.members.index')
+                ->with('error', 'Pendaftaran anggota ini sudah pernah divalidasi.');
+        }
+
+        if ($validated['decision'] === 'approve') {
+            $member->update([
+                'approval_status' => User::APPROVAL_APPROVED,
+                'is_active' => true,
+            ]);
+
+            return redirect()->route('admin.members.index')
+                ->with('success', "Pendaftaran '{$member->name}' disetujui. Anggota sekarang dapat login.");
+        }
+
+        $member->update([
+            'approval_status' => User::APPROVAL_REJECTED,
+            'is_active' => false,
+        ]);
+
+        return redirect()->route('admin.members.index')
+            ->with('success', "Pendaftaran '{$member->name}' ditolak.");
     }
 
     /**

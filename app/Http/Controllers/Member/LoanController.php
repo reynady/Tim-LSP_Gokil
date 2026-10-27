@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use App\Models\Loan;
 use App\Models\LoanDetail;
+use App\Models\LoanPolicy;
 use App\Models\Monster;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
@@ -45,7 +47,8 @@ class LoanController extends Controller
 
         $monsters = $query->orderBy('id')->get();
 
-        $user = auth()->user();
+        /** @var User|null $user */
+        $user = $request->user();
         $activeLoansCount = $user ? Loan::where('user_id', $user->id)
             ->whereIn('status', ['active', 'borrowed', 'approved', 'pending'])
             ->count() : 0;
@@ -58,7 +61,9 @@ class LoanController extends Controller
      */
     public function detailUnit(Request $request)
     {
-        $user = auth()->user();
+        /** @var User|null $user */
+        $user = $request->user();
+        $policy = LoanPolicy::current();
         $code = $request->query('code') ?? $request->query('kode');
 
         $monster = null;
@@ -78,9 +83,9 @@ class LoanController extends Controller
             ->whereIn('status', ['active', 'borrowed', 'approved', 'pending'])
             ->count() : 0;
 
-        $canBorrow = ($activeLoansCount < 2) && ($monster && $monster->canSchedule());
+        $canBorrow = ($activeLoansCount < $policy->max_active_loans) && ($monster && $monster->canSchedule());
 
-        return view('member.detail-unit', compact('monster', 'activeLoansCount', 'canBorrow'));
+        return view('member.detail-unit', compact('monster', 'activeLoansCount', 'canBorrow', 'policy'));
     }
 
     /**
@@ -88,9 +93,10 @@ class LoanController extends Controller
      */
     public function store(Request $request)
     {
-        abort_unless(auth()->user()->role === 'member', 403, 'Hanya member yang dapat mengajukan peminjaman.');
+        /** @var User $user */
+        $user = $request->user();
+        abort_unless($user->role === 'member', 403, 'Hanya member yang dapat mengajukan peminjaman.');
         $validated = $this->validateSchedule($request);
-        $user = auth()->user();
 
         $loan = DB::transaction(function () use ($user, $validated) {
             // SQLite ignores FOR UPDATE; acquire its writer lock before any reads.
@@ -107,8 +113,11 @@ class LoanController extends Controller
                 throw ValidationException::withMessages(['starts_at' => 'Waktu mulai peminjaman tidak boleh di masa lalu.']);
             }
 
-            if (Loan::where('user_id', $user->id)->whereIn('status', Loan::STOCK_LOCKING_STATUSES)->count() >= 2) {
-                throw ValidationException::withMessages(['monster_id' => 'Peminjaman ditolak: batas maksimal 2 peminjaman aktif, termasuk reservasi mendatang, telah tercapai.']);
+            $policy = LoanPolicy::current();
+            if (Loan::where('user_id', $user->id)->whereIn('status', Loan::STOCK_LOCKING_STATUSES)->count() >= $policy->max_active_loans) {
+                throw ValidationException::withMessages([
+                    'monster_id' => "Peminjaman ditolak: batas maksimal {$policy->max_active_loans} peminjaman aktif, termasuk reservasi mendatang, telah tercapai.",
+                ]);
             }
 
             if ($monster->availableUnitsDuring($start, $end) === 0) {
@@ -143,7 +152,9 @@ class LoanController extends Controller
 
     public function availability(Request $request)
     {
-        abort_unless(auth()->user()->role === 'member', 403, 'Hanya member yang dapat memeriksa jadwal peminjaman.');
+        /** @var User $user */
+        $user = $request->user();
+        abort_unless($user->role === 'member', 403, 'Hanya member yang dapat memeriksa jadwal peminjaman.');
         $validated = $this->validateSchedule($request);
         $monster = Monster::findOrFail($validated['monster_id']);
         $available = $monster->availableUnitsDuring(
@@ -184,8 +195,13 @@ class LoanController extends Controller
 
             $start = CarbonImmutable::parse($request->input('starts_at'), config('app.timezone'));
             $end = CarbonImmutable::parse($request->input('ends_at'), config('app.timezone'));
-            if ($end->gt($start->addDays(5))) {
-                $validator->errors()->add('ends_at', 'Durasi peminjaman maksimal 5 hari (120 jam).');
+            $maxDurationDays = LoanPolicy::current()->max_duration_days;
+            if ($end->gt($start->addDays($maxDurationDays))) {
+                $maxDurationHours = $maxDurationDays * 24;
+                $validator->errors()->add(
+                    'ends_at',
+                    "Durasi peminjaman maksimal {$maxDurationDays} hari ({$maxDurationHours} jam).",
+                );
             }
         });
 
@@ -197,7 +213,8 @@ class LoanController extends Controller
      */
     public function success(Request $request)
     {
-        $user = auth()->user();
+        /** @var User $user */
+        $user = $request->user();
         $code = $request->query('code');
 
         $latestLoan = null;
@@ -219,8 +236,9 @@ class LoanController extends Controller
             ->where('user_id', $user->id)
             ->whereIn('status', ['active', 'borrowed', 'approved', 'pending'])
             ->get();
+        $maxActiveLoans = LoanPolicy::current()->max_active_loans;
 
-        return view('member.loan-success', compact('latestLoan', 'dbActiveLoans'));
+        return view('member.loan-success', compact('latestLoan', 'dbActiveLoans', 'maxActiveLoans'));
     }
 
     /**
@@ -228,7 +246,9 @@ class LoanController extends Controller
      */
     public function activeLoans()
     {
-        return view('member.active-loans');
+        $maxActiveLoans = LoanPolicy::current()->max_active_loans;
+
+        return view('member.active-loans', compact('maxActiveLoans'));
     }
 
     /**
@@ -244,10 +264,11 @@ class LoanController extends Controller
      */
     public function printHistory(Request $request)
     {
-        $user = auth()->user();
+        /** @var User $user */
+        $user = $request->user();
         $today = Carbon::today();
 
-        $loans = Loan::with(['details.monster', 'details.fine'])
+        $loans = Loan::with(['user', 'details.monster', 'details.fine'])
             ->where('user_id', $user->id)
             ->latest('loan_date')
             ->get();
@@ -282,7 +303,7 @@ class LoanController extends Controller
         $printedRole = 'Anggota';
         $printedAt = now();
 
-        return view('shared.print-history', compact(
+        return Pdf::loadView('shared.pdf-history', compact(
             'loans',
             'totalLoans',
             'onTimeCount',
@@ -294,7 +315,9 @@ class LoanController extends Controller
             'printedBy',
             'printedRole',
             'printedAt'
-        ));
+        ))
+            ->setPaper('a4', 'landscape')
+            ->download('riwayat-peminjaman-anggota.pdf');
     }
 
 }

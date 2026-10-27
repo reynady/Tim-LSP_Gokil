@@ -94,8 +94,8 @@
                 <div class="form-intro">
                     <h2>Selamat datang kembali.</h2>
                     <p>
-                        Masuk menggunakan akun terdaftar untuk
-                        melanjutkan ke ArsenalTrack.
+                        Masuk menggunakan akun yang telah divalidasi admin
+                        untuk melanjutkan ke ArsenalTrack.
                     </p>
                 </div>
 

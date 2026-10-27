@@ -35,19 +35,14 @@ class PrintHistoryTest extends TestCase
         $resHistory = $this->actingAs($admin)->get(route('admin.loans.history'));
         $resHistory->assertStatus(200);
         $resHistory->assertSee('Riwayat Sirkulasi Peminjaman');
-        $resHistory->assertSee('Cetak Riwayat');
+        $resHistory->assertSee('Unduh PDF Riwayat');
 
-        // 2. Admin access print preview page
+        // 2. Admin downloads the generated PDF report
         $resPrint = $this->actingAs($admin)->get(route('admin.loans.print'));
         $resPrint->assertStatus(200);
-        $resPrint->assertSee('Pratinjau cetak');
-        $resPrint->assertSee('Cetak dokumen');
-        $resPrint->assertSee('Laporan Riwayat Peminjaman Unit');
-        $resPrint->assertSee('ArsenalTrack');
-        $resPrint->assertSee('Seluruh Transaksi Sirkulasi Institusi');
-        $resPrint->assertSee('Total transaksi');
-        $resPrint->assertSee('Selesai tepat waktu');
-        $resPrint->assertSee('Selesai terlambat');
+        $resPrint->assertHeader('content-type', 'application/pdf');
+        $resPrint->assertHeader('content-disposition', 'attachment; filename=riwayat-peminjaman-institusi.pdf');
+        $this->assertStringStartsWith('%PDF-', $resPrint->getContent());
     }
 
     public function test_member_can_access_history_and_print_history(): void
@@ -57,15 +52,13 @@ class PrintHistoryTest extends TestCase
         // 1. Member access history page
         $resHistory = $this->actingAs($member)->get(route('loan.history'));
         $resHistory->assertStatus(200);
-        $resHistory->assertSee('Cetak Riwayat');
+        $resHistory->assertSee('Unduh PDF Riwayat');
 
-        // 2. Member access print preview page
+        // 2. Member downloads their generated PDF report
         $resPrint = $this->actingAs($member)->get(route('loan.history.print'));
         $resPrint->assertStatus(200);
-        $resPrint->assertSee('Pratinjau cetak');
-        $resPrint->assertSee('Cetak dokumen');
-        $resPrint->assertSee('Laporan Riwayat Peminjaman Unit');
-        $resPrint->assertSee('ArsenalTrack');
-        $resPrint->assertSee('Total transaksi');
+        $resPrint->assertHeader('content-type', 'application/pdf');
+        $resPrint->assertHeader('content-disposition', 'attachment; filename=riwayat-peminjaman-anggota.pdf');
+        $this->assertStringStartsWith('%PDF-', $resPrint->getContent());
     }
 }

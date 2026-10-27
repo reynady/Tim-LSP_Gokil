@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -39,11 +39,12 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => $validated['password'],
             'role' => 'member',
-            'is_active' => true,
+            'is_active' => false,
+            'approval_status' => User::APPROVAL_PENDING,
         ]);
 
         return redirect()->route('login')
-            ->with('status', 'Akun berhasil dibuat. Silakan masuk dengan email dan kata sandi kamu.');
+            ->with('status', 'Pendaftaran berhasil. Akun menunggu validasi admin; kamu bisa masuk setelah disetujui.');
     }
 
     public function login(Request $request)
@@ -61,12 +62,27 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
+        /** @var User $user */
         $user = Auth::user();
 
-        if (! $user->is_active) {
+        if ($user->approval_status === User::APPROVAL_PENDING) {
             Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
+
+            return back()->withErrors([
+                'email' => 'Akun masih menunggu persetujuan admin.',
+            ]);
+        }
+
+        if ($user->approval_status !== User::APPROVAL_APPROVED) {
+            Auth::logout();
+
+            return back()->withErrors([
+                'email' => 'Pendaftaran akun tidak disetujui. Hubungi administrator jika membutuhkan bantuan.',
+            ]);
+        }
+
+        if (! $user->canLogin()) {
+            Auth::logout();
 
             return back()->withErrors([
                 'email' => 'Akun kamu tidak aktif.',

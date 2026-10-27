@@ -5,7 +5,7 @@ import vm from 'node:vm';
 
 const script = readFileSync(new URL('../../public/js/loan-schedule.js', import.meta.url), 'utf8');
 
-function setup() {
+function setup(maxDurationDays = 5) {
     const handlers = new Map();
     function element(id) {
         const control = {
@@ -29,6 +29,7 @@ function setup() {
     form.dataset = {
         availabilityUrl: '/peminjaman/ketersediaan',
         serverNow: String(Date.parse('2026-10-26T08:00:00+07:00')),
+        maxDurationDays: String(maxDurationDays),
     };
     form.elements = { monster_id: { value: '7' } };
     form.reportValidity = () => { form.reported = true; };
@@ -100,6 +101,13 @@ test('exactly 120 hours is valid and summary uses WIB', async () => {
     assert.equal(url.searchParams.get('starts_at'), '2026-10-27T09:00');
     assert.equal(url.searchParams.get('monster_id'), '7');
     assert.equal(ui.submit(), false);
+});
+
+test('configured maximum duration controls the end time limit', () => {
+    const ui = setup(2);
+    ui.change('2026-10-27T09:00', '2026-10-29T09:01');
+    assert.match(ui.controls.ends_at.error, /maksimal 2 hari \(48 jam\)/);
+    assert.equal(ui.controls.ends_at.max, '2026-10-29T09:00');
 });
 
 test('unavailable preview prevents confirmation; changing schedule clears stale result', async () => {

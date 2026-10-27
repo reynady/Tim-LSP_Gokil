@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Fine extends Model
 {
-    public const DAILY_RATE_ETHER = 25;
+    public const DAILY_RATE_RUPIAH = 25_000;
 
     public static function amountForOverdueDays(int $overdueDays): int
     {
-        return max(0, $overdueDays) * self::DAILY_RATE_ETHER;
+        return max(0, $overdueDays) * self::DAILY_RATE_RUPIAH;
     }
 
     protected $fillable = [

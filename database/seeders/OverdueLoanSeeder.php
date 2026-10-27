@@ -231,7 +231,7 @@ class OverdueLoanSeeder extends Seeder
                 'loan_date'   => $due5->copy()->subDays(5),
                 'due_date'    => $due5,
                 'status'      => 'returned',
-                'notes'       => 'Contoh riwayat pengembalian terlambat dengan denda Ether.',
+                'notes'       => 'Contoh riwayat pengembalian terlambat dengan denda Rupiah.',
             ]
         );
         $detail5 = LoanDetail::updateOrCreate(

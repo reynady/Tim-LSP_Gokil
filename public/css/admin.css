@@ -952,9 +952,84 @@ textarea.form-control {
 .pagination-wrapper {
     padding: 16px 20px;
     border-top: 1px solid var(--border);
+}
+
+.admin-pagination,
+.pagination-links {
     display: flex;
     align-items: center;
+}
+
+.admin-pagination {
     justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+}
+
+.pagination-summary {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.pagination-summary strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.pagination-links {
+    gap: 4px;
+}
+
+.pagination-link,
+.pagination-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--white);
+    color: var(--text);
+    font-size: 13px;
+}
+
+.pagination-link svg {
+    width: 16px;
+    height: 16px;
+}
+
+a.pagination-link:hover {
+    border-color: var(--green);
+    color: var(--green);
+}
+
+.pagination-link.is-current {
+    border-color: var(--green);
+    background: var(--green);
+    color: var(--white);
+}
+
+.pagination-link.is-disabled,
+.pagination-ellipsis {
+    color: var(--muted);
+}
+
+.pagination-link.is-disabled {
+    background: var(--soft);
+}
+
+@media (max-width: 600px) {
+    .pagination-wrapper {
+        padding: 12px 16px;
+    }
+
+    .admin-pagination {
+        align-items: flex-start;
+        flex-direction: column;
+    }
 }
 
 /* ── Responsive ────────────────────────────────────────── */

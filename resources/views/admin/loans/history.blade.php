@@ -13,9 +13,9 @@
         <p class="page-subtitle" style="font-size: 14px; color: #6D7972; margin: 0;">Arsip rekapitulasi seluruh transaksi sirkulasi peminjaman dan pengembalian unit di institusi.</p>
     </div>
     <div style="display: flex; gap: 10px;">
-        <a href="{{ route('admin.loans.print') }}" target="_blank" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; background: #187653; color: #FFFFFF; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
+        <a href="{{ route('admin.loans.print') }}" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; background: #187653; color: #FFFFFF; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
             <i data-lucide="printer" style="width: 16px; height: 16px;"></i>
-            <span>Cetak Riwayat</span>
+            <span>Unduh PDF Riwayat</span>
         </a>
     </div>
 </div>

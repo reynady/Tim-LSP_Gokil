@@ -8,6 +8,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/overdue-fines.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/currency-converter.css') }}">
 @endpush
 
 @section('content')
@@ -25,7 +26,7 @@
         <div class="overdue-alert-body">
         <span class="overdue-alert-title">Tarif denda keterlambatan</span>
             <span class="overdue-alert-desc">
-            Denda sebesar {{ number_format(\App\Models\Fine::DAILY_RATE_ETHER, 0, ',', '.') }} Ether per hari keterlambatan. Total denda dihitung saat pengembalian dikonfirmasi.
+            Denda sebesar Rp{{ number_format(\App\Models\Fine::DAILY_RATE_RUPIAH, 0, ',', '.') }} per hari keterlambatan. Total denda dihitung saat pengembalian dikonfirmasi.
             </span>
         </div>
     </div>
@@ -138,8 +139,9 @@
                                 </td>
                                 <td>
                                     <span class="cell-fine-pending">
-                                        {{ number_format($loan->calculated_fine_amount, 0, ',', '.') }} Ether
+                                        Rp{{ number_format($loan->calculated_fine_amount, 0, ',', '.') }}
                                     </span>
+                                    @include('shared.currency-converter', ['amount' => $loan->calculated_fine_amount])
                                 </td>
                                 <td>
                                     <a href="{{ route('admin.loans.return', $loan->id) }}" class="overdue-action-link">
@@ -222,8 +224,9 @@
                                 <td>
                                     <div class="cell-fine-returned">
                                         <span class="cell-fine-returned-text">
-                                            {{ number_format($loan->calculated_fine_amount, 0, ',', '.') }} Ether
+                                            Rp{{ number_format($loan->calculated_fine_amount, 0, ',', '.') }}
                                         </span>
+                                        @include('shared.currency-converter', ['amount' => $loan->calculated_fine_amount])
                                         <span class="badge-completed-status">
                                             <span class="badge-completed-dot"></span>
                                             <span>Selesai · {{ $loan->calculated_fine_amount > 0 ? (($detail?->fine?->status === 'paid') ? 'Lunas' : 'Belum dibayar') : 'Tidak dikenakan' }}</span>
@@ -261,3 +264,7 @@
 
 </div>
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('js/currency-converter.js') }}" defer></script>
+@endpush

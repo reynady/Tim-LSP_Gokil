@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/history.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/currency-converter.css') }}">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
@@ -44,6 +45,7 @@
         $isLate = false;
         $note = 'Tepat waktu';
         $subNote = null;
+        $fineAmount = null;
 
         if ($overdueDays > 0) {
             $isLate = true;
@@ -51,7 +53,7 @@
             $fineAmount = $detail?->fine
                 ? $detail->fine->amount
                 : \App\Models\Fine::amountForOverdueDays($overdueDays);
-            $subNote = 'Denda ' . number_format($fineAmount, 0, ',', '.') . ' Ether';
+            $subNote = 'Denda Rp' . number_format($fineAmount, 0, ',', '.');
         }
 
         return [
@@ -65,6 +67,7 @@
             'is_late'     => $isLate,
             'note'        => $note,
             'sub_note'    => $subNote,
+            'fine_amount' => $fineAmount,
         ];
     })->values()->all();
 
@@ -154,9 +157,9 @@
                     <h1>Riwayat peminjaman</h1>
                     <p>Arsip seluruh transaksi peminjaman yang telah selesai dan dicatat oleh Admin.</p>
                 </div>
-                <a href="{{ route('loan.history.print') }}" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; background: #187653; color: #FFFFFF; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                <a href="{{ route('loan.history.print') }}" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; background: #187653; color: #FFFFFF; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
                     <i data-lucide="printer" style="width: 16px; height: 16px;"></i>
-                    <span>Cetak Riwayat</span>
+                    <span>Unduh PDF Riwayat</span>
                 </a>
             </section>
 
@@ -236,6 +239,7 @@
                                     <span class="delay-late">{{ $loan['note'] }}</span>
                                     @if ($loan['sub_note'])
                                         <span class="delay-sub">{{ $loan['sub_note'] }}</span>
+                                        @include('shared.currency-converter', ['amount' => $loan['fine_amount']])
                                     @endif
                                 @else
                                     <span class="delay-ontime">{{ $loan['note'] }}</span>
@@ -288,5 +292,6 @@
 <script>
     if (window.lucide) lucide.createIcons();
 </script>
+<script src="{{ asset('js/currency-converter.js') }}" defer></script>
 </body>
 </html>

@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Fine;
 use App\Models\Loan;
 use App\Models\Monster;
+use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class LoanController extends Controller
 {
@@ -45,12 +48,12 @@ class LoanController extends Controller
      */
     public function returnProcess(Loan $loan)
     {
-        $loan->load(['user', 'details.monster.categories']);
+        $loan->load(['user', 'details.monster.categories', 'details.fine']);
 
         $monster = $loan->details->first()?->monster;
 
         $today = now()->startOfDay();
-        $dueDate = $loan->due_date ? $loan->due_date->startOfDay() : $today;
+        $dueDate = $loan->due_date ? Carbon::parse($loan->due_date)->startOfDay() : $today;
         $overdueDays = $today->gt($dueDate) ? $dueDate->diffInDays($today) : 0;
         $fineAmount = Fine::amountForOverdueDays($overdueDays);
         $isOverdue = $overdueDays > 0;
@@ -77,10 +80,11 @@ class LoanController extends Controller
             'confirm_physical.accepted' => 'Anda wajib mencentang konfirmasi penerimaan fisik unit sebelum menyelesaikan pengembalian.',
         ]);
 
-        $admin = auth()->user();
+        /** @var User $admin */
+        $admin = $request->user();
         $monsterIds = $loan->details()->orderBy('monster_id')->pluck('monster_id');
 
-        DB::transaction(function () use ($loan, $admin, $monsterIds) {
+        DB::transaction(function () use ($request, $loan, $admin, $monsterIds) {
             // Use the same unit lock as booking before changing reservation state.
             if (DB::connection()->getDriverName() === 'sqlite') {
                 DB::table('users')->where('id', $admin->id)->update(['is_active' => DB::raw('is_active')]);
@@ -90,8 +94,13 @@ class LoanController extends Controller
             abort_unless(in_array($loan->status, Loan::STOCK_LOCKING_STATUSES, true), 422, 'Peminjaman ini sudah selesai dan tidak dapat dikembalikan lagi.');
 
             $today = now()->startOfDay();
-            $dueDate = $loan->due_date ? $loan->due_date->startOfDay() : $today;
+            $dueDate = $loan->due_date ? Carbon::parse($loan->due_date)->startOfDay() : $today;
             $overdueDays = $today->gt($dueDate) ? $dueDate->diffInDays($today) : 0;
+            if ($overdueDays > 0 && ! $request->boolean('confirm_fine_paid')) {
+                throw ValidationException::withMessages([
+                    'confirm_fine_paid' => 'Konfirmasi bahwa denda telah dibayar wajib dicentang sebelum pengembalian terlambat diselesaikan.',
+                ]);
+            }
 
             // 1. Update status peminjaman menjadi returned
             $loan->update([
@@ -116,7 +125,8 @@ class LoanController extends Controller
                         [
                             'amount'       => $fineAmount,
                             'overdue_days' => $overdueDays,
-                            'status'       => $fineAmount > 0 ? 'unpaid' : 'waived',
+                            'status' => $fineAmount > 0 ? 'paid' : 'waived',
+                            'paid_at' => $fineAmount > 0 ? now() : null,
                         ]
                     );
                 }
@@ -143,7 +153,6 @@ class LoanController extends Controller
         return redirect()->route('admin.loans.index')
             ->with('success', "Demo: Batas pengembalian {$loan->loan_code} diubah ke kemarin. Transaksi sekarang terlambat 1 hari.");
     }
-
 
     /**
      * Menampilkan daftar riwayat seluruh transaksi peminjaman (FR-011).
@@ -182,7 +191,7 @@ class LoanController extends Controller
 
         $loans->each(function ($loan) use ($today) {
             $detail = $loan->details->first();
-            $dueDate = $loan->due_date ? $loan->due_date->startOfDay() : $today;
+            $dueDate = $loan->due_date ? Carbon::parse($loan->due_date)->startOfDay() : $today;
 
             if ($loan->status === 'returned') {
                 if ($detail?->fine && $detail->fine->overdue_days > 0) {
@@ -229,7 +238,7 @@ class LoanController extends Controller
 
         $loans->each(function ($loan) use ($today) {
             $detail = $loan->details->first();
-            $dueDate = $loan->due_date ? $loan->due_date->startOfDay() : $today;
+            $dueDate = $loan->due_date ? Carbon::parse($loan->due_date)->startOfDay() : $today;
 
             if ($loan->status === 'returned') {
                 if ($detail?->fine && $detail->fine->overdue_days > 0) {
@@ -253,11 +262,13 @@ class LoanController extends Controller
         $backUrl = route('admin.loans.history');
         $scopeTitle = 'Seluruh Transaksi Sirkulasi Institusi';
         $referenceCode = 'REF-RWY-' . strtoupper(substr(md5('admin-' . now()->timestamp), 0, 8));
-        $printedBy = auth()->user()->name ?? 'Administrator';
+        /** @var User $authenticatedUser */
+        $authenticatedUser = $request->user();
+        $printedBy = $authenticatedUser->name ?? 'Administrator';
         $printedRole = 'Administrator';
         $printedAt = now();
 
-        return view('shared.print-history', compact(
+        return Pdf::loadView('shared.pdf-history', compact(
             'loans',
             'totalLoans',
             'onTimeCount',
@@ -269,6 +280,8 @@ class LoanController extends Controller
             'printedBy',
             'printedRole',
             'printedAt'
-        ));
+        ))
+            ->setPaper('a4', 'landscape')
+            ->download('riwayat-peminjaman-institusi.pdf');
     }
 }

@@ -30,7 +30,8 @@
         $due = $loan->due_date ? $loan->due_date->startOfDay() : now()->startOfDay();
         $today = now()->startOfDay();
         $isOverdue = $today->gt($due);
-        $overdueDays = $isOverdue ? $due->diffInDays($today) : 0;
+        $overdueDays = $isOverdue ? (int) $due->diffInDays($today) : 0;
+        $remainingDays = (int) ceil(now()->diffInSeconds($loan->scheduled_end, false) / 86400);
         return [
             'id'          => $loan->id,
             'tx_code'     => $loan->loan_code,
@@ -40,7 +41,7 @@
             'due'         => $loan->scheduled_end ? $loan->scheduled_end->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-',
             'remaining'   => $isOverdue
                 ? 'Terlambat ' . $overdueDays . ' hari'
-                : ($loan->due_date ? (now()->diffInDays($loan->due_date, false) >= 0 ? now()->diffInDays($loan->due_date) . ' hari lagi' : 'Terlambat') : '-'),
+                : ($loan->due_date ? max(0, $remainingDays) . ' hari lagi' : '-'),
             'is_overdue'  => $isOverdue,
             'overdue_days'=> $overdueDays,
             'status'      => ucfirst($loan->status ?? 'Dipinjam'),
@@ -156,7 +157,7 @@
                         <i data-lucide="clipboard-list" class="summary-icon"></i>
                     </div>
                     <span class="summary-val">{{ $totalBorrowed }} monster</span>
-                    <span class="summary-sub">Kapasitas maksimal 2 entitas</span>
+                    <span class="summary-sub">Kapasitas maksimal {{ $maxActiveLoans }} entitas</span>
                 </div>
 
                 {{-- Card 2 --}}
@@ -186,11 +187,11 @@
             </div>
 
             {{-- Informasi Kapasitas --}}
-            @if ($totalBorrowed >= 2)
+            @if ($totalBorrowed >= $maxActiveLoans)
                 <div class="warn-notice">
                     <i data-lucide="info"></i>
                     <div class="warn-body">
-                        <strong>Kapasitas penuh · {{ $totalBorrowed }} dari 2 monster dipinjam</strong>
+                        <strong>Kapasitas penuh · {{ $totalBorrowed }} dari {{ $maxActiveLoans }} monster dipinjam</strong>
                         <p>Anda telah mencapai batas maksimal peminjaman (VAL-L-03). Kembalikan salah satu entitas monster untuk dapat meminjam kembali.</p>
                     </div>
                 </div>
@@ -198,7 +199,7 @@
                 <div class="warn-notice" style="background: var(--green-light); border: 1px solid var(--border);">
                     <i data-lucide="circle-check" style="color: var(--green);"></i>
                     <div class="warn-body">
-                        <strong style="color: var(--green);">Kapasitas tersedia · {{ $totalBorrowed }} dari 2 monster dipinjam</strong>
+                        <strong style="color: var(--green);">Kapasitas tersedia · {{ $totalBorrowed }} dari {{ $maxActiveLoans }} monster dipinjam</strong>
                         <p>Anda memiliki slot peminjaman aktif. Silakan pilih entitas monster melalui Katalog Monster.</p>
                     </div>
                 </div>
