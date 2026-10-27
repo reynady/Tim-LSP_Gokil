@@ -86,7 +86,9 @@ class FineController extends Controller
                 $loan->calculated_overdue_days = 0;
             }
 
-            $loan->calculated_fine_amount = Fine::amountForOverdueDays($loan->calculated_overdue_days);
+            $loan->calculated_fine_amount = $detail?->fine
+                ? $detail->fine->amount
+                : Fine::amountForOverdueDays($loan->calculated_overdue_days);
         });
 
         // 3. Ringkasan KPI Cards

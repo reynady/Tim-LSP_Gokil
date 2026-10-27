@@ -141,6 +141,24 @@ class LoanScheduleConcurrencyTest extends TestCase
         $this->assertSame(0, LoanDetail::on(self::CONNECTION)->where('monster_id', $monsters[1 - $winner]->id)->count());
     }
 
+    public function test_six_members_racing_for_the_same_unit_create_only_one_reservation(): void
+    {
+        $members = array_map(fn () => $this->member(), range(1, 6));
+        $monster = $this->monster('STRESS-SHARED');
+
+        $results = $this->race(array_map(
+            fn (User $member) => [$member->id, $monster->id],
+            $members,
+        ));
+
+        $outcomes = array_column($results, 'outcome');
+        $this->assertSame(1, count(array_filter($outcomes, fn ($outcome) => $outcome === 'success')));
+        $this->assertSame(5, count(array_filter($outcomes, fn ($outcome) => $outcome === 'validation')));
+        $this->assertSame(1, Loan::on(self::CONNECTION)->count());
+        $this->assertSame(1, LoanDetail::on(self::CONNECTION)->count());
+        $this->assertSame('borrowed', $monster->fresh()->status);
+    }
+
     private function member(): User
     {
         $member = User::factory()->make(['role' => 'member', 'is_active' => true]);
@@ -182,7 +200,7 @@ class LoanScheduleConcurrencyTest extends TestCase
             $worker->start();
         }
 
-        $deadline = microtime(true) + 10;
+        $deadline = microtime(true) + 25;
         do {
             $ready = true;
             foreach ($this->workers as $index => $worker) {
@@ -200,13 +218,15 @@ class LoanScheduleConcurrencyTest extends TestCase
         $identities = [];
         foreach ($this->workers as $index => $worker) {
             $identity = json_decode(file_get_contents($this->directory.'/ready-'.$index), true, 512, JSON_THROW_ON_ERROR);
-            $this->assertSame($this->directory.'/database.sqlite', $identity['database']);
+            $expectedDatabase = str_replace('\\', '/', $this->directory.'/database.sqlite');
+            $actualDatabase = str_replace('\\', '/', $identity['database']);
+            $this->assertSame($expectedDatabase, $actualDatabase);
             $this->assertGreaterThanOrEqual(5000, $identity['busy_timeout']);
             $identities[] = $identity;
         }
-        $this->assertNotSame($identities[0]['pid'], $identities[1]['pid']);
-        $this->assertNotSame(getmypid(), $identities[0]['pid']);
-        $this->assertNotSame(getmypid(), $identities[1]['pid']);
+        $workerPids = array_column($identities, 'pid');
+        $this->assertCount(count($this->workers), array_unique($workerPids));
+        $this->assertNotContains(getmypid(), $workerPids);
         $this->assertSame(1, file_put_contents($this->directory.'/release', '1'));
 
         $results = [];
@@ -223,13 +243,20 @@ class LoanScheduleConcurrencyTest extends TestCase
 
     private function assertOneSuccessAndOneValidation(array $results, array $errors): int
     {
-        $outcomes = array_column($results, 'outcome');
-        sort($outcomes);
-        $this->assertSame(['success', 'validation'], $outcomes);
-        $winner = $results[0]['outcome'] === 'success' ? 0 : 1;
+        $winners = array_keys(array_filter($results, fn ($result) => $result['outcome'] === 'success'));
+        $this->assertCount(1, $winners);
+        $winner = $winners[0];
         $this->assertSame(302, $results[$winner]['status']);
-        $this->assertSame(ValidationException::class, $results[1 - $winner]['exception']);
-        $this->assertSame($errors, $results[1 - $winner]['errors']);
+
+        foreach ($results as $index => $result) {
+            if ($index === $winner) {
+                continue;
+            }
+
+            $this->assertSame('validation', $result['outcome']);
+            $this->assertSame(ValidationException::class, $result['exception']);
+            $this->assertSame($errors, $result['errors']);
+        }
 
         return $winner;
     }

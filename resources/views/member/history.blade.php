@@ -48,12 +48,10 @@
         if ($overdueDays > 0) {
             $isLate = true;
             $note = 'Terlambat ' . $overdueDays . ' hari';
-            $fineAmount = \App\Models\Fine::amountForOverdueDays($overdueDays);
-            if ($fineAmount > 0) {
-                $subNote = 'Denda ' . number_format($fineAmount, 0, ',', '.') . ' Ether';
-            } else {
-                $subNote = 'Belum dikenakan denda (masa tenggang 5 hari)';
-            }
+            $fineAmount = $detail?->fine
+                ? $detail->fine->amount
+                : \App\Models\Fine::amountForOverdueDays($overdueDays);
+            $subNote = 'Denda ' . number_format($fineAmount, 0, ',', '.') . ' Ether';
         }
 
         return [

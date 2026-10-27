@@ -220,7 +220,7 @@ class OverdueLoanSeeder extends Seeder
             ]
         );
 
-        // Transaksi 5: contoh riwayat dengan denda setelah melewati masa tenggang 5 hari.
+        // Transaksi 5: contoh riwayat dengan denda karena keterlambatan.
         $due5 = Carbon::today()->subDays(8);
         $returned5 = Carbon::today()->subDay()->setTime(14, 0);
         $loan5 = Loan::updateOrCreate(

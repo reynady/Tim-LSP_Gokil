@@ -121,9 +121,9 @@
                     </div>
                     <div class="rp-calc-note">
                         @if($overdueDays > 0)
-                            Jadwal selesai: {{ $loan->scheduled_end ? $loan->scheduled_end->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-' }}. Keterlambatan {{ $overdueDays }} hari dihitung berdasarkan tanggal jatuh tempo. 5 hari pertama bebas denda; hari berikutnya dikenakan {{ number_format(\App\Models\Fine::DAILY_RATE_ETHER, 0, ',', '.') }} Ether per hari.
+                            Jadwal selesai: {{ $loan->scheduled_end ? $loan->scheduled_end->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-' }}. Keterlambatan {{ $overdueDays }} hari dihitung berdasarkan tanggal jatuh tempo, dengan denda {{ number_format(\App\Models\Fine::DAILY_RATE_ETHER, 0, ',', '.') }} Ether per hari.
                         @else
-                            Unit dikembalikan sebelum atau tepat pada batas tanggal jatuh tempo (0 hari terlambat). Masa tenggang denda adalah 5 hari.
+                            Unit dikembalikan sebelum atau tepat pada batas tanggal jatuh tempo (0 hari terlambat), sehingga tidak dikenakan denda.
                         @endif
                     </div>
                 </div>

@@ -99,6 +99,10 @@
                     </p>
                 </div>
 
+                @if(session('status'))
+                    <div class="success-message">{{ session('status') }}</div>
+                @endif
+
                 <div class="form-fields">
                     <div class="form-group">
                         <label for="email">Email</label>
@@ -139,6 +143,10 @@
                     <span>Masuk ke akun</span>
                     <i data-lucide="arrow-right"></i>
                 </button>
+
+                <p class="auth-switch">
+                    Belum punya akun? <a href="{{ route('register') }}">Sign up</a>
+                </p>
 
                 <div class="access-help">
                     <h3>Mengalami kendala akses?</h3>

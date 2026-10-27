@@ -16,7 +16,7 @@
     {{-- Judul Halaman --}}
     <div class="overdue-header">
         <h1 class="overdue-title">Keterlambatan & denda</h1>
-        <p class="overdue-subtitle">Denda berlaku setelah masa tenggang 5 hari keterlambatan.</p>
+        <p class="overdue-subtitle">Denda dihitung sejak hari pertama keterlambatan.</p>
     </div>
 
     {{-- Pesan Kontekstual --}}
@@ -25,7 +25,7 @@
         <div class="overdue-alert-body">
         <span class="overdue-alert-title">Tarif denda keterlambatan</span>
             <span class="overdue-alert-desc">
-            5 hari keterlambatan pertama bebas denda. Mulai hari ke-6, denda sebesar {{ number_format(\App\Models\Fine::DAILY_RATE_ETHER, 0, ',', '.') }} Ether per hari. Total denda dihitung saat pengembalian dikonfirmasi.
+            Denda sebesar {{ number_format(\App\Models\Fine::DAILY_RATE_ETHER, 0, ',', '.') }} Ether per hari keterlambatan. Total denda dihitung saat pengembalian dikonfirmasi.
             </span>
         </div>
     </div>
