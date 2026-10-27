@@ -100,6 +100,7 @@ class OverdueLoanSeeder extends Seeder
                     'password'  => Hash::make('Password123!'),
                     'role'      => 'member',
                     'is_active' => true,
+                    'approved_at' => now(),
                 ]
             );
             $u->profile()->updateOrCreate(

@@ -100,7 +100,7 @@
                 </div>
 
                 @if(session('status'))
-                    <div class="success-message">{{ session('status') }}</div>
+                    <div class="success-message" role="status">{{ session('status') }}</div>
                 @endif
 
                 <div class="form-fields">

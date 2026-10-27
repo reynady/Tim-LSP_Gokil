@@ -11,7 +11,7 @@ return new class extends Migration
             ->where('overdue_days', '>', 0)
             ->whereIn('status', ['unpaid', 'waived'])
             ->update([
-                'amount' => DB::raw('overdue_days * 25'),
+                'amount' => DB::raw('overdue_days * 25000'),
                 'status' => 'unpaid',
             ]);
     }

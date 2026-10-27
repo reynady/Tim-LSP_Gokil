@@ -109,4 +109,26 @@ class FineOverdueTest extends TestCase
         ]);
         $this->assertNotNull(Fine::where('loan_detail_id', $loan->details()->firstOrFail()->id)->value('paid_at'));
     }
+
+    public function test_currency_migration_converts_existing_fines_to_rupiah(): void
+    {
+        $this->seed([
+            AdminSeeder::class,
+            CategorySeeder::class,
+            MonsterSeeder::class,
+            MemberSeeder::class,
+            OverdueLoanSeeder::class,
+        ]);
+
+        $fine = Fine::where('overdue_days', 7)->firstOrFail();
+        $fine->update(['amount' => 175]);
+
+        $migration = require database_path('migrations/2026_10_27_110000_convert_fine_amounts_to_rupiah.php');
+        $migration->up();
+
+        $this->assertDatabaseHas('fines', [
+            'id' => $fine->id,
+            'amount' => 175_000,
+        ]);
+    }
 }

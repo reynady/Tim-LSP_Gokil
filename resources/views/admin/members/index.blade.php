@@ -147,7 +147,7 @@
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit" class="btn btn-secondary btn-sm"
-                                            title="{{ $member->is_active ? 'Nonaktifkan akun' : 'Aktifkan akun' }}">
+                                            title="{{ $member->is_active ? 'Nonaktifkan akun' : (! $member->approved_at ? 'Setujui dan aktifkan akun' : 'Aktifkan akun') }}">
                                         <i data-lucide="{{ $member->is_active ? 'user-x' : 'user-check' }}"></i>
                                     </button>
                                 </form>
