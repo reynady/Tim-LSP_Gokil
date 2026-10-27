@@ -100,6 +100,31 @@ class LoanScheduleTest extends TestCase
         $this->assertContains('GET', $route->methods());
     }
 
+    public function test_getting_the_loan_submission_url_returns_to_the_unit_form(): void
+    {
+        $response = $this->actingAs($this->member)
+            ->from('/peminjaman')
+            ->post(route('loan.store'), $this->payload(['starts_at' => 'invalid']));
+
+        $response->assertRedirect('/peminjaman');
+        $this->get('/peminjaman')
+            ->assertRedirect(route('unit.detail', ['id' => $this->monster->id]));
+
+        $this->get(route('unit.detail', ['id' => $this->monster->id]))
+            ->assertOk()
+            ->assertSee('Tanggal dan jam mulai peminjaman tidak valid.')
+            ->assertSee('value="invalid"', false);
+
+        $this->assertDatabaseCount('loans', 0);
+    }
+
+    public function test_direct_get_to_loan_submission_url_returns_to_catalog(): void
+    {
+        $this->actingAs($this->member)
+            ->get('/peminjaman')
+            ->assertRedirect(route('catalog'));
+    }
+
     #[DataProvider('endpoints')]
     public function test_guests_cannot_access_schedule_endpoints(string $endpoint): void
     {

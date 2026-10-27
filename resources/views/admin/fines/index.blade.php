@@ -25,7 +25,7 @@
         <div class="overdue-alert-body">
         <span class="overdue-alert-title">Tarif denda keterlambatan</span>
             <span class="overdue-alert-desc">
-            Denda sebesar {{ number_format(\App\Models\Fine::DAILY_RATE_ETHER, 0, ',', '.') }} Ether per hari keterlambatan. Total denda dihitung saat pengembalian dikonfirmasi.
+            Denda sebesar Rp {{ number_format(\App\Models\Fine::DAILY_RATE_RUPIAH, 0, ',', '.') }} per hari keterlambatan. Total denda dihitung saat pengembalian dikonfirmasi.
             </span>
         </div>
     </div>
@@ -138,7 +138,7 @@
                                 </td>
                                 <td>
                                     <span class="cell-fine-pending">
-                                        {{ number_format($loan->calculated_fine_amount, 0, ',', '.') }} Ether
+                                        Rp {{ number_format($loan->calculated_fine_amount, 0, ',', '.') }}
                                     </span>
                                 </td>
                                 <td>
@@ -222,7 +222,7 @@
                                 <td>
                                     <div class="cell-fine-returned">
                                         <span class="cell-fine-returned-text">
-                                            {{ number_format($loan->calculated_fine_amount, 0, ',', '.') }} Ether
+                                            Rp {{ number_format($loan->calculated_fine_amount, 0, ',', '.') }}
                                         </span>
                                         <span class="badge-completed-status">
                                             <span class="badge-completed-dot"></span>

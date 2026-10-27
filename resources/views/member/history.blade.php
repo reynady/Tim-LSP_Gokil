@@ -51,7 +51,7 @@
             $fineAmount = $detail?->fine
                 ? $detail->fine->amount
                 : \App\Models\Fine::amountForOverdueDays($overdueDays);
-            $subNote = 'Denda ' . number_format($fineAmount, 0, ',', '.') . ' Ether';
+            $subNote = 'Denda Rp ' . number_format($fineAmount, 0, ',', '.');
         }
 
         return [

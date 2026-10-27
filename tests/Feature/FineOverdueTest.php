@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Fine;
 use App\Models\Loan;
+use App\Models\User;
 use Database\Seeders\AdminSeeder;
 use Database\Seeders\CategorySeeder;
-use Database\Seeders\MonsterSeeder;
 use Database\Seeders\MemberSeeder;
+use Database\Seeders\MonsterSeeder;
 use Database\Seeders\OverdueLoanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -20,10 +20,10 @@ class FineOverdueTest extends TestCase
     public function test_fine_is_charged_for_each_overdue_day(): void
     {
         $this->assertSame(0, Fine::amountForOverdueDays(0));
-        $this->assertSame(25, Fine::amountForOverdueDays(1));
-        $this->assertSame(125, Fine::amountForOverdueDays(5));
-        $this->assertSame(150, Fine::amountForOverdueDays(6));
-        $this->assertSame(175, Fine::amountForOverdueDays(7));
+        $this->assertSame(25_000, Fine::amountForOverdueDays(1));
+        $this->assertSame(125_000, Fine::amountForOverdueDays(5));
+        $this->assertSame(150_000, Fine::amountForOverdueDays(6));
+        $this->assertSame(175_000, Fine::amountForOverdueDays(7));
     }
 
     public function test_admin_can_access_keterlambatan_denda_page(): void
@@ -43,7 +43,7 @@ class FineOverdueTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Keterlambatan &amp; denda', false);
         $response->assertSee('Tarif denda keterlambatan');
-        $response->assertSee('25 Ether per hari keterlambatan');
+        $response->assertSee('Rp 25.000 per hari keterlambatan');
         $response->assertSee('Aktif terlambat');
         $response->assertSee('Keterlambatan berjalan');
         $response->assertSee('Sudah kembali terlambat');
@@ -57,17 +57,17 @@ class FineOverdueTest extends TestCase
         $response->assertSee('AT-PJM-261008-007');
         $response->assertSee('Selesai');
         $response->assertSee('AT-PJM-DEMO-FINE-001');
-        $response->assertSee('175 Ether');
+        $response->assertSee('Rp 175.000');
 
         $member = User::where('email', 'raka.pratama@arsenaltrack.test')->firstOrFail();
         $historyResponse = $this->actingAs($member)->get(route('loan.history'));
 
         $historyResponse->assertStatus(200);
         $historyResponse->assertSee('AT-PJM-DEMO-FINE-001');
-        $historyResponse->assertSee('175 Ether');
+        $historyResponse->assertSee('Rp 175.000');
     }
 
-    public function test_returning_a_loan_one_day_late_records_an_ether_fine(): void
+    public function test_returning_a_loan_one_day_late_records_a_rupiah_fine(): void
     {
         $this->seed([
             AdminSeeder::class,
@@ -88,9 +88,31 @@ class FineOverdueTest extends TestCase
         $response->assertRedirect(route('admin.loans.index'));
         $this->assertDatabaseHas('fines', [
             'loan_detail_id' => $loan->details()->firstOrFail()->id,
-            'amount' => 25,
+            'amount' => 25_000,
             'overdue_days' => 1,
             'status' => 'unpaid',
+        ]);
+    }
+
+    public function test_currency_migration_converts_existing_fines_to_rupiah(): void
+    {
+        $this->seed([
+            AdminSeeder::class,
+            CategorySeeder::class,
+            MonsterSeeder::class,
+            MemberSeeder::class,
+            OverdueLoanSeeder::class,
+        ]);
+
+        $fine = Fine::where('overdue_days', 7)->firstOrFail();
+        $fine->update(['amount' => 175]);
+
+        $migration = require database_path('migrations/2026_10_27_110000_convert_fine_amounts_to_rupiah.php');
+        $migration->up();
+
+        $this->assertDatabaseHas('fines', [
+            'id' => $fine->id,
+            'amount' => 175_000,
         ]);
     }
 }

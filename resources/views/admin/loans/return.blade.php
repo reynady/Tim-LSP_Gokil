@@ -116,12 +116,12 @@
                         </div>
                         <div class="rp-calc-item">
                             <span class="calc-lbl">Nominal denda</span>
-                            <span class="calc-val">{{ number_format($fineAmount, 0, ',', '.') }} Ether</span>
+                            <span class="calc-val">Rp {{ number_format($fineAmount, 0, ',', '.') }}</span>
                         </div>
                     </div>
                     <div class="rp-calc-note">
                         @if($overdueDays > 0)
-                            Jadwal selesai: {{ $loan->scheduled_end ? $loan->scheduled_end->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-' }}. Keterlambatan {{ $overdueDays }} hari dihitung berdasarkan tanggal jatuh tempo, dengan denda {{ number_format(\App\Models\Fine::DAILY_RATE_ETHER, 0, ',', '.') }} Ether per hari.
+                            Jadwal selesai: {{ $loan->scheduled_end ? $loan->scheduled_end->locale('id')->translatedFormat('d F Y H:i') . ' WIB' : '-' }}. Keterlambatan {{ $overdueDays }} hari dihitung berdasarkan tanggal jatuh tempo, dengan denda Rp {{ number_format(\App\Models\Fine::DAILY_RATE_RUPIAH, 0, ',', '.') }} per hari.
                         @else
                             Unit dikembalikan sebelum atau tepat pada batas tanggal jatuh tempo (0 hari terlambat), sehingga tidak dikenakan denda.
                         @endif
